@@ -1,5 +1,4 @@
-x-mautic-volumes:
-  &mautic-volumes
+x-mautic-volumes: &mautic-volumes
   - ./mautic/config:/var/www/html/config:z
   - ./mautic/logs:/var/www/html/var/logs:z
   - ./mautic/media/files:/var/www/html/docroot/media/files:z
@@ -14,7 +13,7 @@ services:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-    volumes: 
+    volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:
       test: mysqladmin --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD ping
@@ -24,7 +23,6 @@ services:
       retries: 10
     networks:
       - mysql-private
-      - default
 
   mautic_web:
     build:
@@ -36,9 +34,6 @@ services:
     environment:
       - DOCKER_MAUTIC_LOAD_TEST_DATA=${DOCKER_MAUTIC_LOAD_TEST_DATA}
       - DOCKER_MAUTIC_RUN_MIGRATIONS=${DOCKER_MAUTIC_RUN_MIGRATIONS}
-      - VIRTUAL_HOST=${DOMAIN}
-      - LETSENCRYPT_HOST=${DOMAIN}
-      - LETSENCRYPT_EMAIL=${EMAIL_ADDRESS}
     env_file:
       - .mautic_env
     healthcheck:
@@ -52,31 +47,28 @@ services:
         condition: service_healthy
     networks:
       - traefik_web
-      - default
+      - mysql-private
     labels:
       - traefik.enable=true
       - traefik.http.routers.mautic.rule=Host(`${DOMAIN}`)
-      - traefik.http.routers.mautic.entrypoints=websecure
-      - traefik.http.routers.mautic.tls.certresolver=letsencrypt
       - traefik.http.services.mautic.loadbalancer.server.port=80
 
   mautic_cron:
-      build:
-        context: .
-        dockerfile: Dockerfile
-      links:
-        - db:mysql
-      volumes: *mautic-volumes
-      environment:
-        - DOCKER_MAUTIC_ROLE=mautic_cron
-      env_file:
-        - .mautic_env
-      depends_on:
-        mautic_web:
-          condition: service_healthy
-      networks:
-        - default
-
+    build:
+      context: .
+      dockerfile: Dockerfile
+    links:
+      - db:mysql
+    volumes: *mautic-volumes
+    environment:
+      - DOCKER_MAUTIC_ROLE=mautic_cron
+    env_file:
+      - .mautic_env
+    depends_on:
+      mautic_web:
+        condition: service_healthy
+    networks:
+      - mysql-private
   mautic_worker:
     build:
       context: .
@@ -92,7 +84,7 @@ services:
       mautic_web:
         condition: service_healthy
     networks:
-      - default
+      - mysql-private
     deploy:
       replicas: 1
 
