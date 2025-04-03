@@ -25,7 +25,7 @@ else
         echo "Container basic-mautic_worker-1 does not exist or is not running."
     fi
     echo "## Installing Mautic..."
-    docker compose exec -T -u www-data -w /var/www/html mautic_web php ./bin/console mautic:install --force --admin_email {{EMAIL_ADDRESS}} --admin_password {{MAUTIC_PASSWORD}} http://{{IP_ADDRESS}}:{{PORT}}
+    docker compose exec -T -u www-data -w /var/www/html mautic_web php ./bin/console mautic:install --force --admin_email {{EMAIL_ADDRESS}} --admin_password {{MAUTIC_PASSWORD}} https://{{DOMAIN_NAME}}
 fi
 
 echo "## Starting all the containers"
@@ -36,60 +36,6 @@ DOMAIN="{{DOMAIN_NAME}}"
 if [[ "$DOMAIN" == *"DOMAIN_NAME"* ]]; then
     echo "The DOMAIN variable is not set yet."
     exit 0
-fi
-
-DROPLET_IP=$(curl -s http://icanhazip.com)
-
-echo "## Checking if $DOMAIN points to this DO droplet..."
-DOMAIN_IP=$(dig +short $DOMAIN)
-if [ "$DOMAIN_IP" != "$DROPLET_IP" ]; then
-    echo "## $DOMAIN does not point to this droplet IP ($DROPLET_IP). Exiting..."
-    exit 1
-fi
-
-echo "## $DOMAIN is available and points to this droplet. Nginx configuration..."
-
-SOURCE_PATH="/var/www/nginx-virtual-host-$DOMAIN"
-TARGET_PATH="/etc/nginx/sites-enabled/nginx-virtual-host-$DOMAIN"
-
-# Remove the existing symlink if it exists
-if [ -L "$TARGET_PATH" ]; then
-    rm $TARGET_PATH
-    echo "Existing symlink for $DOMAIN configuration removed."
-fi
-
-# Create a new symlink
-ln -s $SOURCE_PATH $TARGET_PATH
-echo "Symlink created for $DOMAIN configuration."
-
-if ! nginx -t; then
-    echo "Nginx configuration test failed, stopping the script."
-    exit 1
-fi
-
-# Check if Nginx is running and reload to apply changes
-if ! pgrep -x nginx > /dev/null; then
-    echo "Nginx is not running, starting Nginx..."
-    systemctl start nginx
-else
-    echo "Reloading Nginx to apply new configuration."
-    nginx -s reload
-fi
-
-echo "## Configuring Let's Encrypt for $DOMAIN..."
-
-# Use Certbot with the Nginx plugin to obtain and install a certificate
-certbot --nginx -d $DOMAIN --non-interactive --agree-tos -m {{EMAIL_ADDRESS}}
-
-# Nginx will be reloaded automatically by Certbot after obtaining the certificate
-echo "## Let's Encrypt configured for $DOMAIN"
-
-# Check if the cron job for renewal is already set
-if ! crontab -l | grep -q 'certbot renew'; then
-    echo "## Setting up cron job for Let's Encrypt certificate renewal..."
-    (crontab -l 2>/dev/null; echo "0 0 1 * * certbot renew --post-hook 'systemctl reload nginx'") | crontab -
-else
-    echo "## Cron job for Let's Encrypt certificate renewal is already set"
 fi
 
 echo "## Check if Mautic is installed"
