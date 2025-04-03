@@ -23,6 +23,7 @@ services:
       timeout: 5s
       retries: 10
     networks:
+      - mysql-private
       - default
 
   mautic_web:
@@ -31,12 +32,13 @@ services:
       dockerfile: Dockerfile
     links:
       - db:mysql
-    ports:
-      - ${MAUTIC_PORT:-8001}:80
     volumes: *mautic-volumes
     environment:
       - DOCKER_MAUTIC_LOAD_TEST_DATA=${DOCKER_MAUTIC_LOAD_TEST_DATA}
       - DOCKER_MAUTIC_RUN_MIGRATIONS=${DOCKER_MAUTIC_RUN_MIGRATIONS}
+      - VIRTUAL_HOST=${DOMAIN}
+      - LETSENCRYPT_HOST=${DOMAIN}
+      - LETSENCRYPT_EMAIL=${EMAIL_ADDRESS}
     env_file:
       - .mautic_env
     healthcheck:
@@ -49,7 +51,14 @@ services:
       db:
         condition: service_healthy
     networks:
+      - traefik_web
       - default
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.mautic.rule=Host(`${DOMAIN}`)
+      - traefik.http.routers.mautic.entrypoints=websecure
+      - traefik.http.routers.mautic.tls.certresolver=letsencrypt
+      - traefik.http.services.mautic.loadbalancer.server.port=80
 
   mautic_cron:
       build:
@@ -91,5 +100,8 @@ volumes:
   mysql-data:
 
 networks:
+  traefik_web:
+    external: true
+  mysql-private:
+    external: true
   default:
-    name: ${COMPOSE_PROJECT_NAME}-docker
