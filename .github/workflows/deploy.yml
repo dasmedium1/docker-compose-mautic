@@ -33,6 +33,29 @@ jobs:
             exit 1
           fi
 
+      - name: Create .env file
+        env:
+          DOMAIN: ${{ vars.DOMAIN }}
+        run: |
+          cat << 'EOF' > .env
+          # Auto-generated deployment configuration
+          MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
+          MYSQL_DATABASE=mautic_${GITHUB_RUN_ID}
+          MYSQL_USER=mautic_user
+          MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
+          
+          # Deployment settings
+          DOMAIN=${DOMAIN}
+          DOCKER_MAUTIC_LOAD_TEST_DATA=false
+          DOCKER_MAUTIC_RUN_MIGRATIONS=true
+          EOF
+          
+          # Verify no unresolved variables remain
+          if grep -q '\${{' .env; then
+            echo "::error::Unresolved variables detected in .env!"
+            exit 1
+          fi
+
       - name: Verify domain DNS
         if: ${{ vars.DOMAIN }}
         run: |
