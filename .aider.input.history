@@ -116,3 +116,72 @@
 
 # 2025-04-07 14:34:35.356306
 +/exit
+
+# 2025-06-16 19:17:38.306854
++y
+
+# 2025-06-16 19:18:23.187065
++n
+
+# 2025-06-16 19:18:44.370092
++/add /github/workflows/*
+
+# 2025-06-16 19:19:01.382709
++/add .github/workflows/deploy.yml
+
+# 2025-06-16 19:19:34.479217
++/add setup-dc.sh
+
+# 2025-06-16 19:19:41.742292
++/add setup-vps.sh
+
+# 2025-06-16 19:20:23.383701
++/ask can you check the deploy.yml frome lines 56-62 and tell me what it does? I need I need to modify this cod
+
+# 2025-06-16 19:22:34.595868
++/ask I thought lines 46-54 handled ssh access to the host. Why do we need to create a .ssh on the host later on?
+
+# 2025-06-16 19:25:45.177645
++/ask at what point in the code base do we run setup-dc.log?
+
+# 2025-06-16 19:28:01.035133
++/ask where is setup-dc.log located?
+
+# 2025-06-16 19:33:29.234368
++/add docker-compose.yml
+
+# 2025-06-16 19:41:35.895801
++/add .mautic_env
+
+# 2025-06-16 19:42:20.515230
++/ask would the github workflow process be able to provide variables to .mautic_env? 
+
+# 2025-06-16 19:43:01.792896
++n
+
+# 2025-06-18 00:05:09.785057
++/ask in .mautic_env are those variables handled by setup-dc.sh, or by the github workflow variables?
+
+# 2025-06-18 00:08:34.644252
++n
+
+# 2025-06-18 00:16:28.347011
++/ask it looks like those variables are passed from .env to .mautic_env
+
+# 2025-06-18 00:20:20.182820
++/add setup.example.sh
+
+# 2025-06-18 00:22:02.549496
++/ask can you compare both setup-dc.sh and setup.example.sh? the setup.example.sh file is from the initial repository which was meant to deploy with a Digital Ocean VPS droplet, are there any considerations that we are missing in setup-dc.sh?
+
+# 2025-06-18 00:40:53.912739
++/ask how should I handle the .env variables via github workflows again?
+
+# 2025-06-18 00:43:47.493579
++/ask can you write simple code with the workflow step that creates the .env file?
+
+# 2025-06-18 00:53:19.378643
++can you add the "Create .env file" step to the deploy.yml?
+
+# 2025-06-18 01:17:05.166961
++/exit

@@ -50,7 +50,7 @@ services:
       - mysql-private
     labels:
       - traefik.enable=true
-      - traefik.http.routers.mautic.rule=Host(`${DOMAIN}`)
+      - traefik.http.routers.mautic.rule=Host(`$${{DOMAIN}}`)
       - traefik.http.services.mautic.loadbalancer.server.port=80
 
   mautic_cron:
@@ -96,4 +96,3 @@ networks:
     external: true
   mysql-private:
     external: true
-  default:
