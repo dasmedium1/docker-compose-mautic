@@ -54,7 +54,7 @@ jobs:
           SCRIPT_AFTER: |
             cd /home/angelantonio/backup/root/mautic
             sed -i "s/{{DOMAIN_NAME}}/${{ vars.DOMAIN }}/g" setup-dc.sh
-            sed -i "s/{{EMAIL_ADDRESS}}/${{ secrets.EMAIL }}/g" setup-dc.sh
+            sed -i "s/{{EMAIL_ADDRESS}}/${{ vars.EMAIL }}/g" setup-dc.sh
             sed -i "s/{{MAUTIC_PASSWORD}}/${{ secrets.MAUTIC_PASSWORD }}/g" setup-dc.sh
             sed -i "s/__MYSQL_PASSWORD__/${{ secrets.MYSQL_PASSWORD }}/g" .env
             sed -i "s/__MYSQL_ROOT_PASSWORD__/${{ secrets.MYSQL_ROOT_PASSWORD }}/g" .env
