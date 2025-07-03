@@ -1,4 +1,4 @@
-cd /var/www
+cd /home/angelantonio/backup/root/mautic
 docker compose build
 docker compose up -d db --wait && docker compose up -d mautic_web --wait
 
