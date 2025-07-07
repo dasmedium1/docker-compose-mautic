@@ -69,6 +69,8 @@ services:
         condition: service_healthy
     networks:
       - mysql_private
+      - traefik_web
+
   mautic_worker:
     build:
       context: .
@@ -85,6 +87,7 @@ services:
         condition: service_healthy
     networks:
       - mysql_private
+      - traefik_web
     deploy:
       replicas: 1
 
