@@ -242,3 +242,1107 @@
 
 # 2025-07-03 19:59:34.131453
 +could you implement fixes 1 and 3, and also fix 2 (with secrets)?
+
+# 2025-07-03 20:37:35.296924
++/ask here is the workflow log output: 2025-07-03T20:19:16.9007340Z Current runner version: '2.325.0'
++2025-07-03T20:19:16.9047704Z ##[group]Operating System
++2025-07-03T20:19:16.9050051Z Ubuntu
++2025-07-03T20:19:16.9052269Z 24.04.2
++2025-07-03T20:19:16.9054443Z LTS
++2025-07-03T20:19:16.9056748Z ##[endgroup]
++2025-07-03T20:19:16.9058991Z ##[group]Runner Image
++2025-07-03T20:19:16.9061287Z Image: ubuntu-24.04
++2025-07-03T20:19:16.9063445Z Version: 20250629.1.0
++2025-07-03T20:19:16.9066834Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20250629.1/images/ubuntu/Ubuntu2404-Readme.md
++2025-07-03T20:19:16.9070808Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20250629.1
++2025-07-03T20:19:16.9073838Z ##[endgroup]
++2025-07-03T20:19:16.9076215Z ##[group]Runner Image Provisioner
++2025-07-03T20:19:16.9078527Z 2.0.449.1
++2025-07-03T20:19:16.9080780Z ##[endgroup]
++2025-07-03T20:19:16.9087589Z ##[group]GITHUB_TOKEN Permissions
++2025-07-03T20:19:16.9091696Z Actions: write
++2025-07-03T20:19:16.9094184Z Attestations: write
++2025-07-03T20:19:16.9096784Z Checks: write
++2025-07-03T20:19:16.9098905Z Contents: write
++2025-07-03T20:19:16.9101033Z Deployments: write
++2025-07-03T20:19:16.9103211Z Discussions: write
++2025-07-03T20:19:16.9105409Z Issues: write
++2025-07-03T20:19:16.9107892Z Metadata: read
++2025-07-03T20:19:16.9109993Z Models: read
++2025-07-03T20:19:16.9112107Z Packages: write
++2025-07-03T20:19:16.9114341Z Pages: write
++2025-07-03T20:19:16.9116692Z PullRequests: write
++2025-07-03T20:19:16.9118955Z RepositoryProjects: write
++2025-07-03T20:19:16.9121199Z SecurityEvents: write
++2025-07-03T20:19:16.9123514Z Statuses: write
++2025-07-03T20:19:16.9126100Z ##[endgroup]
++2025-07-03T20:19:16.9130372Z Secret source: Actions
++2025-07-03T20:19:16.9132977Z Prepare workflow directory
++2025-07-03T20:19:16.9626112Z Prepare all required actions
++2025-07-03T20:19:16.9684331Z Getting action download info
++2025-07-03T20:19:17.2057656Z ##[group]Download immutable action package 'actions/checkout@v4'
++2025-07-03T20:19:17.2059350Z Version: 4.2.2
++2025-07-03T20:19:17.2061049Z Digest: sha256:ccb2698953eaebd21c7bf6268a94f9c26518a7e38e27e0b83c1fe1ad049819b1
++2025-07-03T20:19:17.2062914Z Source commit SHA: 11bd71901bbe5b1630ceea73d27597364c9af683
++2025-07-03T20:19:17.2064208Z ##[endgroup]
++2025-07-03T20:19:17.2934399Z Download action repository 'easingthemes/ssh-deploy@main' (SHA:a1aa0b6cf96ce2406eef90faa35007a4a7bf0ac0)
++2025-07-03T20:19:17.5693529Z Complete job name: deploy
++2025-07-03T20:19:17.6399721Z ##[group]Run actions/checkout@v4
++2025-07-03T20:19:17.6400906Z with:
++2025-07-03T20:19:17.6401734Z   repository: dasmedium1/docker-compose-mautic
++2025-07-03T20:19:17.6402842Z   token: ***
++2025-07-03T20:19:17.6403589Z   ssh-strict: true
++2025-07-03T20:19:17.6404352Z   ssh-user: git
++2025-07-03T20:19:17.6405110Z   persist-credentials: true
++2025-07-03T20:19:17.6406116Z   clean: true
++2025-07-03T20:19:17.6406905Z   sparse-checkout-cone-mode: true
++2025-07-03T20:19:17.6407761Z   fetch-depth: 1
++2025-07-03T20:19:17.6408504Z   fetch-tags: false
++2025-07-03T20:19:17.6409259Z   show-progress: true
++2025-07-03T20:19:17.6410045Z   lfs: false
++2025-07-03T20:19:17.6410767Z   submodules: false
++2025-07-03T20:19:17.6411572Z   set-safe-directory: true
++2025-07-03T20:19:17.6412644Z ##[endgroup]
++2025-07-03T20:19:17.8184271Z Syncing repository: dasmedium1/docker-compose-mautic
++2025-07-03T20:19:17.8188051Z ##[group]Getting Git version info
++2025-07-03T20:19:17.8189920Z Working directory is '/home/runner/work/docker-compose-mautic/docker-compose-mautic'
++2025-07-03T20:19:17.8192762Z [command]/usr/bin/git version
++2025-07-03T20:19:17.8205610Z git version 2.49.0
++2025-07-03T20:19:17.8233400Z ##[endgroup]
++2025-07-03T20:19:17.8253877Z Temporarily overriding HOME='/home/runner/work/_temp/6a5f3a7e-01e8-47a7-8fb5-6dd8b394d4b8' before making global git config changes
++2025-07-03T20:19:17.8256083Z Adding repository directory to the temporary git global config as a safe directory
++2025-07-03T20:19:17.8259177Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/docker-compose-mautic/docker-compose-mautic
++2025-07-03T20:19:17.8292282Z Deleting the contents of '/home/runner/work/docker-compose-mautic/docker-compose-mautic'
++2025-07-03T20:19:17.8295682Z ##[group]Initializing the repository
++2025-07-03T20:19:17.8299884Z [command]/usr/bin/git init /home/runner/work/docker-compose-mautic/docker-compose-mautic
++2025-07-03T20:19:17.8368526Z hint: Using 'master' as the name for the initial branch. This default branch name
++2025-07-03T20:19:17.8370203Z hint: is subject to change. To configure the initial branch name to use in all
++2025-07-03T20:19:17.8371748Z hint: of your new repositories, which will suppress this warning, call:
++2025-07-03T20:19:17.8373524Z hint:
++2025-07-03T20:19:17.8374466Z hint: 	git config --global init.defaultBranch <name>
++2025-07-03T20:19:17.8375529Z hint:
++2025-07-03T20:19:17.8376802Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
++2025-07-03T20:19:17.8378606Z hint: 'development'. The just-created branch can be renamed via this command:
++2025-07-03T20:19:17.8379811Z hint:
++2025-07-03T20:19:17.8380645Z hint: 	git branch -m <name>
++2025-07-03T20:19:17.8382064Z Initialized empty Git repository in /home/runner/work/docker-compose-mautic/docker-compose-mautic/.git/
++2025-07-03T20:19:17.8385542Z [command]/usr/bin/git remote add origin https://github.com/dasmedium1/docker-compose-mautic
++2025-07-03T20:19:17.8415468Z ##[endgroup]
++2025-07-03T20:19:17.8417283Z ##[group]Disabling automatic garbage collection
++2025-07-03T20:19:17.8418991Z [command]/usr/bin/git config --local gc.auto 0
++2025-07-03T20:19:17.8450372Z ##[endgroup]
++2025-07-03T20:19:17.8452898Z ##[group]Setting up auth
++2025-07-03T20:19:17.8458238Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
++2025-07-03T20:19:17.8489881Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
++2025-07-03T20:19:17.8778736Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
++2025-07-03T20:19:17.8812754Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
++2025-07-03T20:19:17.9049173Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
++2025-07-03T20:19:17.9088556Z ##[endgroup]
++2025-07-03T20:19:17.9091050Z ##[group]Fetching the repository
++2025-07-03T20:19:17.9098131Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +e9a64a5e8513cafdba14a1c0b8a5eedf2e9345ca:refs/remotes/origin/linode
++2025-07-03T20:19:18.1836287Z From https://github.com/dasmedium1/docker-compose-mautic
++2025-07-03T20:19:18.1840482Z  * [new ref]         e9a64a5e8513cafdba14a1c0b8a5eedf2e9345ca -> origin/linode
++2025-07-03T20:19:18.1861467Z ##[endgroup]
++2025-07-03T20:19:18.1864018Z ##[group]Determining the checkout info
++2025-07-03T20:19:18.1867230Z ##[endgroup]
++2025-07-03T20:19:18.1869206Z [command]/usr/bin/git sparse-checkout disable
++2025-07-03T20:19:18.1908544Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
++2025-07-03T20:19:18.1937945Z ##[group]Checking out the ref
++2025-07-03T20:19:18.1941062Z [command]/usr/bin/git checkout --progress --force -B linode refs/remotes/origin/linode
++2025-07-03T20:19:18.2013519Z Switched to a new branch 'linode'
++2025-07-03T20:19:18.2016549Z branch 'linode' set up to track 'origin/linode'.
++2025-07-03T20:19:18.2023850Z ##[endgroup]
++2025-07-03T20:19:18.2057801Z [command]/usr/bin/git log -1 --format=%H
++2025-07-03T20:19:18.2080824Z e9a64a5e8513cafdba14a1c0b8a5eedf2e9345ca
++2025-07-03T20:19:18.2294087Z ##[group]Run set -a
++2025-07-03T20:19:18.2295207Z [36;1mset -a[0m
++2025-07-03T20:19:18.2296565Z [36;1msource .mautic_env[0m
++2025-07-03T20:19:18.2297680Z [36;1mset +a[0m
++2025-07-03T20:19:18.2390792Z shell: /usr/bin/bash -e {0}
++2025-07-03T20:19:18.2391956Z ##[endgroup]
++2025-07-03T20:19:18.2567698Z ##[group]Run if [ -z "$MAUTIC_PASSWORD" ]; then
++2025-07-03T20:19:18.2569212Z [36;1mif [ -z "$MAUTIC_PASSWORD" ]; then[0m
++2025-07-03T20:19:18.2570508Z [36;1m  echo "Error: Missing MAUTIC_PASSWORD secret"[0m
++2025-07-03T20:19:18.2571738Z [36;1m  exit 1[0m
++2025-07-03T20:19:18.2572695Z [36;1mfi[0m
++2025-07-03T20:19:18.2573698Z [36;1mif [ -z "$SSH_PRIVATE_KEY" ]; then[0m
++2025-07-03T20:19:18.2574953Z [36;1m  echo "Error: Missing SSH_PRIVATE_KEY secret"[0m
++2025-07-03T20:19:18.2576314Z [36;1m  exit 1[0m
++2025-07-03T20:19:18.2577254Z [36;1mfi[0m
++2025-07-03T20:19:18.2631270Z shell: /usr/bin/bash -e {0}
++2025-07-03T20:19:18.2632302Z env:
++2025-07-03T20:19:18.2633348Z   MAUTIC_PASSWORD: ***
++2025-07-03T20:19:18.2667147Z   SSH_PRIVATE_KEY: ***
++
++2025-07-03T20:19:18.2668162Z ##[endgroup]
++2025-07-03T20:19:18.2834118Z ##[group]Run DOMAIN_IP=$(dig +short dasmedium.co)
++2025-07-03T20:19:18.2835415Z [36;1mDOMAIN_IP=$(dig +short dasmedium.co)[0m
++2025-07-03T20:19:18.2837016Z [36;1mif [ "$DOMAIN_IP" != "104.237.150.126" ]; then[0m
++2025-07-03T20:19:18.2838538Z [36;1m  echo "Error: Domain dasmedium.co does not point to Linode IP 104.237.150.126"[0m
++2025-07-03T20:19:18.2839933Z [36;1m  exit 1[0m
++2025-07-03T20:19:18.2840875Z [36;1mfi[0m
++2025-07-03T20:19:18.2842010Z [36;1mecho "Domain dasmedium.co correctly points to Linode IP"[0m
++2025-07-03T20:19:18.2896533Z shell: /usr/bin/bash -e {0}
++2025-07-03T20:19:18.2897596Z ##[endgroup]
++2025-07-03T20:19:18.6037959Z Domain dasmedium.co correctly points to Linode IP
++2025-07-03T20:19:18.6243580Z ##[group]Run easingthemes/ssh-deploy@main
++2025-07-03T20:19:18.6245653Z with:
++2025-07-03T20:19:18.6314997Z   SSH_PRIVATE_KEY: ***
++
++2025-07-03T20:19:18.6316840Z   SOURCE: .
++2025-07-03T20:19:18.6318437Z   REMOTE_HOST: 104.237.150.126
++2025-07-03T20:19:18.6320225Z   REMOTE_USER: root
++2025-07-03T20:19:18.6322007Z   TARGET: /home/angelantonio/backup/root/mautic
++2025-07-03T20:19:18.6329048Z   SCRIPT_AFTER: cd /home/angelantonio/backup/root/mautic
++sed -i "s/{{DOMAIN_NAME}}/dasmedium.co/g" setup-dc.sh
++sed -i "s/{{EMAIL_ADDRESS}}//g" setup-dc.sh
++sed -i "s/{{MAUTIC_PASSWORD}}/***/g" setup-dc.sh
++sed -i "s/__MYSQL_PASSWORD__/***/g" .env
++sed -i "s/__MYSQL_ROOT_PASSWORD__/***/g" .env
++sed -i "s/__DOMAIN__/dasmedium.co/g" .env
++./setup-dc.sh > /var/log/setup-dc.log 2>&1
++
++2025-07-03T20:19:18.6334917Z   REMOTE_PORT: 22
++2025-07-03T20:19:18.6336706Z   ARGS: -rlgoDzvc -i
++2025-07-03T20:19:18.6338533Z   SSH_CMD_ARGS: -o StrictHostKeyChecking=no
++2025-07-03T20:19:18.6340568Z ##[endgroup]
++2025-07-03T20:19:18.6729497Z [DIR] Creating /home/runner/.ssh dir in workspace root
++2025-07-03T20:19:18.6734351Z ✅ [DIR] dir created.
++2025-07-03T20:19:18.6738067Z [FILE] writing /home/runner/.ssh/known_hosts file ... 0
++2025-07-03T20:19:18.6741807Z ✅ [SSH] known_hosts file ensured /home/runner/.ssh
++2025-07-03T20:19:18.6744898Z ✅ [DIR] /home/runner/.ssh dir exist
++2025-07-03T20:19:18.6747398Z [FILE] writing /home/runner/.ssh/deploy_key_root_1751573958669 file ... 3390
++2025-07-03T20:19:18.6750423Z ✅ [SSH] key added to `.ssh` dir  /home/runner/.ssh deploy_key_root_1751573958669
++2025-07-03T20:19:18.6753340Z [SSH] Adding host to `known_hosts` .... 104.237.150.126 /home/runner/.ssh/known_hosts
++2025-07-03T20:19:18.7351706Z # 104.237.150.126:22 SSH-2.0-OpenSSH_8.2p1 Ubuntu-4ubuntu0.11
++2025-07-03T20:19:18.7753780Z # 104.237.150.126:22 SSH-2.0-OpenSSH_8.2p1 Ubuntu-4ubuntu0.11
++2025-07-03T20:19:18.8153664Z # 104.237.150.126:22 SSH-2.0-OpenSSH_8.2p1 Ubuntu-4ubuntu0.11
++2025-07-03T20:19:18.8587346Z # 104.237.150.126:22 SSH-2.0-OpenSSH_8.2p1 Ubuntu-4ubuntu0.11
++2025-07-03T20:19:18.8723738Z # 104.237.150.126:22 SSH-2.0-OpenSSH_8.2p1 Ubuntu-4ubuntu0.11
++2025-07-03T20:19:18.8857715Z ✅ [SSH] Adding host to `known_hosts` DONE 104.237.150.126 /home/runner/.ssh/known_hosts
++2025-07-03T20:19:18.8906208Z rsync  version 3.2.7  protocol version 31
++2025-07-03T20:19:18.8908623Z Copyright (C) 1996-2022 by Andrew Tridgell, Wayne Davison, and others.
++2025-07-03T20:19:18.8911101Z Web site: https://rsync.samba.org/
++2025-07-03T20:19:18.8912916Z Capabilities:
++2025-07-03T20:19:18.8915548Z     64-bit files, 64-bit inums, 64-bit timestamps, 64-bit long ints,
++2025-07-03T20:19:18.8918588Z     socketpairs, symlinks, symtimes, hardlinks, hardlink-specials,
++2025-07-03T20:19:18.8922012Z     hardlink-symlinks, IPv6, atimes, batchfiles, inplace, append, ACLs,
++2025-07-03T20:19:18.8924844Z     xattrs, optional secluded-args, iconv, prealloc, stop-at, no crtimes
++2025-07-03T20:19:18.8927985Z Optimizations:
++2025-07-03T20:19:18.8929931Z     SIMD-roll, no asm-roll, openssl-crypto, no asm-MD5
++2025-07-03T20:19:18.8931910Z Checksum list:
++2025-07-03T20:19:18.8933624Z     xxh128 xxh3 xxh64 (xxhash) md5 md4 sha1 none
++2025-07-03T20:19:18.8935538Z Compress list:
++2025-07-03T20:19:18.8937302Z     zstd lz4 zlibx zlib none
++2025-07-03T20:19:18.8938998Z Daemon auth list:
++2025-07-03T20:19:18.8940585Z     sha512 sha256 sha1 md5 md4
++2025-07-03T20:19:18.8941582Z 
++2025-07-03T20:19:18.8942759Z rsync comes with ABSOLUTELY NO WARRANTY.  This is free software, and you
++2025-07-03T20:19:18.8945564Z are welcome to redistribute it under certain conditions.  See the GNU
++2025-07-03T20:19:18.8948116Z General Public Licence for details.
++2025-07-03T20:19:18.8950052Z ✅️ [CLI] Rsync exists
++2025-07-03T20:19:18.8954797Z [Rsync] Starting Rsync Action: /home/runner/work/docker-compose-mautic/docker-compose-mautic/. to root@104.237.150.126:/home/angelantonio/backup/root/mautic
++2025-07-03T20:19:18.8960995Z [Rsync] excluding folders 
++2025-07-03T20:19:19.3348595Z sending incremental file list
++2025-07-03T20:19:19.3350324Z 
++2025-07-03T20:19:19.3558242Z <fcsT...... .env
++2025-07-03T20:19:19.3560346Z 
++2025-07-03T20:19:19.3561399Z <fcsT...... setup-dc.sh
++2025-07-03T20:19:19.3562605Z 
++2025-07-03T20:19:19.3786675Z <fc.T...... .git/FETCH_HEAD
++2025-07-03T20:19:19.3788624Z 
++2025-07-03T20:19:19.3790863Z <fc.T...... .git/config
++2025-07-03T20:19:19.3793956Z <fc.T...... .git/index
++2025-07-03T20:19:19.3796704Z <fc.T...... .git/shallow
++2025-07-03T20:19:19.3798215Z 
++2025-07-03T20:19:19.3799405Z <fcsT...... .git/logs/HEAD
++2025-07-03T20:19:19.3802157Z <fcsT...... .git/logs/refs/heads/linode
++2025-07-03T20:19:19.3804228Z <fcsT...... .git/logs/refs/remotes/origin/linode
++2025-07-03T20:19:19.3805490Z 
++2025-07-03T20:19:19.3806729Z <f+++++++++ .git/objects/89/67057de8bb5e93f62bd4e7b7ff73d88f2472f6
++2025-07-03T20:19:19.3809154Z <f+++++++++ .git/objects/a4/c2895990fb13bcf247749c734135981c623d5e
++2025-07-03T20:19:19.3811559Z <f+++++++++ .git/objects/b8/18ceed23b619a370e984e9a7b5c66cbcc584f1
++2025-07-03T20:19:19.3813751Z cd+++++++++ .git/objects/e1/
++2025-07-03T20:19:19.3815694Z <f+++++++++ .git/objects/e1/b8a8403f05aec1ab509be9013bde37eeffb970
++2025-07-03T20:19:19.3818281Z <f+++++++++ .git/objects/e9/a64a5e8513cafdba14a1c0b8a5eedf2e9345ca
++2025-07-03T20:19:19.3819738Z 
++2025-07-03T20:19:19.3820492Z <fc.T...... .git/refs/heads/linode
++2025-07-03T20:19:19.3822265Z <fc.T...... .git/refs/remotes/origin/linode
++2025-07-03T20:19:19.3824177Z <fcsT...... .github/workflows/deploy.yml
++2025-07-03T20:19:19.3825321Z 
++2025-07-03T20:19:19.4427404Z 
++2025-07-03T20:19:19.4428943Z sent 9,951 bytes  received 512 bytes  6,975.33 bytes/sec
++2025-07-03T20:19:19.4432346Z total size is 625,504  speedup is 59.78
++2025-07-03T20:19:19.4448291Z 
++2025-07-03T20:19:19.4449717Z ⭐ [Rsync] command finished: 
++2025-07-03T20:19:19.4452409Z ================================================================
++2025-07-03T20:19:19.4454615Z ================================================================
++2025-07-03T20:19:19.4461229Z rsync /home/runner/work/docker-compose-mautic/docker-compose-mautic/. root@104.237.150.126:/home/angelantonio/backup/root/mautic --rsh "ssh -p 22 -i /home/runner/.ssh/deploy_key_root_1751573958669 -o StrictHostKeyChecking=no" --recursive --exclude= -rlgoDzvc -i
++2025-07-03T20:19:19.4466537Z ✅ [Rsync] finished. sending incremental file list
++2025-07-03T20:19:19.4468472Z <fcsT...... .env
++2025-07-03T20:19:19.4470209Z <fcsT...... setup-dc.sh
++2025-07-03T20:19:19.4471806Z <fc.T...... .git/FETCH_HEAD
++2025-07-03T20:19:19.4473416Z <fc.T...... .git/config
++2025-07-03T20:19:19.4474943Z <fc.T...... .git/index
++2025-07-03T20:19:19.4476996Z <fc.T...... .git/shallow
++2025-07-03T20:19:19.4478590Z <fcsT...... .git/logs/HEAD
++2025-07-03T20:19:19.4481360Z <fcsT...... .git/logs/refs/heads/linode
++2025-07-03T20:19:19.4484604Z <fcsT...... .git/logs/refs/remotes/origin/linode
++2025-07-03T20:19:19.4488323Z <f+++++++++ .git/objects/89/67057de8bb5e93f62bd4e7b7ff73d88f2472f6
++2025-07-03T20:19:19.4492209Z <f+++++++++ .git/objects/a4/c2895990fb13bcf247749c734135981c623d5e
++2025-07-03T20:19:19.4496236Z <f+++++++++ .git/objects/b8/18ceed23b619a370e984e9a7b5c66cbcc584f1
++2025-07-03T20:19:19.4499706Z cd+++++++++ .git/objects/e1/
++2025-07-03T20:19:19.4502868Z <f+++++++++ .git/objects/e1/b8a8403f05aec1ab509be9013bde37eeffb970
++2025-07-03T20:19:19.4507046Z <f+++++++++ .git/objects/e9/a64a5e8513cafdba14a1c0b8a5eedf2e9345ca
++2025-07-03T20:19:19.4510694Z <fc.T...... .git/refs/heads/linode
++2025-07-03T20:19:19.4513677Z <fc.T...... .git/refs/remotes/origin/linode
++2025-07-03T20:19:19.4517036Z <fcsT...... .github/workflows/deploy.yml
++2025-07-03T20:19:19.4518912Z 
++2025-07-03T20:19:19.4520384Z sent 9,951 bytes  received 512 bytes  6,975.33 bytes/sec
++2025-07-03T20:19:19.4523687Z total size is 625,504  speedup is 59.78
++2025-07-03T20:19:19.4525367Z 
++2025-07-03T20:19:19.4527047Z ✅ [DIR] /home/runner/work/docker-compose-mautic/docker-compose-mautic dir exist
++2025-07-03T20:19:19.4530985Z [FILE] writing /home/runner/work/docker-compose-mautic/docker-compose-mautic/local_ssh_script-after-804cd5db-8d5e-4276-9cdc-a18041d02666.sh file ... 408
++2025-07-03T20:19:19.4535392Z Executing remote script: ssh -i /home/runner/.ssh/deploy_key_root_1751573958669 root@104.237.150.126
++2025-07-03T20:24:04.3325471Z ⚠️ [CMD] Remote script failed: Command failed: DEBIAN_FRONTEND=noninteractive ssh -p 22 -i /home/runner/.ssh/deploy_key_root_1751573958669 -o StrictHostKeyChecking=no root@104.237.150.126 'RSYNC_STDOUT="sending incremental file list
++2025-07-03T20:24:04.3327576Z <fcsT...... .env
++2025-07-03T20:24:04.3328162Z <fcsT...... setup-dc.sh
++2025-07-03T20:24:04.3328763Z <fc.T...... .git/FETCH_HEAD
++2025-07-03T20:24:04.3329569Z <fc.T...... .git/config
++2025-07-03T20:24:04.3329964Z <fc.T...... .git/index
++2025-07-03T20:24:04.3330342Z <fc.T...... .git/shallow
++2025-07-03T20:24:04.3330728Z <fcsT...... .git/logs/HEAD
++2025-07-03T20:24:04.3331133Z <fcsT...... .git/logs/refs/heads/linode
++2025-07-03T20:24:04.3331608Z <fcsT...... .git/logs/refs/remotes/origin/linode
++2025-07-03T20:24:04.3332162Z <f+++++++++ .git/objects/89/67057de8bb5e93f62bd4e7b7ff73d88f2472f6
++2025-07-03T20:24:04.3332777Z <f+++++++++ .git/objects/a4/c2895990fb13bcf247749c734135981c623d5e
++2025-07-03T20:24:04.3333373Z <f+++++++++ .git/objects/b8/18ceed23b619a370e984e9a7b5c66cbcc584f1
++2025-07-03T20:24:04.3333900Z cd+++++++++ .git/objects/e1/
++2025-07-03T20:24:04.3334376Z <f+++++++++ .git/objects/e1/b8a8403f05aec1ab509be9013bde37eeffb970
++2025-07-03T20:24:04.3335356Z <f+++++++++ .git/objects/e9/a64a5e8513cafdba14a1c0b8a5eedf2e9345ca
++2025-07-03T20:24:04.3336355Z <fc.T...... .git/refs/heads/linode
++2025-07-03T20:24:04.3337056Z <fc.T...... .git/refs/remotes/origin/linode
++2025-07-03T20:24:04.3337837Z <fcsT...... .github/workflows/deploy.yml
++2025-07-03T20:24:04.3338272Z 
++2025-07-03T20:24:04.3338579Z sent 9,951 bytes  received 512 bytes  6,975.33 bytes/sec
++2025-07-03T20:24:04.3339280Z total size is 625,504  speedup is 59.78
++2025-07-03T20:24:04.3340101Z " bash -s' < local_ssh_script-after-804cd5db-8d5e-4276-9cdc-a18041d02666.sh
++2025-07-03T20:24:04.3340992Z client_loop: send disconnect: Broken pipe
++2025-07-03T20:24:04.3341592Z  
++2025-07-03T20:24:04.3342146Z   client_loop: send disconnect: Broken pipe
++2025-07-03T20:24:04.3342586Z 
++2025-07-03T20:24:04.3344150Z ⚠️ [CMD] Remote script failed: Command failed: DEBIAN_FRONTEND=noninteractive ssh -p 22 -i /home/runner/.ssh/deploy_key_root_1751573958669 -o StrictHostKeyChecking=no root@104.237.150.126 'RSYNC_STDOUT="sending incremental file list
++2025-07-03T20:24:04.3345596Z <fcsT...... .env
++2025-07-03T20:24:04.3346202Z <fcsT...... setup-dc.sh
++2025-07-03T20:24:04.3346581Z <fc.T...... .git/FETCH_HEAD
++2025-07-03T20:24:04.3346940Z <fc.T...... .git/config
++2025-07-03T20:24:04.3347732Z <fc.T...... .git/index
++2025-07-03T20:24:04.3348289Z <fc.T...... .git/shallow
++2025-07-03T20:24:04.3348817Z <fcsT...... .git/logs/HEAD
++2025-07-03T20:24:04.3349511Z <fcsT...... .git/logs/refs/heads/linode
++2025-07-03T20:24:04.3350210Z <fcsT...... .git/logs/refs/remotes/origin/linode
++2025-07-03T20:24:04.3350946Z <f+++++++++ .git/objects/89/67057de8bb5e93f62bd4e7b7ff73d88f2472f6
++2025-07-03T20:24:04.3351786Z <f+++++++++ .git/objects/a4/c2895990fb13bcf247749c734135981c623d5e
++2025-07-03T20:24:04.3352525Z <f+++++++++ .git/objects/b8/18ceed23b619a370e984e9a7b5c66cbcc584f1
++2025-07-03T20:24:04.3364340Z cd+++++++++ .git/objects/e1/
++2025-07-03T20:24:04.3365170Z <f+++++++++ .git/objects/e1/b8a8403f05aec1ab509be9013bde37eeffb970
++2025-07-03T20:24:04.3366303Z <f+++++++++ .git/objects/e9/a64a5e8513cafdba14a1c0b8a5eedf2e9345ca
++2025-07-03T20:24:04.3367140Z <fc.T...... .git/refs/heads/linode
++2025-07-03T20:24:04.3367869Z <fc.T...... .git/refs/remotes/origin/linode
++2025-07-03T20:24:04.3368653Z <fcsT...... .github/workflows/deploy.yml
++2025-07-03T20:24:04.3369186Z 
++2025-07-03T20:24:04.3369553Z sent 9,951 bytes  received 512 bytes  6,975.33 bytes/sec
++2025-07-03T20:24:04.3370368Z total size is 625,504  speedup is 59.78
++2025-07-03T20:24:04.3371291Z " bash -s' < local_ssh_script-after-804cd5db-8d5e-4276-9cdc-a18041d02666.sh
++2025-07-03T20:24:04.3372264Z client_loop: send disconnect: Broken pipe
++2025-07-03T20:24:04.3372718Z 
++2025-07-03T20:24:04.3407358Z ##[group]Run mkdir -p ~/.ssh
++2025-07-03T20:24:04.3407843Z [36;1mmkdir -p ~/.ssh[0m
++2025-07-03T20:24:04.3408374Z [36;1mecho "***[0m
++2025-07-03T20:24:04.3408932Z [36;1m***[0m
++2025-07-03T20:24:04.3409449Z [36;1m***[0m
++2025-07-03T20:24:04.3409933Z [36;1m***[0m
++2025-07-03T20:24:04.3410449Z [36;1m***[0m
++2025-07-03T20:24:04.3410941Z [36;1m***[0m
++2025-07-03T20:24:04.3411424Z [36;1m***[0m
++2025-07-03T20:24:04.3411922Z [36;1m***[0m
++2025-07-03T20:24:04.3412411Z [36;1m***[0m
++2025-07-03T20:24:04.3412900Z [36;1m***[0m
++2025-07-03T20:24:04.3413394Z [36;1m***[0m
++2025-07-03T20:24:04.3413902Z [36;1m***[0m
++2025-07-03T20:24:04.3414412Z [36;1m***[0m
++2025-07-03T20:24:04.3414897Z [36;1m***[0m
++2025-07-03T20:24:04.3415394Z [36;1m***[0m
++2025-07-03T20:24:04.3416150Z [36;1m***[0m
++2025-07-03T20:24:04.3416697Z [36;1m***[0m
++2025-07-03T20:24:04.3417225Z [36;1m***[0m
++2025-07-03T20:24:04.3417722Z [36;1m***[0m
++2025-07-03T20:24:04.3418228Z [36;1m***[0m
++2025-07-03T20:24:04.3418741Z [36;1m***[0m
++2025-07-03T20:24:04.3419228Z [36;1m***[0m
++2025-07-03T20:24:04.3419715Z [36;1m***[0m
++2025-07-03T20:24:04.3420204Z [36;1m***[0m
++2025-07-03T20:24:04.3420672Z [36;1m***[0m
++2025-07-03T20:24:04.3421174Z [36;1m***[0m
++2025-07-03T20:24:04.3421649Z [36;1m***[0m
++2025-07-03T20:24:04.3422147Z [36;1m***[0m
++2025-07-03T20:24:04.3422628Z [36;1m***[0m
++2025-07-03T20:24:04.3423147Z [36;1m***[0m
++2025-07-03T20:24:04.3423624Z [36;1m***[0m
++2025-07-03T20:24:04.3424107Z [36;1m***[0m
++2025-07-03T20:24:04.3424598Z [36;1m***[0m
++2025-07-03T20:24:04.3425083Z [36;1m***[0m
++2025-07-03T20:24:04.3425558Z [36;1m***[0m
++2025-07-03T20:24:04.3426269Z [36;1m***[0m
++2025-07-03T20:24:04.3426782Z [36;1m***[0m
++2025-07-03T20:24:04.3427251Z [36;1m***[0m
++2025-07-03T20:24:04.3427756Z [36;1m***[0m
++2025-07-03T20:24:04.3428245Z [36;1m***[0m
++2025-07-03T20:24:04.3428724Z [36;1m***[0m
++2025-07-03T20:24:04.3429198Z [36;1m***[0m
++2025-07-03T20:24:04.3429678Z [36;1m***[0m
++2025-07-03T20:24:04.3430160Z [36;1m***[0m
++2025-07-03T20:24:04.3430639Z [36;1m***[0m
++2025-07-03T20:24:04.3431133Z [36;1m***[0m
++2025-07-03T20:24:04.3431625Z [36;1m***[0m
++2025-07-03T20:24:04.3432042Z [36;1m***[0m
++2025-07-03T20:24:04.3432389Z [36;1m***[0m
++2025-07-03T20:24:04.3432704Z [36;1m" > ~/.ssh/id_rsa[0m
++2025-07-03T20:24:04.3433064Z [36;1mchmod 600 ~/.ssh/id_rsa[0m
++2025-07-03T20:24:04.3433592Z [36;1mscp -o StrictHostKeyChecking=no root@104.237.150.126:/var/log/setup-dc.log ./[0m
++2025-07-03T20:24:04.3434143Z [36;1mcat setup-dc.log[0m
++2025-07-03T20:24:04.3499020Z shell: /usr/bin/bash -e {0}
++2025-07-03T20:24:04.3499579Z ##[endgroup]
++2025-07-03T20:24:04.7729526Z  Service mautic_web  Building
++2025-07-03T20:24:04.7730393Z #0 building with "default" instance using docker driver
++2025-07-03T20:24:04.7730929Z 
++2025-07-03T20:24:04.7731316Z #1 [mautic_web internal] load build definition from Dockerfile
++2025-07-03T20:24:04.7731861Z #1 transferring dockerfile: 897B done
++2025-07-03T20:24:04.7732459Z #1 DONE 0.0s
++2025-07-03T20:24:04.7732808Z 
++2025-07-03T20:24:04.7733210Z #2 [mautic_web internal] load metadata for docker.io/mautic/mautic:5.2.3-apache
++2025-07-03T20:24:04.7733735Z #2 DONE 1.5s
++2025-07-03T20:24:04.7734059Z  Service mautic_web  Built
++2025-07-03T20:24:04.7734482Z  Service mautic_worker  Building
++2025-07-03T20:24:04.7735127Z  Service mautic_cron  Building
++2025-07-03T20:24:04.7735522Z 
++2025-07-03T20:24:04.7735829Z #3 [mautic_web internal] load .dockerignore
++2025-07-03T20:24:04.7736724Z #3 transferring context: 2B done
++2025-07-03T20:24:04.7737331Z #3 DONE 0.0s
++2025-07-03T20:24:04.7737597Z 
++2025-07-03T20:24:04.7738110Z #4 [mautic_web build 1/4] FROM docker.io/mautic/mautic:5.2.3-apache@sha256:55e323552b2e544c387b9491e890089ca349d55c22bfd55db8ba4ecdbbfad548
++2025-07-03T20:24:04.7738802Z #4 DONE 0.0s
++2025-07-03T20:24:04.7738974Z 
++2025-07-03T20:24:04.7739479Z #5 [mautic_web build 2/4] RUN apt-get update && apt-get install -y git curl npm && rm -rf /var/lib/apt/lists/*
++2025-07-03T20:24:04.7740510Z #5 CACHED
++2025-07-03T20:24:04.7740789Z 
++2025-07-03T20:24:04.7741833Z #6 [mautic_web build 3/4] RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
++2025-07-03T20:24:04.7742547Z #6 CACHED
++2025-07-03T20:24:04.7742731Z 
++2025-07-03T20:24:04.7743368Z #7 [mautic_web build 4/4] RUN cd /var/www/html &&     COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_PROCESS_TIMEOUT=10000  vendor/bin/composer require chimpino/theme-air:^1.0 --no-scripts --no-interaction
++2025-07-03T20:24:04.7744265Z #7 CACHED
++2025-07-03T20:24:04.7744431Z 
++2025-07-03T20:24:04.7744763Z #8 [mautic_web stage-1 2/2] COPY --from=build --chown=www-data:www-data /var/www/html /var/www/html
++2025-07-03T20:24:04.7745339Z #8 CACHED
++2025-07-03T20:24:04.7745500Z 
++2025-07-03T20:24:04.7745658Z #9 [mautic_web] exporting to image
++2025-07-03T20:24:04.7746226Z #9 exporting layers done
++2025-07-03T20:24:04.7746777Z #9 writing image sha256:c376187824259dcb4154e05c7d8d125e662d4765fbcc530a2e273b75bae04f20 done
++2025-07-03T20:24:04.7747392Z #9 naming to docker.io/library/basic-mautic_web done
++2025-07-03T20:24:04.7747810Z #9 DONE 0.0s
++2025-07-03T20:24:04.7747980Z 
++2025-07-03T20:24:04.7748181Z #10 [mautic_web] resolving provenance for metadata file
++2025-07-03T20:24:04.7748598Z #10 DONE 0.0s
++2025-07-03T20:24:04.7748770Z 
++2025-07-03T20:24:04.7748998Z #11 [mautic_worker internal] load build definition from Dockerfile
++2025-07-03T20:24:04.7749482Z #11 transferring dockerfile: 897B done
++2025-07-03T20:24:04.7749856Z #11 DONE 0.0s
++2025-07-03T20:24:04.7750021Z 
++2025-07-03T20:24:04.7750237Z #12 [mautic_cron internal] load build definition from Dockerfile
++2025-07-03T20:24:04.7750717Z #12 transferring dockerfile: 897B 0.0s done
++2025-07-03T20:24:04.7751111Z #12 DONE 0.0s
++2025-07-03T20:24:04.7751276Z 
++2025-07-03T20:24:04.7751554Z #2 [mautic_cron internal] load metadata for docker.io/mautic/mautic:5.2.3-apache
++2025-07-03T20:24:04.7752078Z  Service mautic_worker  Built
++2025-07-03T20:24:04.7752454Z  Service mautic_cron  Built
++2025-07-03T20:24:04.7752797Z #2 DONE 1.7s
++2025-07-03T20:24:04.7752972Z 
++2025-07-03T20:24:04.7753149Z #13 [mautic_cron internal] load .dockerignore
++2025-07-03T20:24:04.7753568Z #13 transferring context: 2B done
++2025-07-03T20:24:04.7753928Z #13 DONE 0.0s
++2025-07-03T20:24:04.7754098Z 
++2025-07-03T20:24:04.7754277Z #14 [mautic_worker internal] load .dockerignore
++2025-07-03T20:24:04.7754695Z #14 transferring context: 2B done
++2025-07-03T20:24:04.7755056Z #14 DONE 0.0s
++2025-07-03T20:24:04.7755225Z 
++2025-07-03T20:24:04.7755707Z #4 [mautic_cron build 1/4] FROM docker.io/mautic/mautic:5.2.3-apache@sha256:55e323552b2e544c387b9491e890089ca349d55c22bfd55db8ba4ecdbbfad548
++2025-07-03T20:24:04.7756748Z #4 DONE 0.0s
++2025-07-03T20:24:04.7756920Z 
++2025-07-03T20:24:04.7757373Z #6 [mautic_cron build 3/4] RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
++2025-07-03T20:24:04.7758045Z #6 CACHED
++2025-07-03T20:24:04.7758212Z 
++2025-07-03T20:24:04.7758576Z #5 [mautic_cron build 2/4] RUN apt-get update && apt-get install -y git curl npm && rm -rf /var/lib/apt/lists/*
++2025-07-03T20:24:04.7759154Z #5 CACHED
++2025-07-03T20:24:04.7759312Z 
++2025-07-03T20:24:04.7759949Z #7 [mautic_cron build 4/4] RUN cd /var/www/html &&     COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_PROCESS_TIMEOUT=10000  vendor/bin/composer require chimpino/theme-air:^1.0 --no-scripts --no-interaction
++2025-07-03T20:24:04.7760787Z #7 CACHED
++2025-07-03T20:24:04.7760945Z 
++2025-07-03T20:24:04.7761280Z #8 [mautic_cron stage-1 2/2] COPY --from=build --chown=www-data:www-data /var/www/html /var/www/html
++2025-07-03T20:24:04.7761820Z #8 CACHED
++2025-07-03T20:24:04.7761985Z 
++2025-07-03T20:24:04.7762153Z #15 [mautic_worker] exporting to image
++2025-07-03T20:24:04.7762547Z #15 exporting layers done
++2025-07-03T20:24:04.7763094Z #15 writing image sha256:8807ff2ac41d21f09e17fba3f951a581d2e3edb7584f94d7d7c37e468e7cc233 done
++2025-07-03T20:24:04.7763722Z #15 naming to docker.io/library/basic-mautic_worker done
++2025-07-03T20:24:04.7764143Z #15 DONE 0.0s
++2025-07-03T20:24:04.7764321Z 
++2025-07-03T20:24:04.7764627Z #16 [mautic_cron] exporting to image
++2025-07-03T20:24:04.7765011Z #16 exporting layers done
++2025-07-03T20:24:04.7765546Z #16 writing image sha256:14088cfe9b233125f5ecd2932e10acc114fa2201de6281310ae2dffb9f2a5096 done
++2025-07-03T20:24:04.7766331Z #16 naming to docker.io/library/basic-mautic_cron done
++2025-07-03T20:24:04.7766759Z #16 DONE 0.0s
++2025-07-03T20:24:04.7766939Z 
++2025-07-03T20:24:04.7767145Z #17 [mautic_worker] resolving provenance for metadata file
++2025-07-03T20:24:04.7767590Z #17 DONE 0.0s
++2025-07-03T20:24:04.7767766Z 
++2025-07-03T20:24:04.7767969Z #18 [mautic_cron] resolving provenance for metadata file
++2025-07-03T20:24:04.7768397Z #18 DONE 0.0s
++2025-07-03T20:24:04.7769214Z time="2025-07-03T20:19:19Z" level=warning msg="current commit information was not captured by the build" error="failed to read current commit information with git rev-parse --is-inside-work-tree"
++2025-07-03T20:24:04.7770553Z time="2025-07-03T20:19:21Z" level=warning msg="current commit information was not captured by the build" error="failed to read current commit information with git rev-parse --is-inside-work-tree"
++2025-07-03T20:24:04.7771860Z time="2025-07-03T20:19:21Z" level=warning msg="current commit information was not captured by the build" error="failed to read current commit information with git rev-parse --is-inside-work-tree"
++2025-07-03T20:24:04.7772709Z  Container basic-db-1  Starting
++2025-07-03T20:24:04.7773570Z Error response from daemon: Could not attach to network mysql-private: rpc error: code = NotFound desc = network mysql-private not found
++2025-07-03T20:24:04.7774322Z ## Wait for basic-mautic_web-1 container to be fully running
++2025-07-03T20:24:04.7774862Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7775397Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7776057Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7776577Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7777090Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7777596Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7778106Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7778616Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7779117Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7779631Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7780126Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7780788Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7781286Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7781799Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7782299Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7782812Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7783309Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7783821Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7784314Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7784824Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7785322Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7785828Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7786633Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7787145Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7787644Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7788156Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7788776Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7789295Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7789792Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7790305Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7790803Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7791309Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7791812Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7792321Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7792845Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7793357Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7793850Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7794361Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7794865Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7795368Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7796043Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7796560Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7797062Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7797571Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7798062Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7798574Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7799066Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7799578Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7800080Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7800596Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7801095Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7801600Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7802105Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7802632Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7803137Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7803642Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7804288Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7804796Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7805290Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7805800Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7806553Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7807068Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7807568Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7808074Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7808576Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7809089Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7809591Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7810104Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7810600Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7811121Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7811647Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7812172Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7812806Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7813316Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7813817Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7814325Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7814818Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7815326Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7815824Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7816504Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7817006Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7817508Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7818005Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7818520Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7819017Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7819526Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7820019Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7820524Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7821027Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7821538Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7822057Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7822572Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7823078Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7823598Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7824104Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7824689Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7837427Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7838037Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7838580Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7839106Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7839619Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7840390Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7840897Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7841408Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7841928Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7842473Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7842988Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7843506Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7844048Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7844568Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7845072Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7845584Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7846274Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7846807Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7847310Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7847823Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7848460Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7848977Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7849487Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7849996Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7850502Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7851018Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7851514Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7852033Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7852539Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7853051Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7853556Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7854064Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7854570Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7855084Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7855582Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7856259Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7856753Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7857262Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7857763Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7858276Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7858782Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7859287Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7859785Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7860301Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7860801Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7861315Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7861826Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7862335Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7862836Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7863340Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7863975Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7864486Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7864983Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7865495Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7866183Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7866725Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7867241Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7867760Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7868282Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7868791Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7869295Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7869817Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7870342Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7870862Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7871383Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7871899Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7872530Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7873053Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7873551Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7874065Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7874632Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7875143Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7875643Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7876374Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7876886Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7877398Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7877897Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7878416Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7878914Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7879431Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7879932Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7880442Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7880943Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7881454Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7881966Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7882486Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7882989Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7883509Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7884020Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7884530Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7885033Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7885543Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7886228Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7886747Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7887246Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7887901Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7888399Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7888917Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7889422Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7889939Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7890448Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7890955Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7891457Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7891970Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7892467Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7892986Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7893477Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7894002Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7894508Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7895025Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7895547Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7896314Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7896829Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7897356Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7897855Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7898383Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7898886Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7899405Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7899916Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7900430Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7900930Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7901446Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7901954Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7902470Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7902969Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7903488Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7903987Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7904496Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7905002Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7905523Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7906123Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7906640Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7907139Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7907659Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7908165Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7908675Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7909184Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7909697Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7910201Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7910722Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7911350Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7911856Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7912351Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7912857Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7913363Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7913871Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7914372Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7914882Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7915377Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7915983Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7916482Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7917002Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7917503Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7918008Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7918510Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7919016Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7919660Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7920181Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7920687Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7921205Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7921699Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7922210Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7922714Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7923263Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7923766Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7924278Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7924779Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7925300Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7925805Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7926435Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7926937Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7927445Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7927946Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7928459Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7929000Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7929519Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7930022Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7930539Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7931054Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7931576Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7932081Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7932593Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7933095Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7933612Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.7934109Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.7934750Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8328982Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8329525Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8330055Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8330551Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8331067Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8331729Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8332242Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8332736Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8333244Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8333721Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8334212Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8334695Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8335191Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8335666Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8336262Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8336757Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8337266Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8337749Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8338249Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8338736Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8339236Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8339728Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8340227Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8340751Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8341257Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8341746Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8342277Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8342766Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8343276Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8343790Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8344289Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8344780Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8345278Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8345771Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8346376Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8346995Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8347501Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8347991Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8348502Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8349011Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8349538Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8350054Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8350565Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8351073Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8351585Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8352076Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8352590Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8353090Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8353589Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8354086Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8354729Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8355235Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8355742Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8356367Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8356889Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8357391Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8357899Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8358405Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8358910Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8359407Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8359910Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8360412Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8360923Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8361418Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8361926Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8362427Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8362932Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8363444Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8363949Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8364455Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8364966Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8365462Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8366069Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8366573Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8367083Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8367583Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8368086Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8368574Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8369070Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8369549Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8370176Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8370658Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8371152Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8371644Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8372145Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8372638Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8373136Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8373625Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8374126Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8374611Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8375120Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8375634Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8376245Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8376743Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8377240Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8377847Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8378353Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8378839Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8379336Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8379816Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8380312Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8380804Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8381302Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8381792Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8382285Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8382772Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8383274Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8383762Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8384256Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8384738Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8385235Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8385718Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8386310Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8386799Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8387307Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8387790Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8388290Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8388781Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8389283Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8389772Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8390268Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8390757Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8391252Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8391741Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8392436Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8393131Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8393645Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8394135Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8394641Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8395142Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8395650Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8396250Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8396765Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8397257Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8397767Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8398262Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8398774Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8399270Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8399776Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8400270Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8400885Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8401395Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8401907Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8402398Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8402906Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8403437Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8403943Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8404446Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8404969Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8405482Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8406103Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8406619Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8407128Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8407628Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8408134Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8408632Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8409137Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8409638Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8410141Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8410646Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8411152Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8411645Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8412155Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8412653Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8413174Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8413673Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8414178Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8414674Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8415184Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8415680Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8416411Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8416908Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8417415Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8417908Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8418416Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8418910Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8419421Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8419916Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8420422Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8420916Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8421422Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8421924Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8422435Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8422936Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8423445Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8424055Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8424570Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8425063Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8425570Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8426237Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8426747Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8427248Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8427756Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8428255Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8428756Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8429258Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8429770Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8430268Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8430772Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8431262Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8431774Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8432276Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8432779Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8433282Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8433801Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8434301Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8434813Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8435306Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8435817Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8436413Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8436916Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8437416Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8437919Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8438415Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8438920Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8439533Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8440039Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8440528Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8441037Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8441538Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8442042Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8442537Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8443041Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8443541Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8444078Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8444566Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8445077Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8445567Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8446162Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8446657Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8447306Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8447811Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8448317Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8448809Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8449320Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8449811Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8450318Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8450821Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8451325Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8451822Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8452328Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8452833Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8453356Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8453851Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8454357Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8454854Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8455360Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8455950Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8456455Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8456962Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8457473Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8457968Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8458472Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8458971Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8459481Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8459978Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8460479Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8460982Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8461490Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8461987Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8462632Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8463130Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8463644Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8464146Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8464652Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8465147Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8465649Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8466249Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8466796Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8467290Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8467801Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8468299Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8468807Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8469303Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8469809Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8470417Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8470923Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8471420Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8471931Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8472425Z Error response from daemon: No such container: basic-mautic_web-1
++2025-07-03T20:24:04.8472929Z ### Waiting for basic-mautic_web-1 to be fully running...
++2025-07-03T20:24:04.8569481Z Post job cleanup.
++2025-07-03T20:24:04.9497153Z [command]/usr/bin/git version
++2025-07-03T20:24:04.9532793Z git version 2.49.0
++2025-07-03T20:24:04.9579922Z Temporarily overriding HOME='/home/runner/work/_temp/9af27c5b-454e-4281-821d-7210156db902' before making global git config changes
++2025-07-03T20:24:04.9581013Z Adding repository directory to the temporary git global config as a safe directory
++2025-07-03T20:24:04.9585533Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/docker-compose-mautic/docker-compose-mautic
++2025-07-03T20:24:04.9624841Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
++2025-07-03T20:24:04.9656448Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
++2025-07-03T20:24:04.9881590Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
++2025-07-03T20:24:04.9901401Z http.https://github.com/.extraheader
++2025-07-03T20:24:04.9914008Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
++2025-07-03T20:24:04.9943953Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
++2025-07-03T20:24:05.0268348Z Cleaning up orphan processes
+
+# 2025-07-03 20:37:49.316750
++/exit
+
+# 2025-07-07 17:10:32.095974
++n
+
+# 2025-07-07 17:10:39.941658
++/add setup-dc.sh
+
+# 2025-07-07 17:10:44.398333
++/add setup-vps.sh
+
+# 2025-07-07 17:10:51.920573
++/add docker-compose.yml
+
+# 2025-07-07 17:10:57.423319
++/add Dockerfile
+
+# 2025-07-07 17:11:51.177662
++/add .logs
+
+# 2025-07-07 17:12:18.572272
++/add logs
+
+# 2025-07-07 17:16:23.873585
++n
+
+# 2025-07-07 17:16:32.215573
++/add logs
+
+# 2025-07-07 17:16:36.668604
++/add docker-compose.yml
+
+# 2025-07-07 17:16:49.643899
++/add setup-dc.sh
+
+# 2025-07-07 17:16:55.295300
++/add setup-vps.sh
+
+# 2025-07-07 17:17:03.652421
++/add Dockerfile
+
+# 2025-07-07 17:17:14.274486
++/add .env
+
+# 2025-07-07 17:17:19.588651
++/add .mautic_env
+
+# 2025-07-07 17:17:28.113725
++/add .github/workflows/deploy.yml
+
+# 2025-07-07 17:18:05.789235
++/ask the changes made to the workflow and script improved. Can you check the "logs" file?
+
+# 2025-07-07 17:39:18.047245
++/exit

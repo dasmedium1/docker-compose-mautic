@@ -22,7 +22,7 @@ services:
       timeout: 5s
       retries: 10
     networks:
-      - mysql-private
+      - mysql_private
 
   mautic_web:
     build:
@@ -47,7 +47,7 @@ services:
         condition: service_healthy
     networks:
       - traefik_web
-      - mysql-private
+      - mysql_private
     labels:
       - traefik.enable=true
       - traefik.http.routers.mautic.rule=Host(`$${{DOMAIN}}`)
@@ -68,7 +68,7 @@ services:
       mautic_web:
         condition: service_healthy
     networks:
-      - mysql-private
+      - mysql_private
   mautic_worker:
     build:
       context: .
@@ -84,7 +84,7 @@ services:
       mautic_web:
         condition: service_healthy
     networks:
-      - mysql-private
+      - mysql_private
     deploy:
       replicas: 1
 
@@ -94,5 +94,5 @@ volumes:
 networks:
   traefik_web:
     external: true
-  mysql-private:
+  mysql_private:
     external: true
