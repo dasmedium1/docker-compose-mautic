@@ -6,7 +6,7 @@ x-mautic-volumes: &mautic-volumes
   - ./cron:/opt/mautic/cron:z
 
 services:
-  db:
+  mautic_db:
     image: mysql:8.0
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
