@@ -29,7 +29,7 @@ services:
       context: .
       dockerfile: Dockerfile
     links:
-      - db:mysql
+      - mautic_db:mysql
     volumes: *mautic-volumes
     environment:
       - DOCKER_MAUTIC_LOAD_TEST_DATA=${DOCKER_MAUTIC_LOAD_TEST_DATA}
@@ -58,7 +58,7 @@ services:
       context: .
       dockerfile: Dockerfile
     links:
-      - db:mysql
+      - mautic_db:mysql
     volumes: *mautic-volumes
     environment:
       - DOCKER_MAUTIC_ROLE=mautic_cron
@@ -76,7 +76,7 @@ services:
       context: .
       dockerfile: Dockerfile
     links:
-      - db:mysql
+      - mautic_db:mysql
     volumes: *mautic-volumes
     environment:
       - DOCKER_MAUTIC_ROLE=mautic_worker
