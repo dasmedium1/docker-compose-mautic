@@ -43,7 +43,7 @@ services:
       timeout: 5s
       retries: 100
     depends_on:
-      db:
+      mautic_db:
         condition: service_healthy
     networks:
       - traefik_web
