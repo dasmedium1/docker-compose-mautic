@@ -1415,3 +1415,6 @@
 
 # 2025-07-10 23:03:23.743460
 +/ask I added my current traefik config in traefik.yml
+
+# 2025-07-10 23:25:12.529978
++/ask I updated the labels, and the docker logs for the web container are now in the 'logs' file. I made a few requests from the browser and received 404.
