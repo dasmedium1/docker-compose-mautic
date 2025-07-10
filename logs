@@ -1,39 +1,54 @@
-docker logs -f 5b6a1b35b3e4
-[2025-07-10 22:15:10] 
-[2025-07-10 22:15:10]  [OK] Already at the latest version                                             
-[2025-07-10 22:15:10]       ("Mautic\Migrations\Versionzz20230929183000")                             
-[2025-07-10 22:15:10] 
-AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 10.0.2.147. Set the 'ServerName' directive globally to suppress this message
-AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 10.0.2.147. Set the 'ServerName' directive globally to suppress this message
-[Thu Jul 10 22:15:10.704108 2025] [mpm_prefork:notice] [pid 17:tid 17] AH00163: Apache/2.4.62 (Debian) PHP/8.1.31 configured -- resuming normal operations
-[Thu Jul 10 22:15:10.704279 2025] [core:notice] [pid 17:tid 17] AH00094: Command line: 'apache2 -D FOREGROUND'
-127.0.0.1 - - [10/Jul/2025:22:15:14 +0000] "GET / HTTP/1.1" 301 649 "-" "curl/7.88.1"
-127.0.0.1 - - [10/Jul/2025:22:15:19 +0000] "GET / HTTP/1.1" 301 649 "-" "curl/7.88.1"
-127.0.0.1 - - [10/Jul/2025:22:15:25 +0000] "GET / HTTP/1.1" 301 649 "-" "curl/7.88.1"
-127.0.0.1 - - [10/Jul/2025:22:15:30 +0000] "GET / HTTP/1.1" 301 649 "-" "curl/7.88.1"
-127.0.0.1 - - [10/Jul/2025:22:15:35 +0000] "GET / HTTP/1.1" 301 649 "-" "curl/7.88.1"
-127.0.0.1 - - [10/Jul/2025:22:15:40 +0000] "GET / HTTP/1.1" 301 649 "-" "curl/7.88.1"
-127.0.0.1 - - [10/Jul/2025:22:15:45 +0000] "GET / HTTP/1.1" 301 649 "-" "curl/7.88.1"
-127.0.0.1 - - [10/Jul/2025:22:15:50 +0000] "GET / HTTP/1.1" 301 649 "-" "curl/7.88.1"
-127.0.0.1 - - [10/Jul/2025:22:15:56 +0000] "GET / HTTP/1.1" 301 649 "-" "curl/7.88.1"
-127.0.0.1 - - [10/Jul/2025:22:16:01 +0000] "GET / HTTP/1.1" 301 649 "-" "curl/7.88.1"
-127.0.0.1 - - [10/Jul/2025:22:16:28 +0000] "GET / HTTP/1.1" 301 649 "-" "curl/7.88.1"
+[2025-07-10 22:31:14] 
+[2025-07-10 22:31:14]  [OK] Already at the latest version                                             
+[2025-07-10 22:31:14]       ("Mautic\Migrations\Versionzz20230929183000")                             
+[2025-07-10 22:31:14] 
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 10.0.2.163. Set the 'ServerName' directive globally to suppress this message
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 10.0.2.163. Set the 'ServerName' directive globally to suppress this message
+[Thu Jul 10 22:31:14.300086 2025] [mpm_prefork:notice] [pid 17:tid 17] AH00163: Apache/2.4.62 (Debian) PHP/8.1.31 configured -- resuming normal operations
+[Thu Jul 10 22:31:14.300295 2025] [core:notice] [pid 17:tid 17] AH00094: Command line: 'apache2 -D FOREGROUND'
+127.0.0.1 - - [10/Jul/2025:22:31:17 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:31:23 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:31:28 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:31:33 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:31:38 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:31:43 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:31:49 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:31:54 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:31:59 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:32:07 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:34:14 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:34:18 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:34:24 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:34:30 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:34:36 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:34:42 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:34:48 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:34:53 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:34:59 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:35:05 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:35:19 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:35:25 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:35:30 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:35:35 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:35:40 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:35:46 +0000] "GET / HTTP/1.1" 302 607 "-" "curl/7.88.1"
 
 
+---------------------
 
-
-----------------------
-
-  2025-07-10 22:15:01+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.42-1.el9 started.
-2025-07-10 22:15:01+00:00 [Note] [Entrypoint]: Switching to dedicated user 'mysql'
-2025-07-10 22:15:01+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.42-1.el9 started.
+  2025-07-10 22:31:04+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.42-1.el9 started.
+2025-07-10 22:31:04+00:00 [Note] [Entrypoint]: Switching to dedicated user 'mysql'
+2025-07-10 22:31:04+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.42-1.el9 started.
 '/var/lib/mysql/mysql.sock' -> '/var/run/mysqld/mysqld.sock'
-2025-07-10T22:15:02.425920Z 0 [Warning] [MY-011068] [Server] The syntax '--skip-host-cache' is deprecated and will be removed in a future release. Please use SET GLOBAL host_cache_size=0 instead.
-2025-07-10T22:15:02.433398Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.42) starting as process 1
-2025-07-10T22:15:02.484264Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
-2025-07-10T22:15:02.987227Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
-2025-07-10T22:15:03.342355Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
-2025-07-10T22:15:03.342560Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
-2025-07-10T22:15:03.345653Z 0 [Warning] [MY-011810] [Server] Insecure configuration for --pid-file: Location '/var/run/mysqld' in the path is accessible to all OS users. Consider choosing a different directory.
-2025-07-10T22:15:03.384548Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '::' port: 33060, socket: /var/run/mysqld/mysqlx.sock
-2025-07-10T22:15:03.385009Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.42'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  MySQL Community Server - GPL.
+2025-07-10T22:31:05.641761Z 0 [Warning] [MY-011068] [Server] The syntax '--skip-host-cache' is deprecated and will be removed in a future release. Please use SET GLOBAL host_cache_size=0 instead.
+2025-07-10T22:31:05.655281Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.42) starting as process 1
+2025-07-10T22:31:05.773384Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2025-07-10T22:31:06.214165Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2025-07-10T22:31:06.691276Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2025-07-10T22:31:06.691701Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2025-07-10T22:31:06.694574Z 0 [Warning] [MY-011810] [Server] Insecure configuration for --pid-file: Location '/var/run/mysqld' in the path is accessible to all OS users. Consider choosing a different directory.
+2025-07-10T22:31:06.738123Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '::' port: 33060, socket: /var/run/mysqld/mysqlx.sock
+2025-07-10T22:31:06.738937Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.42'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  MySQL Community Server - GPL.
+
+----
+  
