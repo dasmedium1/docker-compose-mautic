@@ -1376,3 +1376,33 @@
 
 # 2025-07-07 21:22:40.333876
 +/ask can you check the docker logs inside the 'logs' file? 
+
+# 2025-07-10 14:31:42.348945
++n
+
+# 2025-07-10 14:31:47.161392
++/add logs
+
+# 2025-07-10 14:31:50.998459
++/add docker-compose.yml
+
+# 2025-07-10 14:32:04.746097
++/add Dockerfile docker-compose.yml
+
+# 2025-07-10 14:32:12.481577
++/add setup-dc.sh
+
+# 2025-07-10 14:32:30.836387
++/add .env .mautic_env 
+
+# 2025-07-10 14:32:45.819809
++/add .github/workflows/deploy.yml 
+
+# 2025-07-10 14:33:03.592492
++/ask can you check the recent deployment "logs" file?
+
+# 2025-07-10 22:10:35.100687
++/ask I updated the variable in github from EMAIL_ADDRESS to just EMAIL. The 'logs' file reflects the new result.
+
+# 2025-07-10 22:18:04.405636
++/ask i updated the 'logs' file with the output of docker logs for the mautic web container

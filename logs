@@ -1,32 +1,39 @@
- docker logs -f 28cc24b5a970
-mysqladmin: connect to server at 'db' failed
-error: 'Access denied for user 'mautic_db_user'@'10.0.2.10' (using password: YES)'
-mysqladmin: connect to server at 'db' failed
-error: 'Access denied for user 'mautic_db_user'@'10.0.2.10' (using password: YES)'
-[2025-07-07 21:11:50] [notice] Migrating up to Mautic\Migrations\Versionzz20230929183000
-[error] Migration Mautic\Migrations\Version020230615115326 failed during Execution. Error: "An exception occurred while executing a query: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'mautic_db.message_channels' doesn't exist"
-
-[2025-07-07 21:11:51] ++ adding generated column generated_sent_date
-[2025-07-07 21:11:51] -> ALTER TABLE email_stats ADD generated_sent_date DATE AS (CONCAT(YEAR(date_sent), '-', LPAD(MONTH(date_sent), 2, '0'), '-', LPAD(DAY(date_sent), 2, '0'))) COMMENT '(DC2Type:generated)';
-            ALTER TABLE email_stats ADD INDEX `generated_sent_date_email_id`(generated_sent_date, email_id)
-
-In ExceptionConverter.php line 49:
-
-  An exception occurred while executing a query: SQLSTATE[42S02]: Base table
-  or view not found: 1146 Table 'mautic_db.email_stats' doesn't exist
-
-
-In Exception.php line 28:
-
-  SQLSTATE[42S02]: Base table or view not found: 1146 Table 'mautic_db.email_
-  stats' doesn't exist
+docker logs -f 5b6a1b35b3e4
+[2025-07-10 22:15:10] 
+[2025-07-10 22:15:10]  [OK] Already at the latest version                                             
+[2025-07-10 22:15:10]       ("Mautic\Migrations\Versionzz20230929183000")                             
+[2025-07-10 22:15:10] 
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 10.0.2.147. Set the 'ServerName' directive globally to suppress this message
+AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 10.0.2.147. Set the 'ServerName' directive globally to suppress this message
+[Thu Jul 10 22:15:10.704108 2025] [mpm_prefork:notice] [pid 17:tid 17] AH00163: Apache/2.4.62 (Debian) PHP/8.1.31 configured -- resuming normal operations
+[Thu Jul 10 22:15:10.704279 2025] [core:notice] [pid 17:tid 17] AH00094: Command line: 'apache2 -D FOREGROUND'
+127.0.0.1 - - [10/Jul/2025:22:15:14 +0000] "GET / HTTP/1.1" 301 649 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:15:19 +0000] "GET / HTTP/1.1" 301 649 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:15:25 +0000] "GET / HTTP/1.1" 301 649 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:15:30 +0000] "GET / HTTP/1.1" 301 649 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:15:35 +0000] "GET / HTTP/1.1" 301 649 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:15:40 +0000] "GET / HTTP/1.1" 301 649 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:15:45 +0000] "GET / HTTP/1.1" 301 649 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:15:50 +0000] "GET / HTTP/1.1" 301 649 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:15:56 +0000] "GET / HTTP/1.1" 301 649 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:16:01 +0000] "GET / HTTP/1.1" 301 649 "-" "curl/7.88.1"
+127.0.0.1 - - [10/Jul/2025:22:16:28 +0000] "GET / HTTP/1.1" 301 649 "-" "curl/7.88.1"
 
 
-In Connection.php line 71:
-
-  SQLSTATE[42S02]: Base table or view not found: 1146 Table 'mautic_db.email_
-  stats' doesn't exist
 
 
-doctrine:migrations:migrate [--write-sql [WRITE-SQL]] [--dry-run] [--query-time] [--allow-no-migration] [--all-or-nothing [ALL-OR-NOTHING]] [--no-all-or-nothing] [--configuration CONFIGURATION] [--em EM] [--conn CONN] [--] [<version>]
+----------------------
 
+  2025-07-10 22:15:01+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.42-1.el9 started.
+2025-07-10 22:15:01+00:00 [Note] [Entrypoint]: Switching to dedicated user 'mysql'
+2025-07-10 22:15:01+00:00 [Note] [Entrypoint]: Entrypoint script for MySQL Server 8.0.42-1.el9 started.
+'/var/lib/mysql/mysql.sock' -> '/var/run/mysqld/mysqld.sock'
+2025-07-10T22:15:02.425920Z 0 [Warning] [MY-011068] [Server] The syntax '--skip-host-cache' is deprecated and will be removed in a future release. Please use SET GLOBAL host_cache_size=0 instead.
+2025-07-10T22:15:02.433398Z 0 [System] [MY-010116] [Server] /usr/sbin/mysqld (mysqld 8.0.42) starting as process 1
+2025-07-10T22:15:02.484264Z 1 [System] [MY-013576] [InnoDB] InnoDB initialization has started.
+2025-07-10T22:15:02.987227Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
+2025-07-10T22:15:03.342355Z 0 [Warning] [MY-010068] [Server] CA certificate ca.pem is self signed.
+2025-07-10T22:15:03.342560Z 0 [System] [MY-013602] [Server] Channel mysql_main configured to support TLS. Encrypted connections are now supported for this channel.
+2025-07-10T22:15:03.345653Z 0 [Warning] [MY-011810] [Server] Insecure configuration for --pid-file: Location '/var/run/mysqld' in the path is accessible to all OS users. Consider choosing a different directory.
+2025-07-10T22:15:03.384548Z 0 [System] [MY-011323] [Server] X Plugin ready for connections. Bind-address: '::' port: 33060, socket: /var/run/mysqld/mysqlx.sock
+2025-07-10T22:15:03.385009Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.0.42'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  MySQL Community Server - GPL.
