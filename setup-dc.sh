@@ -25,7 +25,7 @@ else
         echo "Container basic-mautic_worker-1 does not exist or is not running."
     fi
     echo "## Installing Mautic..."
-    docker compose exec -T -u www-data -w /var/www/html mautic_web php ./bin/console mautic:install --force --admin_email {{EMAIL_ADDRESS}} --admin_password {{MAUTIC_PASSWORD}} http://{{DOMAIN_NAME}}
+    docker compose exec -T -u www-data -w /var/www/html mautic_web php ./bin/console mautic:install --force --admin_email {{EMAIL_ADDRESS}} --admin_password {{MAUTIC_PASSWORD}} https://{{DOMAIN_NAME}}
 fi
 
 echo "## Starting all the containers"
@@ -44,7 +44,7 @@ if docker compose exec -T mautic_web test -f /var/www/html/config/local.php && d
     
     # Replace the site_url value with the domain
     echo "## Updating site_url in Mautic configuration..."
-    docker compose exec -T mautic_web sed -i "s|'site_url' => '.*',|'site_url' => 'http://$DOMAIN',|g" /var/www/html/config/local.php
+    docker compose exec -T mautic_web sed -i "s|'site_url' => '.*',|'site_url' => 'https://$DOMAIN',|g" /var/www/html/config/local.php
 fi
 
 echo "## Script execution completed"
