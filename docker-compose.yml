@@ -52,6 +52,9 @@ services:
       - traefik.enable=true
       - traefik.http.routers.mautic.rule=Host(`${DOMAIN}`)
       - traefik.http.services.mautic.loadbalancer.server.port=80
+      - traefik.http.routers.mautic.entrypoints=websecure                                                            
+      - traefik.http.routers.mautic.tls=true                                                                         
+      - traefik.http.routers.mautic.tls.certresolver=letsencrypt 
 
   mautic_cron:
     build:

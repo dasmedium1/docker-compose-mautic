@@ -5,3 +5,4 @@
 requirements.md
 .passwords
 logs
+traefik.yml
