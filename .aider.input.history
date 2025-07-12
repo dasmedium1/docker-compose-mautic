@@ -1568,3 +1568,9 @@
 
 # 2025-07-12 20:33:41.918948
 +/ask can we write sample code to create `mysql_private` network if does not exist?
+
+# 2025-07-12 20:43:54.818530
++/add logs
+
+# 2025-07-12 20:46:35.665586
++/ask I narrowed down the redirect issue to the fact the network check. Now the site works but we get: The site is currently offline due to encountering an error. If the problem persists, please contact the system administrator. I updated the logs from the container and they are in 'logs'. Can you check?
