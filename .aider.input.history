@@ -1565,3 +1565,6 @@
 
 # 2025-07-12 20:07:18.272577
 +/ask i am not able to reach the mautic instance at the domain name. it says we are redirecting too many times in the browser. i included a sample traefik.yml from the actual server here. Can you help troubleshoot?
+
+# 2025-07-12 20:33:41.918948
++/ask can we write sample code to create `mysql_private` network if does not exist?
