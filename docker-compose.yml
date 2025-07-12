@@ -34,7 +34,7 @@ services:
     environment:
       - DOCKER_MAUTIC_LOAD_TEST_DATA=${DOCKER_MAUTIC_LOAD_TEST_DATA}
       - DOCKER_MAUTIC_RUN_MIGRATIONS=${DOCKER_MAUTIC_RUN_MIGRATIONS}
-      - MAUTIC_TRUSTED_PROXIES='["10.0.1.0/24"]' 
+      - MAUTIC_TRUSTED_PROXIES='%json(["10.0.1.0/24"])%'
     env_file:
       - .mautic_env
     healthcheck:
