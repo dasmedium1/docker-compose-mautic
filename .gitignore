@@ -4,5 +4,5 @@
 .aider*
 requirements.md
 .passwords
-# logs
-# traefik.yml
+logs
+traefik.yml
