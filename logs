@@ -1,442 +1,295 @@
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
-
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
-
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
-
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
-
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
-
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
-
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
-
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
-
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
-
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
-
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
-
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
-
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
-
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
-
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
-
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
-
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
-
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
-
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
-
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
-
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
-
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
-
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
-
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
 
  [WARNING] Some commands could not be registered:                               
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
-[2025-07-12 20:58:54] 
-[2025-07-12 20:58:54]  [OK] Already at the latest version                                             
-[2025-07-12 20:58:54]       ("Mautic\Migrations\Versionzz20230929183000")                             
-[2025-07-12 20:58:54] 
+[2025-07-14 20:57:58] 
+[2025-07-14 20:57:58]  [OK] Already at the latest version                                             
+[2025-07-14 20:57:58]       ("Mautic\Migrations\Versionzz20230929183000")                             
+[2025-07-14 20:57:58] 
 
-In EnvVarProcessor.php line 245:
-                                                                          
-  Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error  
-                                                                          
+In AppKernelProdContainer.php line 11424:
+                                                          
+  The parameter "json(["10.0.1.0/24"])" must be defined.  
+                                                          
 
 doctrine:migrations:migrate [--write-sql [WRITE-SQL]] [--dry-run] [--query-time] [--allow-no-migration] [--all-or-nothing [ALL-OR-NOTHING]] [--no-all-or-nothing] [--configuration CONFIGURATION] [--em EM] [--conn CONN] [--] [<version>]
 
 AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.18.0.3. Set the 'ServerName' directive globally to suppress this message
 AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 172.18.0.3. Set the 'ServerName' directive globally to suppress this message
-[Sat Jul 12 20:58:55.064958 2025] [mpm_prefork:notice] [pid 17:tid 17] AH00163: Apache/2.4.62 (Debian) PHP/8.1.31 configured -- resuming normal operations
-[Sat Jul 12 20:58:55.065131 2025] [core:notice] [pid 17:tid 17] AH00094: Command line: 'apache2 -D FOREGROUND'
-[Sat Jul 12 20:58:59.876806 2025] [php:notice] [pid 30:tid 30] [client 127.0.0.1:46242] Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException: Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error - in file /var/www/html/vendor/symfony/dependency-injection/EnvVarProcessor.php - at line 245
-127.0.0.1 - - [12/Jul/2025:20:58:59 +0000] "GET / HTTP/1.1" 500 1539 "-" "curl/7.88.1"
-[Sat Jul 12 20:59:05.035272 2025] [php:notice] [pid 29:tid 29] [client 127.0.0.1:38966] Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException: Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error - in file /var/www/html/vendor/symfony/dependency-injection/EnvVarProcessor.php - at line 245
-127.0.0.1 - - [12/Jul/2025:20:59:04 +0000] "GET / HTTP/1.1" 500 1539 "-" "curl/7.88.1"
-[Sat Jul 12 20:59:10.156284 2025] [php:notice] [pid 31:tid 31] [client 127.0.0.1:38982] Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException: Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error - in file /var/www/html/vendor/symfony/dependency-injection/EnvVarProcessor.php - at line 245
-127.0.0.1 - - [12/Jul/2025:20:59:10 +0000] "GET / HTTP/1.1" 500 1539 "-" "curl/7.88.1"
-[Sat Jul 12 20:59:15.255919 2025] [php:notice] [pid 32:tid 32] [client 127.0.0.1:41950] Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException: Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error - in file /var/www/html/vendor/symfony/dependency-injection/EnvVarProcessor.php - at line 245
-127.0.0.1 - - [12/Jul/2025:20:59:15 +0000] "GET / HTTP/1.1" 500 1539 "-" "curl/7.88.1"
-[Sat Jul 12 20:59:16.968369 2025] [php:notice] [pid 28:tid 28] [client 10.0.1.39:54198] Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException: Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error - in file /var/www/html/vendor/symfony/dependency-injection/EnvVarProcessor.php - at line 245
-10.0.1.39 - - [12/Jul/2025:20:59:16 +0000] "GET / HTTP/1.1" 500 1539 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0"
-[Sat Jul 12 20:59:20.358649 2025] [php:notice] [pid 30:tid 30] [client 127.0.0.1:41960] Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException: Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error - in file /var/www/html/vendor/symfony/dependency-injection/EnvVarProcessor.php - at line 245
-127.0.0.1 - - [12/Jul/2025:20:59:20 +0000] "GET / HTTP/1.1" 500 1539 "-" "curl/7.88.1"
-[Sat Jul 12 20:59:25.453408 2025] [php:notice] [pid 29:tid 29] [client 127.0.0.1:49402] Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException: Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error - in file /var/www/html/vendor/symfony/dependency-injection/EnvVarProcessor.php - at line 245
-127.0.0.1 - - [12/Jul/2025:20:59:25 +0000] "GET / HTTP/1.1" 500 1539 "-" "curl/7.88.1"
-[Sat Jul 12 20:59:30.546138 2025] [php:notice] [pid 31:tid 31] [client 127.0.0.1:49408] Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException: Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error - in file /var/www/html/vendor/symfony/dependency-injection/EnvVarProcessor.php - at line 245
-127.0.0.1 - - [12/Jul/2025:20:59:30 +0000] "GET / HTTP/1.1" 500 1539 "-" "curl/7.88.1"
-[Sat Jul 12 20:59:35.627479 2025] [php:notice] [pid 32:tid 32] [client 127.0.0.1:34126] Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException: Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error - in file /var/www/html/vendor/symfony/dependency-injection/EnvVarProcessor.php - at line 245
-127.0.0.1 - - [12/Jul/2025:20:59:35 +0000] "GET / HTTP/1.1" 500 1539 "-" "curl/7.88.1"
-[Sat Jul 12 20:59:40.735796 2025] [php:notice] [pid 28:tid 28] [client 127.0.0.1:34128] Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException: Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error - in file /var/www/html/vendor/symfony/dependency-injection/EnvVarProcessor.php - at line 245
-127.0.0.1 - - [12/Jul/2025:20:59:40 +0000] "GET / HTTP/1.1" 500 1539 "-" "curl/7.88.1"
-[Sat Jul 12 20:59:45.832277 2025] [php:notice] [pid 30:tid 30] [client 127.0.0.1:54192] Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException: Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error - in file /var/www/html/vendor/symfony/dependency-injection/EnvVarProcessor.php - at line 245
-127.0.0.1 - - [12/Jul/2025:20:59:45 +0000] "GET / HTTP/1.1" 500 1539 "-" "curl/7.88.1"
-[Sat Jul 12 20:59:50.931095 2025] [php:notice] [pid 29:tid 29] [client 127.0.0.1:54206] Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException: Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error - in file /var/www/html/vendor/symfony/dependency-injection/EnvVarProcessor.php - at line 245
-127.0.0.1 - - [12/Jul/2025:20:59:50 +0000] "GET / HTTP/1.1" 500 1539 "-" "curl/7.88.1"
-[Sat Jul 12 20:59:56.077497 2025] [php:notice] [pid 31:tid 31] [client 127.0.0.1:38952] Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException: Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error - in file /var/www/html/vendor/symfony/dependency-injection/EnvVarProcessor.php - at line 245
-127.0.0.1 - - [12/Jul/2025:20:59:56 +0000] "GET / HTTP/1.1" 500 1539 "-" "curl/7.88.1"
-[Sat Jul 12 21:00:01.198687 2025] [php:notice] [pid 32:tid 32] [client 127.0.0.1:38968] Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException: Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error - in file /var/www/html/vendor/symfony/dependency-injection/EnvVarProcessor.php - at line 245
-127.0.0.1 - - [12/Jul/2025:21:00:01 +0000] "GET / HTTP/1.1" 500 1539 "-" "curl/7.88.1"
-[Sat Jul 12 21:00:06.398962 2025] [php:notice] [pid 28:tid 28] [client 127.0.0.1:49212] Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException: Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error - in file /var/www/html/vendor/symfony/dependency-injection/EnvVarProcessor.php - at line 245
-127.0.0.1 - - [12/Jul/2025:21:00:06 +0000] "GET / HTTP/1.1" 500 1539 "-" "curl/7.88.1"
-[Sat Jul 12 21:00:11.501613 2025] [php:notice] [pid 30:tid 30] [client 127.0.0.1:49214] Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException: Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error - in file /var/www/html/vendor/symfony/dependency-injection/EnvVarProcessor.php - at line 245
-127.0.0.1 - - [12/Jul/2025:21:00:11 +0000] "GET / HTTP/1.1" 500 1539 "-" "curl/7.88.1"
-[Sat Jul 12 21:00:16.596382 2025] [php:notice] [pid 29:tid 29] [client 127.0.0.1:33880] Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException: Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error - in file /var/www/html/vendor/symfony/dependency-injection/EnvVarProcessor.php - at line 245
-127.0.0.1 - - [12/Jul/2025:21:00:16 +0000] "GET / HTTP/1.1" 500 1539 "-" "curl/7.88.1"
-[Sat Jul 12 21:00:21.691126 2025] [php:notice] [pid 31:tid 31] [client 127.0.0.1:33888] Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException: Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error - in file /var/www/html/vendor/symfony/dependency-injection/EnvVarProcessor.php - at line 245
-127.0.0.1 - - [12/Jul/2025:21:00:21 +0000] "GET / HTTP/1.1" 500 1539 "-" "curl/7.88.1"
-[Sat Jul 12 21:00:26.791491 2025] [php:notice] [pid 32:tid 32] [client 127.0.0.1:40862] Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException: Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error - in file /var/www/html/vendor/symfony/dependency-injection/EnvVarProcessor.php - at line 245
-127.0.0.1 - - [12/Jul/2025:21:00:26 +0000] "GET / HTTP/1.1" 500 1539 "-" "curl/7.88.1"
-[Sat Jul 12 21:00:27.061604 2025] [php:notice] [pid 28:tid 28] [client 10.0.1.39:60766] Symfony\\Component\\DependencyInjection\\Exception\\RuntimeException: Invalid JSON in env var "resolve:MAUTIC_TRUSTED_PROXIES": Syntax error - in file /var/www/html/vendor/symfony/dependency-injection/EnvVarProcessor.php - at line 245
-10.0.1.39 - - [12/Jul/2025:21:00:27 +0000] "GET / HTTP/1.1" 500 1539 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0"
-^Ccontext canceled
+[Mon Jul 14 20:57:58.767950 2025] [mpm_prefork:notice] [pid 17:tid 17] AH00163: Apache/2.4.62 (Debian) PHP/8.1.31 configured -- resuming normal operations
+[Mon Jul 14 20:57:58.768126 2025] [core:notice] [pid 17:tid 17] AH00094: Command line: 'apache2 -D FOREGROUND'
+[Mon Jul 14 20:58:03.056547 2025] [php:notice] [pid 30:tid 30] [client 127.0.0.1:50640] Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException: The parameter "json(["10.0.1.0/24"])" must be defined. - in file /var/www/html/var/cache/prod/ContainerEvzx86H/AppKernelProdContainer.php - at line 11424
+127.0.0.1 - - [14/Jul/2025:20:58:02 +0000] "GET / HTTP/1.1" 500 1539 "-" "curl/7.88.1"
+[Mon Jul 14 20:58:08.269110 2025] [php:notice] [pid 29:tid 29] [client 127.0.0.1:60112] Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException: The parameter "json(["10.0.1.0/24"])" must be defined. - in file /var/www/html/var/cache/prod/ContainerEvzx86H/AppKernelProdContainer.php - at line 11424
+127.0.0.1 - - [14/Jul/2025:20:58:08 +0000] "GET / HTTP/1.1" 500 1539 "-" "curl/7.88.1"
+[Mon Jul 14 20:58:13.399316 2025] [php:notice] [pid 31:tid 31] [client 127.0.0.1:60128] Symfony\\Component\\DependencyInjection\\Exception\\InvalidArgumentException: The parameter "json(["10.0.1.0/24"])" must be defined. - in file /var/www/html/var/cache/prod/ContainerEvzx86H/AppKernelProdContainer.php - at line 11424
+127.0.0.1 - - [14/Jul/2025:20:58:13 +0000] "GET / HTTP/1.1" 500 1539 "-" "curl/7.88.1"
