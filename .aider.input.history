@@ -1610,3 +1610,18 @@
 
 # 2025-07-15 15:36:30.287703
 +/ask I have been experiencing a endless redirect issue with this app, running behind traefik. the configuration for traefik on the server is in the .yml file. Can you help troubleshoot?
+
+# 2025-07-15 16:15:48.454362
++n
+
+# 2025-07-15 16:16:33.521573
++/add .env .github/workflows/deploy.yml Dockerfile docker-compose.yml setup-dc.sh setup-vps.sh traefik.yml 
+
+# 2025-07-15 16:18:04.099491
++/ask my mautic application is having an endless redirect loop behind traefik. The traefik configuration is in the traefik.yml file. I have commented out some lines from the configurations in docker-compose.yml. BBefore the lines were commneted out, the app still had the redirect loop. Can you look at the configuration and help me troubleshoot?
+
+# 2025-07-15 16:19:59.722013
++/ask is there any other solution? I was able to successfully deploy and visit the app before.
+
+# 2025-07-15 16:26:30.233991
++n
