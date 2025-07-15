@@ -3,11 +3,7 @@ entryPoints:
   web:
     address: ":80"
     http:
-      redirections:
-        entryPoint:
-          to: websecure
-          scheme: https
-      
+           
   websecure:
     address: ":443"
     http:
@@ -33,26 +29,26 @@ providers:
     # allowEmptyServices: true
     # Add this to enable Swarm mode
 
-# http:                                                                                                            
-#   middlewares:                                                                                                   
-#     https-redirect:                                                                                              
-#       redirectScheme:                                                                                            
-#         scheme: https                                                                                            
-#         permanent: true  
+http:                                                                                                            
+  middlewares:                                                                                                   
+    https-redirect:                                                                                              
+      redirectScheme:                                                                                            
+        scheme: https                                                                                            
+        permanent: true  
 
 # Security headers middleware
-http:
-middlewares:
-  security-headers:
-    headers:
-      sslRedirect: true
-      stsSeconds: 31536000
-      stsIncludeSubdomains: true
-      stsPreload: true
-      forceSTSHeader: true
-      frameDeny: true
-      contentTypeNosniff: true
-      browserXssFilter: true
-      referrerPolicy: "strict-origin-when-cross-origin"
-      featurePolicy: "camera 'none'; microphone 'none'; geolocation 'none'"
-      permissionsPolicy: "camera=(), microphone=(), geolocation=()"
+# http:
+# middlewares:
+#   security-headers:
+#     headers:
+#       sslRedirect: true
+#       stsSeconds: 31536000
+#       stsIncludeSubdomains: true
+#       stsPreload: true
+#       forceSTSHeader: true
+#       frameDeny: true
+#       contentTypeNosniff: true
+#       browserXssFilter: true
+#       referrerPolicy: "strict-origin-when-cross-origin"
+#       featurePolicy: "camera 'none'; microphone 'none'; geolocation 'none'"
+#       permissionsPolicy: "camera=(), microphone=(), geolocation=()"
