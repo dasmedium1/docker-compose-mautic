@@ -1625,3 +1625,15 @@
 
 # 2025-07-15 16:26:30.233991
 +n
+
+# 2025-07-16 13:18:21.178812
++/add docker-compose.yml setup-dc.sh .env .mautic_env .github/workflows/deploy.yml traefik.yml
+
+# 2025-07-16 13:19:35.582452
++/ask I saw in a discussion here: https://forum.mautic.org/t/mautic-redirect-loop/16990/2 that it might be a good idea to add $_SERVER[‘HTTPS’] = ‘on’; to the index.php file
+
+# 2025-07-16 13:19:38.882017
++y
+
+# 2025-07-16 13:51:35.964987
++/exit

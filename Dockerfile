@@ -14,6 +14,9 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN cd /var/www/html && \
     COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_PROCESS_TIMEOUT=10000  vendor/bin/composer require chimpino/theme-air:^1.0 --no-scripts --no-interaction
 
+# Patch index.php to force HTTPS detection                                                                      
+RUN sed -i "1s|<?php|<?php \$_SERVER['HTTPS'] = 'on';|" /var/www/html/index.php     
+
 # Production stage:
 FROM mautic/mautic:${MAUTIC_VERSION}
 
