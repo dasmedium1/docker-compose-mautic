@@ -1,109 +1,35 @@
-array(52) {
-  ["DOCKER_MAUTIC_WORKERS_CONSUME_FAILED"]=>
-  string(1) "2"
-  ["HOSTNAME"]=>
-  string(12) "739155a587f3"
-  ["PHP_VERSION"]=>
-  string(6) "8.1.31"
-  ["APACHE_CONFDIR"]=>
-  string(12) "/etc/apache2"
-  ["MAUTIC_TRUSTED_HOSTS"]=>
-  string(23) "["mautic.dasmedium.co"]"
-  ["PHP_INI_DIR"]=>
-  string(18) "/usr/local/etc/php"
-  ["GPG_KEYS"]=>
-  string(122) "528995BFEDFBA7191D46839EF9BA0ADA31CBD89E 39B641343D8C104B2B146DC3F9C39DC0B9698544 F1F692238FBC1666E5A5CCD4199F9DFEF6FFBAFD"
-  ["PHP_LDFLAGS"]=>
-  string(12) "-Wl,-O1 -pie"
-  ["PHP_INI_VALUE_UPLOAD_MAX_FILESIZE"]=>
-  string(4) "512M"
-  ["PHP_INI_VALUE_MAX_EXECUTION_TIME"]=>
-  string(3) "300"
-  ["MAUTIC_TRUSTED_PROXIES"]=>
-  string(12) "["10.0.1.1"]"
-  ["PWD"]=>
-  string(13) "/var/www/html"
-  ["PHP_INI_VALUE_POST_MAX_FILESIZE"]=>
-  string(4) "512M"
-  ["DOCKER_MAUTIC_WORKERS_CONSUME_EMAIL"]=>
-  string(1) "2"
-  ["APACHE_DOCUMENT_ROOT"]=>
-  string(21) "/var/www/html/docroot"
-  ["MAUTIC_DB_PORT"]=>
-  string(4) "3306"
-  ["PHP_INI_VALUE_MEMORY_LIMIT"]=>
-  string(4) "512M"
-  ["HOME"]=>
-  string(5) "/root"
-  ["MAUTIC_DB_USER"]=>
-  string(14) "mautic_db_user"
-  ["MAUTIC_DB_HOST"]=>
-  string(9) "mautic_db"
-  ["PHP_SHA256"]=>
-  string(64) "c4f244d46ba51c72f7d13d4f66ce6a9e9a8d6b669c51be35e01765ba58e7afca"
-  ["DOCKER_MAUTIC_WORKERS_CONSUME_HIT"]=>
-  string(1) "2"
-  ["DOCKER_MAUTIC_RUN_MIGRATIONS"]=>
-  string(4) "true"
-  ["PHPIZE_DEPS"]=>
-  string(76) "autoconf          dpkg-dev                file            g++             gcc             libc-dev                make     pkg-config               re2c"
-  ["DOCKER_MAUTIC_LOAD_TEST_DATA"]=>
-  string(5) "false"
-  ["TERM"]=>
-  string(5) "xterm"
-  ["MAUTIC_MESSENGER_DSN_HIT"]=>
-  string(18) "doctrine://default"
-  ["MAUTIC_PORT"]=>
-  string(2) "80"
-  ["MAUTIC_DB_PASSWORD"]=>
-  string(21) "XNmYRAQETaavw6jfq47LE"
-  ["PHP_URL"]=>
-  string(51) "https://www.php.net/distributions/php-8.1.31.tar.xz"
-  ["MAUTIC_MESSENGER_DSN_EMAIL"]=>
-  string(18) "doctrine://default"
-  ["SHLVL"]=>
-  string(1) "1"
-  ["PHP_CFLAGS"]=>
-  string(83) "-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"
-  ["PHP_INI_VALUE_DATE_TIMEZONE"]=>
-  string(3) "UTC"
-  ["MAUTIC_TRUSTED_HEADERS"]=>
-  string(52) ""x-forwarded-for,x-forwarded-host,x-forwarded-proto""
-  ["APACHE_ENVVARS"]=>
-  string(20) "/etc/apache2/envvars"
-  ["MAUTIC_DB_DATABASE"]=>
-  string(9) "mautic_db"
-  ["PATH"]=>
-  string(60) "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-  ["DOCKER_MAUTIC_ROLE"]=>
-  string(10) "mautic_web"
-  ["PHP_ASC_URL"]=>
-  string(55) "https://www.php.net/distributions/php-8.1.31.tar.xz.asc"
-  ["PHP_CPPFLAGS"]=>
-  string(83) "-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"
-  ["_"]=>
-  string(18) "/usr/local/bin/php"
-  ["OLDPWD"]=>
-  string(21) "/var/www/html/docroot"
-  ["PHP_SELF"]=>
-  string(19) "Standard input code"
-  ["SCRIPT_NAME"]=>
-  string(19) "Standard input code"
-  ["SCRIPT_FILENAME"]=>
-  string(0) ""
-  ["PATH_TRANSLATED"]=>
-  string(0) ""
-  ["DOCUMENT_ROOT"]=>
-  string(0) ""
-  ["REQUEST_TIME_FLOAT"]=>
-  float(1752533081.416213)
-  ["REQUEST_TIME"]=>
-  int(1752533081)
-  ["argv"]=>
-  array(1) {
-    [0]=>
-    string(19) "Standard input code"
-  }
-  ["argc"]=>
-  int(1)
-}
+Service mautic_web  Building
+#0 building with "default" instance using docker driver
+
+#1 [mautic_web internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.10kB done
+#1 DONE 0.0s
+
+#2 [mautic_web internal] load metadata for docker.io/mautic/mautic:5.2.3-apache
+#2 DONE 0.2s
+
+#3 [mautic_web internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [mautic_web build 1/5] FROM docker.io/mautic/mautic:5.2.3-apache@sha256:55e323552b2e544c387b9491e890089ca349d55c22bfd55db8ba4ecdbbfad548
+#4 CACHED
+
+#5 [mautic_web build 3/5] RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+#5 CACHED
+
+#6 [mautic_web build 2/5] RUN apt-get update && apt-get install -y git curl npm && rm -rf /var/lib/apt/lists/*
+#6 CACHED
+
+#7 [mautic_web build 4/5] RUN cd /var/www/html &&     COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_PROCESS_TIMEOUT=10000  vendor/bin/composer require chimpino/theme-air:^1.0 --no-scripts --no-interaction
+#7 CACHED
+
+#8 [mautic_web build 5/5] RUN sed -i "1s|<?php|<?php $_SERVER['HTTPS'] = 'on';|" /var/www/html/index.php
+#8 0.216 sed: can't read /var/www/html/index.php: No such file or directory
+#8 ERROR: process "/bin/sh -c sed -i \"1s|<?php|<?php \\$_SERVER['HTTPS'] = 'on';|\" /var/www/html/index.php" did not complete successfully: exit code: 2
+------
+ > [mautic_web build 5/5] RUN sed -i "1s|<?php|<?php $_SERVER['HTTPS'] = 'on';|" /var/www/html/index.php:
+0.216 sed: can't read /var/www/html/index.php: No such file or directory
+------
+time="2025-07-16T14:01:51Z" level=warning msg="current commit information was not captured by the build" error="failed to read current commit information with git rev-parse --is-inside-work-tree"
+failed to solve: process "/bin/sh -c sed -i \"1s|<?php|<?php \\$_SERVER['HTTPS'] = 'on';|\" /var/www/html/index.php" did not complete successfully: exit code: 2
