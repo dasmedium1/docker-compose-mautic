@@ -55,11 +55,11 @@ services:
       - traefik.enable=true
       - traefik.http.routers.mautic.rule=Host(`${DOMAIN}`)
       - traefik.http.services.mautic.loadbalancer.server.port=80
-      # - traefik.http.routers.mautic.entrypoints=websecure                                                            
-      # - traefik.http.routers.mautic.tls=true                                                                         
-      # - traefik.http.routers.mautic.tls.certresolver=letsencrypt
-      # # - traefik.http.middlewares.mautic-headers.headers.customRequestHeaders.X-Forwarded-Proto=https
-      # - traefik.http.routers.mautic.middlewares=mautic-headers 
+      - traefik.http.routers.mautic.entrypoints=websecure                                                            
+      - traefik.http.routers.mautic.tls=true                                                                         
+      - traefik.http.routers.mautic.tls.certresolver=letsencrypt
+      - traefik.http.middlewares.mautic-headers.headers.customRequestHeaders.X-Forwarded-Proto=https
+      - traefik.http.routers.mautic.middlewares=mautic-headers 
 
   mautic_cron:
     build:
