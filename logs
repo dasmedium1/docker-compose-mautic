@@ -48,3 +48,91 @@ PHP_CPPFLAGS=-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FIL
 _=/usr/bin/env
 OLDPWD=/var/www/html/docroot
 
+
+
+
+3. Check Trusted Proxies / Headers
+
+
+
+
+4. Confirm Forwarded Headers from Traefik
+
+curl -k -I https://mautic.dasmedium.co/s/login
+
+HTTP/2 200 
+cache-control: max-age=0, must-revalidate, private
+content-type: text/html; charset=UTF-8
+date: Sat, 19 Jul 2025 13:41:12 GMT
+expires: Sat, 19 Jul 2025 13:41:12 GMT
+server: Apache/2.4.62 (Debian)
+set-cookie: 82fccce4af64e452b3a6af5a8267be70=49a87da4f057609dc9900757c016c420; path=/; httponly; samesite=lax
+x-powered-by: PHP/8.1.31
+
+
+curl -k -v -H "Origin: https://mautic.dasmedium.co" \
+     --data "username=dasmedium.co@gmail.com&password=JTi7hj0KhQHV1TUbJqb8@&_csrf_token=XYZ" \
+     https://mautic.dasmedium.co/s/login_check
+
+*   Trying 104.237.150.126:443...
+* Connected to mautic.dasmedium.co (104.237.150.126) port 443 (#0)
+* ALPN: offers h2,http/1.1
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+* TLSv1.3 (IN), TLS handshake, Encrypted Extensions (8):
+* TLSv1.3 (IN), TLS handshake, Certificate (11):
+* TLSv1.3 (IN), TLS handshake, CERT verify (15):
+* TLSv1.3 (IN), TLS handshake, Finished (20):
+* TLSv1.3 (OUT), TLS change cipher, Change cipher spec (1):
+* TLSv1.3 (OUT), TLS handshake, Finished (20):
+* SSL connection using TLSv1.3 / TLS_AES_128_GCM_SHA256
+* ALPN: server accepted h2
+* Server certificate:
+*  subject: CN=mautic.dasmedium.co
+*  start date: Jul 11 22:23:57 2025 GMT
+*  expire date: Oct  9 22:23:56 2025 GMT
+*  issuer: C=US; O=Let's Encrypt; CN=R10
+*  SSL certificate verify result: unable to get local issuer certificate (20), continuing anyway.
+* using HTTP/2
+* h2h3 [:method: POST]
+* h2h3 [:path: /s/login_check]
+* h2h3 [:scheme: https]
+* h2h3 [:authority: mautic.dasmedium.co]
+* h2h3 [user-agent: curl/7.88.1]
+* h2h3 [accept: */*]
+* h2h3 [origin: https://mautic.dasmedium.co]
+* h2h3 [content-length: 78]
+* h2h3 [content-type: application/x-www-form-urlencoded]
+* Using Stream ID: 1 (easy handle 0x56542df73780)
+> POST /s/login_check HTTP/2
+> Host: mautic.dasmedium.co
+> user-agent: curl/7.88.1
+> accept: */*
+> origin: https://mautic.dasmedium.co
+> content-length: 78
+> content-type: application/x-www-form-urlencoded
+> 
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+* We are completely uploaded and fine
+< HTTP/2 302 
+< cache-control: max-age=0, must-revalidate, private
+< content-type: text/html; charset=utf-8
+< date: Sat, 19 Jul 2025 13:43:08 GMT
+< expires: Sat, 19 Jul 2025 13:43:08 GMT
+< location: /s/login
+< server: Apache/2.4.62 (Debian)
+< set-cookie: 82fccce4af64e452b3a6af5a8267be70=3bd37aa62d5005647277ed02b18ca6b5; path=/; httponly; samesite=lax
+< x-powered-by: PHP/8.1.31
+< 
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="refresh" content="0;url='/s/login'" />
+
+        <title>Redirecting to /s/login</title>
+    </head>
+    <body>
+        Redirecting to <a href="/s/login">/s/login</a>.
+    </body>
+* Connection #0 to host mautic.dasmedium.co left intact </html>
