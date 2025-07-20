@@ -60,6 +60,7 @@ services:
       - traefik.http.routers.mautic.tls=true                                                                         
       - traefik.http.routers.mautic.tls.certresolver=letsencrypt
       - traefik.http.middlewares.mautic-headers.headers.customRequestHeaders.X-Forwarded-Proto=https
+      - traefik.http.middlewares.mautic-headers.headers.customRequestheaders.X-Forwarded-Host=${DOMAIN}
       - traefik.http.routers.mautic.middlewares=mautic-headers 
 
   mautic_cron:
