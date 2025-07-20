@@ -90,7 +90,7 @@ EOF
 
     # Clear Symfony cache
     echo "## Clearing Symfony cache..."
-    docker compose exec -T mautic_web php bin/console cache:clear
+    docker compose exec -T --user www-data --workdir /var/www/html mautic_web php bin/console cache:clear
 fi
 
 echo "## Script execution completed"
