@@ -31,3 +31,11 @@ FROM mautic/mautic:${MAUTIC_VERSION}
 
 # Copy the built assets and the Mautic installation from the build stage:
 COPY --from=build --chown=www-data:www-data /var/www/html /var/www/html
+
+# Add entrypoint patch
+COPY entrypoint-patch.sh /entrypoint-patch.sh
+RUN chmod +x /entrypoint-patch.sh
+
+# Set wrapper entrypoint
+ENTRYPOINT ["/entrypoint-patch.sh"]
+CMD ["apache2-foreground"]
