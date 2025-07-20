@@ -1736,3 +1736,6 @@
 
 # 2025-07-20 04:58:58.144536
 +/ask the mautic_web container will never start, because the entrypoint-patch needs to complete its waiting loop before the original entrypoint runs, which will never run because we have a wait loop on the entrypoint-patch.sh. Maybe we should move this logic to the setup-dc.sh, and undo the changes we just made?
+
+# 2025-07-20 05:18:05.997110
++/ask the changes you proposed break the deployment.

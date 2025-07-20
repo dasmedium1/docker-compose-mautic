@@ -49,37 +49,9 @@ if docker compose exec -T mautic_web test -f /var/www/html/config/local.php && d
     echo "## Mautic is installed already."
     
     # Replace the site_url value with the domain
-    echo "## Updating site_url in Mautic configuration..."                                                           
-    docker compose exec -T mautic_web sed -i "s|'site_url' => '.*',|'site_url' => 'https://$DOMAIN',|g"              
-    /var/www/html/config/local.php                                                                                   
-                                                                                                                 
-# Wait for installation to complete before configuring proxies                                                   
-echo "## Waiting for Mautic installation to finalize..."                                                         
-while ! docker compose exec -T mautic_web test -f /var/www/html/config/local.php; do                             
-    echo "### Waiting for local.php..."                                                                          
-    sleep 5                                                                                                      
-done                                                                                                             
-fi 
+    echo "## Updating site_url in Mautic configuration..."
+    docker compose exec -T mautic_web sed -i "s|'site_url' => '.*',|'site_url' => 'https://$DOMAIN',|g" /var/www/html/config/local.php
+fi
 
+echo "## Script execution completed"
 
-# Configure trusted proxies after Mautic is installed                                                            
-echo "## Configuring trusted proxies"                                                                            
-docker compose exec -T mautic_web bash -c 'cat > /var/www/html/config/trusted_proxies.php' <<EOF                 
-<?php                                                                                                            
-\$parameters['trusted_proxies'] = ['10.0.1.0/24'];                                                               
-\$parameters['trusted_headers'] = [                                                                              
-    'x-forwarded-for',                                                                                           
-    'x-forwarded-proto',                                                                                         
-    'x-forwarded-port',                                                                                          
-    'x-forwarded-host'                                                                                           
-];                                                                                                               
-EOF                                                                                                              
-                                                                                                                 
-docker compose exec -T mautic_web chown www-data:www-data /var/www/html/config/trusted_proxies.php               
-                                                                                                                 
-# Update local.php to include trusted proxies                                                                    
-docker compose exec -T mautic_web sh -c 'if ! grep -q "trusted_proxies.php" /var/www/html/config/local.php; then 
-sed -i "/return \\\$parameters;/i if (file_exists(__DIR__ . '\''/trusted_proxies.php'\'')) { include __DIR__ .   
-'\''/trusted_proxies.php'\''; }" /var/www/html/config/local.php; fi'                                             
-                                                                                                                 
-echo "## Script execution completed" 
