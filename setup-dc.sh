@@ -2,7 +2,7 @@ cd /home/angelantonio/backup/root/mautic
 # Check/create required networks                                                                                 
 if ! docker network inspect mysql_private >/dev/null 2>&1; then                                                  
     echo "Creating mysql_private network..."                                                                     
-    docker network create -d overlay --attachable mysql_private                                                                         
+    docker network create mysql_private                                                                          
 fi   
 
 docker compose build
@@ -54,4 +54,3 @@ if docker compose exec -T mautic_web test -f /var/www/html/config/local.php && d
 fi
 
 echo "## Script execution completed"
-

@@ -34,7 +34,8 @@ services:
     environment:
       - DOCKER_MAUTIC_LOAD_TEST_DATA=${DOCKER_MAUTIC_LOAD_TEST_DATA}
       - DOCKER_MAUTIC_RUN_MIGRATIONS=${DOCKER_MAUTIC_RUN_MIGRATIONS}
-      # Proxy settings now handled by entrypoint script
+      # - MAUTIC_TRUSTED_PROXIES=["10.0.1.140/24"]
+      # - MAUTIC_TRUSTED_HEADERS=x-forwarded-for,x-forwarded-host,x-forwarded-proto
     env_file:
       - .mautic_env
     healthcheck:
