@@ -64,6 +64,7 @@ $parameters['trusted_headers'] = [
     'x-forwarded-proto' => 'X_FORWARDED_PROTO',                                                                  
     'x-forwarded-port' => 'X_FORWARDED_PORT'                                                                     
 ];                                                                                                               
-EOF                                                                                                              
+EOF
+fi                                                                                                              
                                                                                                                  
 echo "## Script execution completed"  
