@@ -15,13 +15,13 @@ RUN cd /var/www/html && \
     COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_PROCESS_TIMEOUT=10000  vendor/bin/composer require chimpino/theme-air:^1.0 --no-scripts --no-interaction
 
 # Patch index.php to force HTTPS detection                                                                      
-RUN if [ -f /var/www/html/index.php ]; then \                                                                  
-    sed -i "1s|<?php|<?php \$_SERVER['HTTPS'] = 'on';|" /var/www/html/index.php; \                             
-  elif [ -f /var/www/html/docroot/index.php ]; then \                                                          
-    sed -i "1s|<?php|<?php \$_SERVER['HTTPS'] = 'on';|" /var/www/html/docroot/index.php; \                     
-  else \                                                                                                       
-    echo "Error: index.php not found" >&2; exit 1; \                                                           
-  fi   
+# RUN if [ -f /var/www/html/index.php ]; then \                                                                  
+#     sed -i "1s|<?php|<?php \$_SERVER['HTTPS'] = 'on';|" /var/www/html/index.php; \                             
+#   elif [ -f /var/www/html/docroot/index.php ]; then \                                                          
+#     sed -i "1s|<?php|<?php \$_SERVER['HTTPS'] = 'on';|" /var/www/html/docroot/index.php; \                     
+#   else \                                                                                                       
+#     echo "Error: index.php not found" >&2; exit 1; \                                                           
+#   fi   
 
 # Production stage:
 FROM mautic/mautic:${MAUTIC_VERSION}
