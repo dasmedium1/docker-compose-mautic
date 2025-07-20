@@ -1739,3 +1739,8 @@
 
 # 2025-07-20 05:18:05.997110
 +/ask the changes you proposed break the deployment.
+
+# 2025-07-20 05:40:01.750503
++/ask can we re-attempt a little simpler? Could we just add the following at the end of local.php: $parameters['trusted_proxies'] = ['10.0.1.0/24'];
++$parameters['trusted_headers'] = [ 'forwarded' => 'FORWARDED', 'x-forwarded-for' => 'X_FORWARDED_FOR', 'x-forwarded-host' => 'X_FORWARDED_HOST', 'x-forwarded-proto' => 'X_FORWARDED_PROTO', 'x-forwarded-port' => 'X_FORWARDED_PORT'];
++
