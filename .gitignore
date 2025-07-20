@@ -8,3 +8,4 @@ logs
 traefik.yml
 .*
 bla
+chat.txt
