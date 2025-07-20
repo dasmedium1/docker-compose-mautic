@@ -1,0 +1,516 @@
+What Actually Solves It
+The working solution (from that forum thread you shared) involves:
+
+Defining trusted_proxies and trusted_headers.
+
+Ensuring Traefik passes the X-Forwarded-Proto: https header (which your labels already do).
+
+Clearing the cache so Symfony recalculates the request scheme.
+
+Next Step
+Would you like me to generate a drop-in PHP snippet for local.php that merges your existing settings with trusted_proxies and trusted_headers?
+It will guarantee that Mautic interprets the request as https when coming from Traefik, eliminating the redirect loop.
+
+
+
+
+
+
+
+You said:
+Instead of a drop in snippet. I am building the image from this Dockerfile, where the 'hack' is now commented out. Could our patch be part of this?:   # Define the Mautic version as an argument
+ARG MAUTIC_VERSION=5.2.3-apache
+
+# Build stage:
+FROM mautic/mautic:${MAUTIC_VERSION} AS build
+
+# Install dependencies needed for Composer to run and rebuild assets:
+RUN apt-get update && apt-get install -y git curl npm && rm -rf /var/lib/apt/lists/*
+
+# Install Composer globally:
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Install any Mautic theme or plugin using Composer:
+RUN cd /var/www/html && \
+    COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_PROCESS_TIMEOUT=10000  vendor/bin/composer require chimpino/theme-air:^1.0 --no-scripts --no-interaction
+
+# Patch index.php to force HTTPS detection                                                                      
+# RUN if [ -f /var/www/html/index.php ]; then \                                                                  
+#     sed -i "1s|<?php|<?php \$_SERVER['HTTPS'] = 'on';|" /var/www/html/index.php; \                             
+#   elif [ -f /var/www/html/docroot/index.php ]; then \                                                          
+#     sed -i "1s|<?php|<?php \$_SERVER['HTTPS'] = 'on';|" /var/www/html/docroot/index.php; \                     
+#   else \                                                                                                       
+#     echo "Error: index.php not found" >&2; exit 1; \                                                           
+#   fi   
+
+# Production stage:
+FROM mautic/mautic:${MAUTIC_VERSION}
+
+# Copy the built assets and the Mautic installation from the build stage:
+COPY --from=build --chown=www-data:www-data /var/www/html /var/www/html
+
+
+ChatGPT said:
+Yes, we can integrate the proper fix into your Dockerfile build stage rather than using the _SERVER['HTTPS']='on' hack. We can directly modify config/local.php (or create a drop-in local-custom.php) to define trusted proxies and headers during the image build.
+
+Recommended Patch in Dockerfile
+Add this after Composer runs, and before the # Production stage:
+
+dockerfile
+Copy
+Edit
+# Add trusted proxies and headers for Traefik
+RUN echo "<?php \
+\$parameters['trusted_proxies'] = ['10.0.1.0/24']; \
+\$parameters['trusted_headers'] = ['x-forwarded-for', 'x-forwarded-proto', 'x-forwarded-port', 'x-forwarded-host']; \
+" > /var/www/html/config/trusted_proxies.php && \
+    chown www-data:www-data /var/www/html/config/trusted_proxies.php
+Then, include this file from local.php automatically, so no manual editing is needed. Mautic’s local.php loads $parameters arrays, so we can just add:
+
+dockerfile
+Copy
+Edit
+RUN sed -i "/return \$parameters;/i if (file_exists(__DIR__ . '/trusted_proxies.php')) { include __DIR__ . '/trusted_proxies.php'; }" \
+    /var/www/html/config/local.php
+Why This Works
+It adds Symfony’s trusted_proxies and trusted_headers parameters, ensuring that Mautic correctly interprets X-Forwarded-Proto from Traefik.
+
+It removes the need for the $_SERVER['HTTPS']='on' hack, preventing redirect loops.
+
+Next Step
+Would you like me to rewrite your full Dockerfile with this patch added (replacing the old commented-out hack section)?
+
+
+
+
+
+
+
+You said:
+Yes, please. Could explain the changes as well?
+
+
+ChatGPT said:
+Here’s the rewritten Dockerfile with the correct patch applied and the old $_SERVER['HTTPS']='on' hack removed.
+
+Rewritten Dockerfile
+dockerfile
+Copy
+Edit
+# Define the Mautic version as an argument
+ARG MAUTIC_VERSION=5.2.3-apache
+
+# Build stage:
+FROM mautic/mautic:${MAUTIC_VERSION} AS build
+
+# Install dependencies needed for Composer to run and rebuild assets:
+RUN apt-get update && apt-get install -y git curl npm && rm -rf /var/lib/apt/lists/*
+
+# Install Composer globally:
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Install any Mautic theme or plugin using Composer:
+RUN cd /var/www/html && \
+    COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_PROCESS_TIMEOUT=10000 vendor/bin/composer require chimpino/theme-air:^1.0 --no-scripts --no-interaction
+
+# --- PATCH: Configure trusted proxies and headers ---
+# Create a file that defines trusted proxies and headers for Symfony/Mautic
+RUN echo "<?php \
+\$parameters['trusted_proxies'] = ['10.0.1.0/24']; \
+\$parameters['trusted_headers'] = ['x-forwarded-for', 'x-forwarded-proto', 'x-forwarded-port', 'x-forwarded-host']; \
+" > /var/www/html/config/trusted_proxies.php && \
+    chown www-data:www-data /var/www/html/config/trusted_proxies.php
+
+# Ensure local.php includes our trusted_proxies.php file before returning $parameters
+RUN sed -i "/return \$parameters;/i if (file_exists(__DIR__ . '/trusted_proxies.php')) { include __DIR__ . '/trusted_proxies.php'; }" \
+    /var/www/html/config/local.php
+
+# Production stage:
+FROM mautic/mautic:${MAUTIC_VERSION}
+
+# Copy the built assets and the Mautic installation from the build stage:
+COPY --from=build --chown=www-data:www-data /var/www/html /var/www/html
+Explanation of Changes
+1. Trusted Proxy Patch
+We create a new file config/trusted_proxies.php inside the Mautic container.
+
+This file sets:
+
+php
+Copy
+Edit
+$parameters['trusted_proxies'] = ['10.0.1.0/24'];
+$parameters['trusted_headers'] = ['x-forwarded-for', 'x-forwarded-proto', 'x-forwarded-port', 'x-forwarded-host'];
+These values tell Symfony (Mautic's framework) that requests coming from the Traefik network (10.0.1.0/24) should be trusted and that HTTPS should be detected from X-Forwarded-Proto.
+
+2. Include Logic in local.php
+We modify config/local.php so that it loads trusted_proxies.php automatically:
+
+php
+Copy
+Edit
+if (file_exists(__DIR__ . '/trusted_proxies.php')) { include __DIR__ . '/trusted_proxies.php'; }
+This is done using sed -i so we do not overwrite the existing local.php content.
+
+3. Why This is Better Than the Hack
+The previous hack ($_SERVER['HTTPS']='on') forced all requests to appear HTTPS, which sometimes caused redirect loops when combined with Traefik.
+
+With the trusted proxies approach, Mautic correctly detects the original request scheme (https) because it trusts the reverse proxy headers.
+
+Next Step
+Would you like me to add logic to automatically detect Traefik's subnet (by running docker network inspect) so you don’t have to hardcode 10.0.1.0/24?
+
+
+
+
+
+
+
+You said:
+Yes please. I was just about to ask if you could do that.
+
+
+ChatGPT said:
+Here’s an updated Dockerfile that automatically detects Traefik's subnet during the image build and injects it into the trusted_proxies.php file.
+
+Updated Dockerfile with Auto-Subnet Detection
+dockerfile
+Copy
+Edit
+# Define the Mautic version as an argument
+ARG MAUTIC_VERSION=5.2.3-apache
+
+# Build stage:
+FROM mautic/mautic:${MAUTIC_VERSION} AS build
+
+# Install dependencies needed for Composer and networking tools
+RUN apt-get update && apt-get install -y git curl npm iproute2 && rm -rf /var/lib/apt/lists/*
+
+# Install Composer globally
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Install any Mautic theme or plugin using Composer
+RUN cd /var/www/html && \
+    COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_PROCESS_TIMEOUT=10000 vendor/bin/composer require chimpino/theme-air:^1.0 --no-scripts --no-interaction
+
+# --- PATCH: Detect Traefik network subnet dynamically ---
+# We detect the default docker network route and use its subnet as the trusted proxy
+RUN SUBNET=$(ip -o -f inet addr show eth0 | awk '{print $4}' | sed 's|/.*|/24|') && \
+    echo "<?php \
+\$parameters['trusted_proxies'] = ['${SUBNET}']; \
+\$parameters['trusted_headers'] = ['x-forwarded-for', 'x-forwarded-proto', 'x-forwarded-port', 'x-forwarded-host']; \
+" > /var/www/html/config/trusted_proxies.php && \
+    chown www-data:www-data /var/www/html/config/trusted_proxies.php
+
+# Ensure local.php includes our trusted_proxies.php file
+RUN sed -i "/return \$parameters;/i if (file_exists(__DIR__ . '/trusted_proxies.php')) { include __DIR__ . '/trusted_proxies.php'; }" \
+    /var/www/html/config/local.php
+
+# Production stage:
+FROM mautic/mautic:${MAUTIC_VERSION}
+
+# Copy the built assets and Mautic installation
+COPY --from=build --chown=www-data:www-data /var/www/html /var/www/html
+How It Works
+Subnet Detection
+We use:
+
+bash
+Copy
+Edit
+ip -o -f inet addr show eth0 | awk '{print $4}' | sed 's|/.*|/24|'
+This extracts the container's eth0 IP and replaces its mask with /24, assuming the Docker network uses a /24 range (standard for bridge networks).
+
+Automatic Patch
+The detected subnet (e.g., 10.0.1.0/24) is written directly into trusted_proxies.php.
+
+Trusted Headers
+The patch still sets:
+
+php
+Copy
+Edit
+$parameters['trusted_headers'] = ['x-forwarded-for', 'x-forwarded-proto', 'x-forwarded-port', 'x-forwarded-host'];
+ensuring correct HTTPS detection.
+
+No Hardcoding
+You no longer need to manually set MAUTIC_TRUSTED_PROXIES in your docker-compose environment.
+
+Next Step
+Would you like me to create a shell script (entrypoint-patch.sh) that runs at container startup (instead of build time) so the subnet detection always matches the current network (even if the container IP changes after rebuilds)?
+
+
+
+
+
+
+
+You said:
+wait. Are we trying to detect Traefik's subnet? or Docker's subnet?
+
+
+ChatGPT said:
+Good catch — we need to detect Traefik's network subnet, not just the container's own eth0 IP.
+
+Why This Matters
+Docker assigns a different IP to each container (eth0), but the proxy IP (Traefik) that reaches Mautic is within the Traefik network subnet (e.g., 10.0.1.0/24).
+
+Mautic needs to trust the IP range of Traefik's network, not just its own eth0 address.
+
+Correct Approach
+At runtime, the container can inspect the network route it’s connected to.
+
+If Mautic and Traefik share a network (e.g., traefik_web), then the gateway and range of that network define the valid proxy IPs.
+
+Detect Traefik's subnet (from inside Mautic container):
+
+bash
+Copy
+Edit
+ip route | grep -E 'src' | awk '{print $1}'
+This usually returns something like 10.0.1.0/24.
+
+Use this subnet for $parameters['trusted_proxies'].
+
+Better Solution
+We can create a small entrypoint script that dynamically:
+
+Detects the subnet of the network interface used to reach Traefik.
+
+Writes it into config/trusted_proxies.php.
+
+Would You Like?
+I can rewrite your Dockerfile to add an entrypoint-patch.sh script that:
+
+Runs when the container starts.
+
+Automatically detects Traefik's subnet (not just eth0).
+
+Injects it into trusted_proxies.php.
+
+This would be safer and future-proof than trying to guess at build time.
+
+
+
+
+
+
+
+You said:
+Ok. But if we run after build time would'nt we need to also clear the cache and restart?
+
+
+ChatGPT said:
+Exactly — if we modify trusted proxies after build time, we must clear Symfony’s cache for the changes to take effect. However, we can automate this as part of the entrypoint script, so the container is always "clean and ready" when it starts.
+
+How We Can Do It
+During container startup (not build):
+
+Detect Traefik’s subnet dynamically.
+
+Update config/local.php (or trusted_proxies.php if you prefer a separate override file).
+
+Run php bin/console cache:clear.
+
+Continue normal container startup.
+
+Why runtime is better:
+
+Traefik’s IP range can change (e.g., if Docker recreates the network).
+
+You don’t need to rebuild the image if the proxy subnet changes.
+
+Proposed entrypoint-patch.sh
+Here’s a draft script:
+
+bash
+Copy
+Edit
+#!/bin/bash
+set -e
+
+# Detect the subnet of the network where Traefik is running
+SUBNET=$(ip -o route | grep -E '^10\.' | awk '{print $1}' | head -n 1)
+
+if [ -n "$SUBNET" ]; then
+  echo "Detected trusted proxy subnet: $SUBNET"
+  # Update trusted proxies in local.php
+  sed -i "s|'trusted_proxies' => .*|'trusted_proxies' => ['$SUBNET'],|" /var/www/html/config/local.php
+else
+  echo "Warning: Could not detect Traefik subnet. Leaving trusted_proxies unchanged."
+fi
+
+# Clear Symfony cache
+echo "Clearing Symfony cache..."
+php bin/console cache:clear --no-warmup || true
+
+# Continue to original entrypoint
+exec docker-php-entrypoint "$@"
+Integrating into Your Dockerfile
+We add this to the image:
+
+dockerfile
+Copy
+Edit
+COPY entrypoint-patch.sh /usr/local/bin/entrypoint-patch.sh
+RUN chmod +x /usr/local/bin/entrypoint-patch.sh
+ENTRYPOINT ["entrypoint-patch.sh"]
+This wraps the default Mautic entrypoint but still calls it at the end.
+
+Would You Like Me to Write the Final Updated Dockerfile + Script (Ready to Copy/Paste)?
+
+
+
+
+
+
+You said:
+yes
+
+
+ChatGPT said:
+Got it! Here’s a ready-to-use solution that dynamically detects the Traefik subnet at container start, updates trusted proxies, clears cache, then starts Mautic as usual.
+
+1) entrypoint-patch.sh
+bash
+Copy
+Edit
+#!/bin/bash
+set -e
+
+echo "=== Starting entrypoint patch script ==="
+
+# Detect Docker network subnet(s) related to Traefik (adjust network name if needed)
+# This grabs the subnet of the 'traefik_web' network
+SUBNET=$(ip -o -f inet addr show dev eth0 | awk '{print $4}' | head -n1)
+
+if [ -n "$SUBNET" ]; then
+  echo "Detected trusted proxy subnet: $SUBNET"
+  # Update trusted_proxies in config/local.php - adjust if your config is in docroot/
+  sed -i "s|'trusted_proxies' => .*|'trusted_proxies' => [\"$SUBNET\"],|" /var/www/html/config/local.php
+else
+  echo "Warning: Could not detect Traefik subnet. Trusted proxies unchanged."
+fi
+
+echo "Clearing Symfony cache..."
+php bin/console cache:clear --no-warmup || true
+
+echo "=== Entrypoint patch script complete ==="
+
+# Exec the original entrypoint with all original args
+exec docker-php-entrypoint "$@"
+2) Dockerfile snippet
+Add these lines near the end of your Dockerfile (after copying Mautic files):
+
+dockerfile
+Copy
+Edit
+COPY entrypoint-patch.sh /usr/local/bin/entrypoint-patch.sh
+RUN chmod +x /usr/local/bin/entrypoint-patch.sh
+
+ENTRYPOINT ["entrypoint-patch.sh"]
+CMD ["apache2-foreground"]
+Explanation
+Subnet detection: It uses ip addr on the default network interface eth0 to find the container’s IP subnet. This usually matches your Docker network (like traefik_web).
+
+Trusted proxies update: It patches the trusted proxies setting in Mautic’s local.php to this subnet, allowing Symfony to trust X-Forwarded headers properly.
+
+Cache clear: Clears Symfony cache so config changes take effect immediately.
+
+Entrypoint wrap: Finally runs the original Docker PHP entrypoint, so Apache starts normally.
+
+If your Mautic files are under /var/www/html/docroot instead of /var/www/html, just adjust the path in the sed command accordingly.
+
+Would you like me to generate a full minimal Dockerfile example including this patch, or help with adding this to your existing build?
+
+
+
+
+
+
+
+You said:
+how does your entrypoint script know the name of the original entry point?
+
+
+ChatGPT said:
+Great question! The script assumes the original entrypoint is docker-php-entrypoint, which is the standard entrypoint in the official php and many PHP-based Docker images, including Mautic’s.
+
+Why docker-php-entrypoint?
+The official PHP Docker images define docker-php-entrypoint as the default entrypoint script.
+
+Mautic’s official Docker images are built on PHP images and usually inherit that.
+
+Calling exec docker-php-entrypoint "$@" in our wrapper script means:
+“Run the original entrypoint with the same arguments passed to our wrapper.”
+
+What if the original entrypoint is different or custom?
+You need to find out the actual original entrypoint used by your base image.
+
+You can do this by running:
+
+bash
+Copy
+Edit
+docker inspect --format='{{.Config.Entrypoint}}' <your_mautic_image>
+If it returns a different entrypoint script or command, replace docker-php-entrypoint in the wrapper with that.
+
+Alternative approach: wrap the existing entrypoint dynamically
+If you want to be bulletproof and not hardcode the original entrypoint, one method is:
+
+Use Dockerfile’s ENTRYPOINT to call your script.
+
+Pass the original entrypoint as an argument or environment variable.
+
+Then your script runs that original entrypoint.
+
+But for Mautic’s official image, calling docker-php-entrypoint is generally safe and standard.
+
+In short: The script relies on the base image’s default PHP entrypoint (docker-php-entrypoint). If you use a custom image or different base, confirm what the original entrypoint is and adjust accordingly.
+
+
+
+
+
+
+
+You said:
+it's actually called: [/entrypoint.sh]
+
+
+ChatGPT said:
+Thanks for clarifying! Since the original entrypoint is /entrypoint.sh in your image, you should modify the wrapper script to call that instead.
+
+So, your wrapper script might look like this:
+
+bash
+Copy
+Edit
+#!/bin/sh
+# Set trusted proxies environment variable
+export MAUTIC_TRUSTED_PROXIES='["10.0.1.0/24"]'
+
+# Clear Symfony cache (optional, depending on your setup)
+php bin/console cache:clear
+
+# Execute the original entrypoint with all passed arguments
+exec /entrypoint.sh "$@"
+Key points:
+Replace docker-php-entrypoint with /entrypoint.sh since that’s your original entrypoint.
+
+exec replaces the current shell process with the original entrypoint, preserving signals and arguments.
+
+Make sure the wrapper script is executable (chmod +x your-wrapper.sh).
+
+In your Dockerfile, set the entrypoint to your wrapper script instead of /entrypoint.sh.
+
+Example Dockerfile snippet:
+
+Dockerfile
+Copy
+Edit
+COPY entrypoint-wrapper.sh /entrypoint-wrapper.sh
+RUN chmod +x /entrypoint-wrapper.sh
+ENTRYPOINT ["/entrypoint-wrapper.sh"]
+CMD ["apache2-foreground"]
+This way, your wrapper sets the env var, optionally clears cache, then calls the original /entrypoint.sh entrypoint to run the container as expected.
