@@ -49,13 +49,11 @@ if docker compose exec -T mautic_web test -f /var/www/html/config/local.php && d
     echo "## Mautic is installed already."
     
     # Replace the site_url value with the domain
-    echo "## Updating site_url in Mautic configuration..."                                                           
-docker compose exec -T mautic_web sed -i "s|'site_url' => '.*',|'site_url' => 'https://$DOMAIN',|g"              
-/var/www/html/config/local.php                                                                                   
-                                                                                                                 
-# Add trusted proxies configuration                                                                              
-echo "## Adding trusted proxies configuration"                                                                   
-docker compose exec -T mautic_web bash -c 'cat >> /var/www/html/config/local.php' <<'EOF'                        
+    echo "## Updating site_url in Mautic configuration..."
+    docker compose exec -T mautic_web sed -i "s|'site_url' => '.*',|'site_url' => 'https://$DOMAIN',|g" /var/www/html/config/local.php
+    # Add trusted proxies configuration                                                                              
+    echo "## Adding trusted proxies configuration"                                                                   
+    docker compose exec -T mautic_web bash -c 'cat >> /var/www/html/config/local.php' <<'EOF'                        
 $parameters['trusted_proxies'] = ['10.0.1.0/24'];                                                                
 $parameters['trusted_headers'] = [                                                                               
     'forwarded' => 'FORWARDED',                                                                                  
@@ -65,6 +63,6 @@ $parameters['trusted_headers'] = [
     'x-forwarded-port' => 'X_FORWARDED_PORT'                                                                     
 ];                                                                                                               
 EOF
-fi                                                                                                              
-                                                                                                                 
-echo "## Script execution completed"  
+fi
+
+echo "## Script execution completed"
