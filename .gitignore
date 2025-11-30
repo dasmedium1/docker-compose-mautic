@@ -10,3 +10,4 @@ traefik.yml
 bla
 chat.txt
 setup-backup.sh
+docker-compose-local.yml

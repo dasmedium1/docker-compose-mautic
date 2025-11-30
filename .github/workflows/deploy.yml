@@ -3,7 +3,7 @@ name: Deploy to Linode
 "on":
   push:
     branches:
-      - linode
+      - mautic6
 
 jobs:
   deploy:

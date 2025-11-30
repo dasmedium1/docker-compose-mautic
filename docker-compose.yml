@@ -25,9 +25,7 @@ services:
       - mysql_private
 
   mautic_web:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: mautic/mautic:${MAUTIC_VERSION:-6.0.5-apache}
     links:
       - mautic_db:mysql
     volumes: *mautic-volumes
@@ -62,9 +60,7 @@ services:
       - traefik.http.routers.mautic.middlewares=mautic-headers 
 
   mautic_cron:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: mautic/mautic:${MAUTIC_VERSION:-6.0.5-apache}
     links:
       - mautic_db:mysql
     volumes: *mautic-volumes
@@ -80,9 +76,7 @@ services:
       - traefik_web
 
   mautic_worker:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: mautic/mautic:${MAUTIC_VERSION:-6.0.5-apache}
     links:
       - mautic_db:mysql
     volumes: *mautic-volumes
