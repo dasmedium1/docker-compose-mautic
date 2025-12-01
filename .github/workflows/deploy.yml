@@ -3,7 +3,7 @@ name: Deploy to Linode
 "on":
   push:
     branches:
-      - mautic6
+      - m6-dev
 
 jobs:
   deploy:
@@ -12,6 +12,78 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+            # --------------------------
+      # 🔐 BACKUP STEP (WITH RETENTION + TOGGLE)
+      # --------------------------
+      - name: Create backup on Linode before deployment
+        if: ${{ vars.ENABLE_BACKUP != 'false' }} # B: Backup toggle
+        run: |
+          set -euo pipefail
+
+          # Create backup script locally
+          cat << 'EOF' > backup_mautic.sh
+          #!/usr/bin/env bash
+          set -euo pipefail
+
+          BACKUP_NAME="backup-$(date +%F).tar.gz"
+          SOURCE_DIR="/home/angelantonio/backup/root/mautic"
+          DEST_DIR="/home/angelantonio/backup/root/mautic/backups"
+          RETAIN_COUNT=10  # A: Keep last 10 backups
+
+          echo "📁 Checking source directory: $SOURCE_DIR"
+          if [ ! -d "$SOURCE_DIR" ]; then
+            echo "❌ Error: Source directory does not exist."
+            exit 1
+          fi
+
+          # Verify critical directories contain data
+          DATA_DIRS=(mautic/config mautic/logs mautic/media/files mautic/media/images cron)
+          HAS_DATA=false
+
+          for dir in "${DATA_DIRS[@]}"; do
+            FULL_PATH="$SOURCE_DIR/$dir"
+            if [ -d "$FULL_PATH" ] && [ -n "$(ls -A "$FULL_PATH" 2>/dev/null || true)" ]; then
+              echo "✔ Found data in: $FULL_PATH"
+              HAS_DATA=true
+            fi
+          done
+
+          if [ "$HAS_DATA" = false ]; then
+            echo "❌ No data found in critical directories — aborting backup."
+            exit 1
+          fi
+
+          mkdir -p "$DEST_DIR"
+          cd "$SOURCE_DIR"
+
+          echo "📦 Creating backup: $BACKUP_NAME"
+          tar --gzip -cf "$DEST_DIR/$BACKUP_NAME" mautic cron
+          echo "✅ Backup created: $DEST_DIR/$BACKUP_NAME"
+
+          # A: Retention — keep only the newest $RETAIN_COUNT backups
+          echo "🧹 Applying retention policy (keep last $RETAIN_COUNT backups)..."
+          cd "$DEST_DIR"
+          BACKUP_COUNT=$(ls -1 backup-*.tar.gz 2>/dev/null | wc -l || true)
+
+          if [ "$BACKUP_COUNT" -gt "$RETAIN_COUNT" ]; then
+            REMOVE_COUNT=$((BACKUP_COUNT - RETAIN_COUNT))
+            echo "Removing $REMOVE_COUNT old backup(s)..."
+            ls -1tr backup-*.tar.gz | head -n "$REMOVE_COUNT" | xargs rm -f
+            echo "🗑 Old backups removed."
+          else
+            echo "No backups to remove. ($BACKUP_COUNT ≤ $RETAIN_COUNT)"
+          fi
+
+          echo "🎉 Backup + retention completed successfully."
+          EOF
+
+          chmod +x backup_mautic.sh
+
+          # Upload and execute script
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa backup_mautic.sh root@${{ vars.LINODE_IP }}:/tmp/backup_mautic.sh
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa root@${{ vars.LINODE_IP }} "bash /tmp/backup_mautic.sh"
+
 
       - name: Load .mautic_env variables
         run: |
