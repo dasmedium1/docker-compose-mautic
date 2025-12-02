@@ -5,13 +5,6 @@ on:
     branches:
       - m6-dev
   workflow_dispatch:
-env:
-  BACKUP_SOURCE_DIR: "/home/angelantonio/backup/root/mautic"
-  BACKUP_DEST_DIR: "/home/angelantonio/backup/root/mautic/backups"
-  MYSQL_CONTAINER_NAME: "basic-mautic_db-1"
-  MYSQL_USER: "mautic_db_user"
-  MYSQL_DATABASE: "mautic_db"
-  RETAIN_COUNT: "14"
 jobs:
   deploy:
     runs-on: ubuntu-latest
