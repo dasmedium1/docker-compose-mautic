@@ -1,10 +1,17 @@
-name: Deploy to Linode
+name: Deploy Mautic App (with Pre-Deploy Backup)
 
-"on":
+on:
   push:
     branches:
       - m6-dev
-
+  workflow_dispatch:
+env:
+  BACKUP_SOURCE_DIR: "/home/angelantonio/backup/root/mautic"
+  BACKUP_DEST_DIR: "/home/angelantonio/backup/root/mautic/backups"
+  MYSQL_CONTAINER_NAME: "basic-mautic_db-1"
+  MYSQL_USER: "mautic_db_user"
+  MYSQL_DATABASE: "mautic_db"
+  RETAIN_COUNT: "14"
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -13,33 +20,50 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create backup on Linode before deployment
-        if: ${{ vars.ENABLE_BACKUP != 'false' }}
-        env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }} # ⬅️ REQUIRED
+      - name: Set up SSH key
         run: |
-          set -euo pipefail
-
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/vps_key
           chmod 600 ~/.ssh/vps_key
 
+      # --------------------------
+      # 🔐 BACKUP STEP: files + DB (pre-deploy)
+      # --------------------------
+      - name: Create backup on Linode before deployment
+        if: ${{ vars.ENABLE_BACKUP != 'false' }}
+        env:
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_USER: ${{ env.MYSQL_USER }}
+          MYSQL_DATABASE: ${{ env.MYSQL_DATABASE }}
+          MYSQL_CONTAINER_NAME: ${{ env.MYSQL_CONTAINER_NAME }}
+          BACKUP_SOURCE_DIR: ${{ env.BACKUP_SOURCE_DIR }}
+          BACKUP_DEST_DIR: ${{ env.BACKUP_DEST_DIR }}
+          RETAIN_COUNT: ${{ env.RETAIN_COUNT }}
+        run: |
+          set -euo pipefail
+
+          # Write backup script to run on remote host
           cat << 'EOF' > backup_mautic.sh
           #!/usr/bin/env bash
           set -euo pipefail
 
           BACKUP_NAME="backup-$(date +%F).tar.gz"
           DB_BACKUP_NAME="db-backup-$(date +%F).sql.gz"
-          SOURCE_DIR="/home/angelantonio/backup/root/mautic"
-          DEST_DIR="/home/angelantonio/backup/root/mautic/backups"
-          RETAIN_COUNT=10
+          SOURCE_DIR="${BACKUP_SOURCE_DIR}"
+          DEST_DIR="${BACKUP_DEST_DIR}"
+          RETAIN_COUNT=${RETAIN_COUNT}
+          MYSQL_CONTAINER_NAME="${MYSQL_CONTAINER_NAME}"
+          MYSQL_USER="${MYSQL_USER}"
+          MYSQL_DATABASE="${MYSQL_DATABASE}"
+          MYSQL_PASSWORD="${MYSQL_PASSWORD}"
 
           echo "📁 Checking source directory: $SOURCE_DIR"
           if [ ! -d "$SOURCE_DIR" ]; then
-            echo "❌ Error: Source directory does not exist."
+            echo "❌ Error: Source directory does not exist: $SOURCE_DIR"
             exit 1
           fi
 
+          # Verify critical directories contain data
           DATA_DIRS=(mautic/config mautic/logs mautic/media/files mautic/media/images cron)
           HAS_DATA=false
 
@@ -61,48 +85,57 @@ jobs:
 
           echo "📦 Creating filesystem backup: $BACKUP_NAME"
           tar --gzip -cf "$DEST_DIR/$BACKUP_NAME" mautic cron
-          echo "✅ Filesystem backup created."
+          echo "✅ Filesystem backup created: $DEST_DIR/$BACKUP_NAME"
 
           # --------------------------
-          # 🗄 DATABASE BACKUP
+          # 🗄 Create DB dump INSIDE the MySQL container
           # --------------------------
-          if command -v mysqldump >/dev/null 2>&1; then
-            echo "🛢 Creating database backup: $DB_BACKUP_NAME"
-            mysqldump --single-transaction \
-              -u root -p"${MYSQL_ROOT_PASSWORD}" mautic \
-              | gzip > "$DEST_DIR/$DB_BACKUP_NAME"
-            echo "✅ Database backup completed: $DEST_DIR/$DB_BACKUP_NAME"
-          else
-            echo "❌ mysqldump not found — cannot back up database."
+          echo "🛢 Creating database backup: $DB_BACKUP_NAME (container: $MYSQL_CONTAINER_NAME)"
+          # Confirm container exists and is running
+          if ! docker ps --format '{{.Names}}' | grep -q "^${MYSQL_CONTAINER_NAME}\$"; then
+            echo "❌ MySQL container '${MYSQL_CONTAINER_NAME}' not running."
             exit 1
           fi
 
+          # Run mysqldump inside container and compress on host
+          docker exec "${MYSQL_CONTAINER_NAME}" sh -c "exec mysqldump --single-transaction -u${MYSQL_USER} -p'${MYSQL_PASSWORD}' ${MYSQL_DATABASE}" \
+            | gzip > "$DEST_DIR/$DB_BACKUP_NAME"
+
+          if [ ! -s "$DEST_DIR/$DB_BACKUP_NAME" ]; then
+            echo "❌ Database dump failed or produced empty file."
+            exit 1
+          fi
+          echo "✅ Database backup created: $DEST_DIR/$DB_BACKUP_NAME"
+
           # --------------------------
-          # ♻ RETENTION POLICY
+          # ♻ Retention policy (keep newest RETAIN_COUNT items)
           # --------------------------
           echo "🧹 Applying retention policy (keep last $RETAIN_COUNT backups)..."
           cd "$DEST_DIR"
 
-          # Filesystem backups
           FS_COUNT=$(ls -1 backup-*.tar.gz 2>/dev/null | wc -l || true)
           if [ "$FS_COUNT" -gt "$RETAIN_COUNT" ]; then
             REMOVE_COUNT=$((FS_COUNT - RETAIN_COUNT))
-            ls -1tr backup-*.tar.gz | head -n "$REMOVE_COUNT" | xargs rm -f
+            ls -1tr backup-*.tar.gz | head -n "$REMOVE_COUNT" | xargs -r rm -f
           fi
 
-          # DB backups
           DB_COUNT=$(ls -1 db-backup-*.sql.gz 2>/dev/null | wc -l || true)
           if [ "$DB_COUNT" -gt "$RETAIN_COUNT" ]; then
             REMOVE_COUNT=$((DB_COUNT - RETAIN_COUNT))
-            ls -1tr db-backup-*.sql.gz | head -n "$REMOVE_COUNT" | xargs rm -f
+            ls -1tr db-backup-*.sql.gz | head -n "$REMOVE_COUNT" | xargs -r rm -f
           fi
 
           echo "🎉 Backup + DB dump + retention complete."
           EOF
 
-          chmod +x backup_mautic.sh
+          # Save SSH key to runner and scp/ssh the script to the Linode
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/vps_key
+          chmod 600 ~/.ssh/vps_key
+
           scp -o StrictHostKeyChecking=no -i ~/.ssh/vps_key backup_mautic.sh root@${{ vars.LINODE_IP }}:/tmp/backup_mautic.sh
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key root@${{ vars.LINODE_IP }} "MYSQL_ROOT_PASSWORD='${MYSQL_ROOT_PASSWORD}' bash /tmp/backup_mautic.sh"
+          # Pass the required env vars into the remote shell invocation
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key root@${{ vars.LINODE_IP }} "BACKUP_SOURCE_DIR='${{ env.BACKUP_SOURCE_DIR }}' BACKUP_DEST_DIR='${{ env.BACKUP_DEST_DIR }}' MYSQL_CONTAINER_NAME='${{ env.MYSQL_CONTAINER_NAME }}' MYSQL_USER='${{ env.MYSQL_USER }}' MYSQL_DATABASE='${{ env.MYSQL_DATABASE }}' MYSQL_PASSWORD='${{ secrets.MYSQL_PASSWORD }}' RETAIN_COUNT='${{ env.RETAIN_COUNT }}' bash /tmp/backup_mautic.sh"
 
       - name: Load .mautic_env variables
         run: |
