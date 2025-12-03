@@ -7,7 +7,7 @@ if ! docker network inspect mysql_private >/dev/null 2>&1; then
     docker network create -d overlay --attachable mysql_private
 fi
 
-docker compose build
+# docker compose build
 docker compose up -d mautic_db --wait && docker compose up -d mautic_web --wait
 
 echo "## Wait for basic-mautic_web-1 container to be fully running"

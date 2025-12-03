@@ -114,7 +114,7 @@ echo "🧹 Clearing application caches..."
 
 # Start web container temporarily if not running
 cd "$MAUTIC_ROOT"
-docker compose up -d mautic_db mautic_web --wait
+docker compose up -d mautic_db --wait && docker compose up -d mautic_web --wait
 
 # Clear Symfony cache
 docker compose exec -T --user www-data --workdir /var/www/html mautic_web \

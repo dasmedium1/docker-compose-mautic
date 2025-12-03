@@ -32,8 +32,7 @@ jobs:
 
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key \
             root@${{ vars.LINODE_IP }} "MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}' bash /tmp/backup_mautic.sh"
-
-  
+      
       - name: Load .mautic_env variables
         run: |
           set -a
@@ -81,6 +80,32 @@ jobs:
             sed -i "s/__MYSQL_ROOT_PASSWORD__/${{ secrets.MYSQL_ROOT_PASSWORD }}/g" .env
             sed -i "s/__DOMAIN__/${{ vars.DOMAIN }}/g" .env
             ./setup-dc.sh > /var/log/setup-dc.log 2>&1
+      
+      
+      # --------------------------
+      # 🔁 CONDITIONAL RESTORE STEP
+      # --------------------------
+      - name: Restore Mautic from backup (if enabled)
+        if: ${{ vars.ENABLE_RESTORE == 'true' && github.event.inputs.restore_prefix != '' }}
+        run: |
+          set -euo pipefail
+
+          echo "🔐 Preparing SSH key..."
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/vps_key
+          chmod 600 ~/.ssh/vps_key
+
+          RESTORE_PREFIX="${{ github.event.inputs.restore_prefix }}"
+          echo "♻ Restore requested for prefix: $RESTORE_PREFIX"
+          
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/vps_key scripts/restore_mautic.sh root@${{ vars.LINODE_IP }}:/tmp/restore_mautic.sh
+
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key root@${{ vars.LINODE_IP }} \
+          "MYSQL_PASSWORD='${{ secrets.MYSQL_PASSWORD }}' \
+          MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}' \
+          bash /tmp/restore_mautic.sh '$RESTORE_PREFIX'"
+
+          echo "🟢 Restore completed successfully."  
 
       - name: Download setup-dc.log
         run: |
