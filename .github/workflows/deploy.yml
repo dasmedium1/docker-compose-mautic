@@ -57,9 +57,9 @@ jobs:
               exit 1
             end
             entry = brands[brand_id]
-            puts \"domain=\#{entry['domain']}\"
-            puts \"email=\#{entry['admin_email']}\"
-            puts \"password_secret=\#{entry['admin_password_secret_name']}\"
+            puts \"domain=#{entry['domain']}\"
+            puts \"email=#{entry['admin_email']}\"
+            puts \"password_secret=#{entry['admin_password_secret_name']}\"
           " >> $GITHUB_OUTPUT
       
       - name: Backup Mautic before deployment
@@ -74,7 +74,7 @@ jobs:
           scp -o StrictHostKeyChecking=no -i ~/.ssh/vps_key scripts/backup_mautic.sh root@${{ vars.LINODE_IP }}:/tmp/backup_mautic.sh
 
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key \
-            root@${{ vars.LINODE_IP }} "MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}' bash /tmp/backup_mautic.sh"
+            root@${{ vars.LINODE_IP }} "MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}' bash /tmp/backup_mautic.sh '${{ steps.brand.outputs.brand }}'"
       
       - name: Load .mautic_env variables
         run: |
@@ -83,6 +83,7 @@ jobs:
           set +a
 
       - name: Check required secrets
+        if: steps.brand.outputs.brand == 'default'
         env:
           MAUTIC_PASSWORD: ${{ secrets.MAUTIC_PASSWORD }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -119,7 +120,7 @@ jobs:
             cd /home/angelantonio/backup/root/mautic
             sed -i "s/{{DOMAIN_NAME}}/${{ steps.brand.outputs.domain }}/g" setup-dc.sh
             sed -i "s/{{EMAIL_ADDRESS}}/${{ steps.brand.outputs.email }}/g" setup-dc.sh
-            sed -i "s/{{MAUTIC_PASSWORD}}/${{ secrets[steps.brand.outputs.password_secret] }}/g" setup-dc.sh
+            sed -i "s/{{MAUTIC_PASSWORD}}/${{ steps.brand.outputs.password }}/g" setup-dc.sh
             sed -i "s/__MYSQL_PASSWORD__/${{ secrets.MYSQL_PASSWORD }}/g" .env
             sed -i "s/__MYSQL_ROOT_PASSWORD__/${{ secrets.MYSQL_ROOT_PASSWORD }}/g" .env
             sed -i "s/__DOMAIN__/${{ vars.DOMAIN }}/g" .env
@@ -147,7 +148,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key root@${{ vars.LINODE_IP }} \
           "MYSQL_PASSWORD='${{ secrets.MYSQL_PASSWORD }}' \
           MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}' \
-          bash /tmp/restore_mautic.sh '$RESTORE_PREFIX'"
+          bash /tmp/restore_mautic.sh '${{ steps.brand.outputs.brand }}' '$RESTORE_PREFIX'"
 
           echo "🟢 Restore completed successfully."  
 
