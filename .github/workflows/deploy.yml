@@ -74,6 +74,14 @@ jobs:
               ;;
           esac
       
+      - name: Set brand environment variables
+        run: |
+          echo "DOMAIN=${{ steps.brand.outputs.domain }}" >> $GITHUB_ENV
+          echo "EMAIL=${{ steps.brand.outputs.email }}" >> $GITHUB_ENV
+          echo "DB_NAME=${{ steps.brand.outputs.db_name }}" >> $GITHUB_ENV
+          echo "BRAND_ID=${{ steps.brand.outputs.brand }}" >> $GITHUB_ENV
+
+
       - name: Backup Mautic before deployment
         if: ${{ vars.ENABLE_BACKUP != 'false' }}
         run: |
@@ -130,13 +138,13 @@ jobs:
           TARGET: /home/angelantonio/backup/root/mautic
           SCRIPT_AFTER: |
             cd /home/angelantonio/backup/root/mautic
-            sed -i "s|{{DOMAIN_NAME}}|${{ steps.brand.outputs.domain }}|g" setup-dc.sh
-            sed -i "s|{{EMAIL_ADDRESS}}|${{ steps.brand.outputs.email }}|g" setup-dc.sh
+            sed -i "s|{{DOMAIN_NAME}}|${{ env.DOMAIN }}|g" setup-dc.sh
+            sed -i "s|{{EMAIL_ADDRESS}}|${{ env.EMAIL }}|g" setup-dc.sh
             sed -i "s|{{MAUTIC_PASSWORD}}|${{ steps.brand.outputs.password }}|g" setup-dc.sh
             sed -i "s|__MYSQL_PASSWORD__|${{ secrets.MYSQL_PASSWORD }}|g" .env
             sed -i "s|__MYSQL_ROOT_PASSWORD__|${{ secrets.MYSQL_ROOT_PASSWORD }}|g" .env
-            sed -i "s|__DOMAIN__|${{ steps.brand.outputs.domain }}|g" .env
-            sed -i "s|__MYSQL_DATABASE__|${{ steps.brand.outputs.db_name }}|g" .env
+            sed -i "s|__DOMAIN__|${{ env.DOMAIN }}|g" .env
+            sed -i "s|__MYSQL_DATABASE__|${{ env.DB_NAME }}|g" .env
             ./setup-dc.sh > /var/log/setup-dc.log 2>&1
       
       
