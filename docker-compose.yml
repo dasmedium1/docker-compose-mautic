@@ -53,9 +53,9 @@ services:
       - traefik.enable=true
       - traefik.http.routers.mautic-${BRAND_ID:-default}.rule=Host(`${DOMAIN}`)
       - traefik.http.services.mautic.loadbalancer.server.port=80
-      - traefik.http.routers.mautic.entrypoints=websecure                                                            
-      - traefik.http.routers.mautic.tls=true                                                                         
-      - traefik.http.routers.mautic.tls.certresolver=letsencrypt
+      - traefik.http.routers.mautic-${BRAND_ID:-default}.entrypoints=websecure                                                            
+      - traefik.http.routers.mautic-${BRAND_ID:-default}.tls=true                                                                         
+      - traefik.http.routers.mautic-${BRAND_ID:-default}.tls.certresolver=letsencrypt
       - traefik.http.middlewares.mautic-headers-${BRAND_ID:-default}.headers.customRequestHeaders.X-Forwarded-Proto=https
       - traefik.http.middlewares.mautic-headers-${BRAND_ID:-default}.headers.customRequestheaders.X-Forwarded-Host=${DOMAIN}
       - traefik.http.routers.mautic-${BRAND_ID:-default}.middlewares=mautic-headers-${BRAND_ID:-default}
