@@ -107,17 +107,17 @@ jobs:
           set +a
 
       - name: Check required secrets
-        if: steps.brand.outputs.brand == 'default'
         env:
+          BRAND: ${{ steps.brand.outputs.brand }}
           MAUTIC_PASSWORD: ${{ secrets.MAUTIC_PASSWORD }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
-          if [ -z "$MAUTIC_PASSWORD" ]; then
-            echo "Error: Missing MAUTIC_PASSWORD secret"
-            exit 1
-          fi
           if [ -z "$SSH_PRIVATE_KEY" ]; then
             echo "Error: Missing SSH_PRIVATE_KEY secret"
+            exit 1
+          fi
+          if [ "$BRAND" = "default" ] && [ -z "$MAUTIC_PASSWORD" ]; then
+            echo "Error: Missing MAUTIC_PASSWORD secret for default brand"
             exit 1
           fi
 

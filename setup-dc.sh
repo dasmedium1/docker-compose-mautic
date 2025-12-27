@@ -18,7 +18,16 @@ else
     export BRAND_DB_NAME="${MYSQL_DATABASE:-mautic_db}"
 fi
 
+export MYSQL_DATABASE="${BRAND_DB_NAME}"
+
 cd /home/angelantonio/backup/root/mautic
+
+# Load environment variables from .env file
+if [ -f .env ]; then
+    set -a
+    source .env
+    set +a
+fi
 
 # Check/create required networks
 if ! docker network inspect mysql_private >/dev/null 2>&1; then
