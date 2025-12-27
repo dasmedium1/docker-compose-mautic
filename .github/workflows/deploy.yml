@@ -10,13 +10,14 @@ on:
         description: 'Brand identifier (optional, defaults to "default")'
         required: false
         default: 'default'
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    env:
-      DOMAIN: ${{ vars.DOMAIN }}
-      EMAIL: ${{ vars.EMAIL }}
+    # 🔑 Brand → Environment mapping
+    environment:
+      name: mautic-${{ github.event.inputs.brand || 'default' }}
 
     steps:
       - name: Checkout code
@@ -28,64 +29,42 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/vps_key
           chmod 600 ~/.ssh/vps_key
 
+      # ---------------------------------
+      # Brand resolution (env-driven)
+      # ---------------------------------
       - name: Determine brand variables
         id: brand
         env:
           BRAND_INPUT: ${{ github.event.inputs.brand }}
         run: |
           BRAND="${BRAND_INPUT:-default}"
+
           echo "brand=$BRAND" >> "$GITHUB_OUTPUT"
+          echo "domain=$DOMAIN" >> "$GITHUB_OUTPUT"
+          echo "email=$EMAIL" >> "$GITHUB_OUTPUT"
+          echo "db_name=$DB_NAME" >> "$GITHUB_OUTPUT"
 
-          if [ "$BRAND" = "default" ]; then
-            echo "domain=$DOMAIN" >> "$GITHUB_OUTPUT"
-            echo "email=$EMAIL" >> "$GITHUB_OUTPUT"
-            echo "password=${{ secrets.MAUTIC_PASSWORD }}" >> "$GITHUB_OUTPUT"
-            echo "db_name=mautic_db" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          if [ ! -f brands.yml ]; then
-            echo "❌ brands.yml not found"
-            exit 1
-          fi
-
-          # Extract domain, email and db_name from brands.yml using awk
-          domain=$(awk -v brand="$BRAND" '/^  [^[:space:]]+:/ {in_brand = ($1 == brand ":")} in_brand && /^    domain:/ {sub(/^[[:space:]]*domain:[[:space:]]*/, ""); gsub(/[[:space:]]+$/, ""); print; exit}' brands.yml)
-          email=$(awk -v brand="$BRAND" '/^  [^[:space:]]+:/ {in_brand = ($1 == brand ":")} in_brand && /^    admin_email:/ {sub(/^[[:space:]]*admin_email:[[:space:]]*/, ""); gsub(/[[:space:]]+$/, ""); print; exit}' brands.yml)
-          db_name=$(awk -v brand="$BRAND" '/^  [^[:space:]]+:/ {in_brand = ($1 == brand ":")} in_brand && /^    db_name:/ {sub(/^[[:space:]]*db_name:[[:space:]]*/, ""); gsub(/[[:space:]]+$/, ""); print; exit}' brands.yml)
-
-          if [ -z "$domain" ] || [ -z "$email" ] || [ -z "$db_name" ]; then
-            echo "❌ Could not find domain, email or db_name for brand '$BRAND' in brands.yml"
-            exit 1
-          fi
-
-          echo "domain=$domain" >> "$GITHUB_OUTPUT"
-          echo "email=$email" >> "$GITHUB_OUTPUT"
-          echo "db_name=$db_name" >> "$GITHUB_OUTPUT"
-
-          # Determine password based on brand
-          case "$BRAND" in
-            angelantonio)
-              PASS="${{ secrets.MAUTIC_PASSWORD_ANGELANTONIO }}"
-              # Escape characters that are special in sed replacement: & and \
-              PASS_ESCAPED="${PASS//&/\\&}"
-              PASS_ESCAPED="${PASS_ESCAPED//\\/\\\\}"
-              echo "password=$PASS_ESCAPED" >> "$GITHUB_OUTPUT"
-              ;;
-            *)
-              echo "❌ No password secret defined for brand '$BRAND'"
-              exit 1
-              ;;
-          esac
-      
-      - name: Set brand environment variables
+      # ---------------------------------
+      # Validate secrets (environment owns them)
+      # ---------------------------------
+      - name: Check required secrets
+        env:
+          MAUTIC_PASSWORD: ${{ secrets.MAUTIC_PASSWORD }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
-          echo "DOMAIN=${{ steps.brand.outputs.domain }}" >> $GITHUB_ENV
-          echo "EMAIL=${{ steps.brand.outputs.email }}" >> $GITHUB_ENV
-          echo "DB_NAME=${{ steps.brand.outputs.db_name }}" >> $GITHUB_ENV
-          echo "BRAND_ID=${{ steps.brand.outputs.brand }}" >> $GITHUB_ENV
+          if [ -z "$SSH_PRIVATE_KEY" ]; then
+            echo "Error: Missing SSH_PRIVATE_KEY"
+            exit 1
+          fi
 
+          if [ -z "$MAUTIC_PASSWORD" ]; then
+            echo "Error: Missing MAUTIC_PASSWORD in environment"
+            exit 1
+          fi
 
+      # ---------------------------------
+      # Backup (unchanged contract)
+      # ---------------------------------
       - name: Backup Mautic before deployment
         if: ${{ vars.ENABLE_BACKUP != 'false' }}
         run: |
@@ -95,43 +74,33 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/vps_key
           chmod 600 ~/.ssh/vps_key
 
-          scp -o StrictHostKeyChecking=no -i ~/.ssh/vps_key scripts/backup_mautic.sh root@${{ vars.LINODE_IP }}:/tmp/backup_mautic.sh
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/vps_key \
+            scripts/backup_mautic.sh \
+            root@${{ vars.LINODE_IP }}:/tmp/backup_mautic.sh
 
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key \
-            root@${{ vars.LINODE_IP }} "MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}' bash /tmp/backup_mautic.sh '${{ steps.brand.outputs.brand }}'"
-      
-      - name: Load .mautic_env variables
-        run: |
-          set -a
-          source .mautic_env
-          set +a
+            root@${{ vars.LINODE_IP }} \
+            "MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}' \
+             bash /tmp/backup_mautic.sh '${{ steps.brand.outputs.brand }}'"
 
-      - name: Check required secrets
-        env:
-          BRAND: ${{ steps.brand.outputs.brand }}
-          MAUTIC_PASSWORD: ${{ secrets.MAUTIC_PASSWORD }}
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        run: |
-          if [ -z "$SSH_PRIVATE_KEY" ]; then
-            echo "Error: Missing SSH_PRIVATE_KEY secret"
-            exit 1
-          fi
-          if [ "$BRAND" = "default" ] && [ -z "$MAUTIC_PASSWORD" ]; then
-            echo "Error: Missing MAUTIC_PASSWORD secret for default brand"
-            exit 1
-          fi
-
+      # ---------------------------------
+      # DNS verification
+      # ---------------------------------
       - name: Verify domain DNS
-        if: ${{ steps.brand.outputs.domain }}
         run: |
           DOMAIN="${{ steps.brand.outputs.domain }}"
           DOMAIN_IP=$(dig +short "$DOMAIN")
+
           if [ "$DOMAIN_IP" != "${{ vars.LINODE_IP }}" ]; then
             echo "Error: Domain $DOMAIN does not point to Linode IP ${{ vars.LINODE_IP }}"
             exit 1
           fi
+
           echo "Domain $DOMAIN correctly points to Linode IP"
 
+      # ---------------------------------
+      # Deploy
+      # ---------------------------------
       - name: Deploy to Server
         uses: easingthemes/ssh-deploy@main
         with:
@@ -142,45 +111,49 @@ jobs:
           TARGET: /home/angelantonio/backup/root/mautic
           SCRIPT_AFTER: |
             cd /home/angelantonio/backup/root/mautic
-            sed -i "s|{{DOMAIN_NAME}}|${{ env.DOMAIN }}|g" setup-dc.sh
-            sed -i "s|{{EMAIL_ADDRESS}}|${{ env.EMAIL }}|g" setup-dc.sh
-            sed -i "s|{{MAUTIC_PASSWORD}}|${{ steps.brand.outputs.password }}|g" setup-dc.sh
+
+            sed -i "s|{{DOMAIN_NAME}}|${{ steps.brand.outputs.domain }}|g" setup-dc.sh
+            sed -i "s|{{EMAIL_ADDRESS}}|${{ steps.brand.outputs.email }}|g" setup-dc.sh
+            sed -i "s|{{MAUTIC_PASSWORD}}|${{ secrets.MAUTIC_PASSWORD }}|g" setup-dc.sh
+
             sed -i "s|__MYSQL_PASSWORD__|${{ secrets.MYSQL_PASSWORD }}|g" .env
             sed -i "s|__MYSQL_ROOT_PASSWORD__|${{ secrets.MYSQL_ROOT_PASSWORD }}|g" .env
-            sed -i "s|__DOMAIN__|${{ env.DOMAIN }}|g" .env
-            sed -i "s|__MYSQL_DATABASE__|${{ env.DB_NAME }}|g" .env
+            sed -i "s|__DOMAIN__|${{ steps.brand.outputs.domain }}|g" .env
+            sed -i "s|__MYSQL_DATABASE__|${{ steps.brand.outputs.db_name }}|g" .env
+
             ./setup-dc.sh ${{ steps.brand.outputs.brand }} > /var/log/setup-dc.log 2>&1
-      
-      
-      # --------------------------
-      # 🔁 CONDITIONAL RESTORE STEP
-      # --------------------------
+
+      # ---------------------------------
+      # Restore (unchanged)
+      # ---------------------------------
       - name: Restore Mautic from backup (if enabled)
         if: ${{ vars.ENABLE_RESTORE == 'true' && github.event.inputs.restore_prefix != '' }}
         run: |
           set -euo pipefail
 
-          echo "🔐 Preparing SSH key..."
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/vps_key
           chmod 600 ~/.ssh/vps_key
 
           RESTORE_PREFIX="${{ github.event.inputs.restore_prefix }}"
-          echo "♻ Restore requested for prefix: $RESTORE_PREFIX"
-          
-          scp -o StrictHostKeyChecking=no -i ~/.ssh/vps_key scripts/restore_mautic.sh root@${{ vars.LINODE_IP }}:/tmp/restore_mautic.sh
 
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key root@${{ vars.LINODE_IP }} \
-          "MYSQL_PASSWORD='${{ secrets.MYSQL_PASSWORD }}' \
-          MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}' \
-          bash /tmp/restore_mautic.sh '${{ steps.brand.outputs.brand }}' '$RESTORE_PREFIX'"
+          scp -o StrictHostKeyChecking=no -i ~/.ssh/vps_key \
+            scripts/restore_mautic.sh \
+            root@${{ vars.LINODE_IP }}:/tmp/restore_mautic.sh
 
-          echo "🟢 Restore completed successfully."  
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key \
+            root@${{ vars.LINODE_IP }} \
+            "MYSQL_PASSWORD='${{ secrets.MYSQL_PASSWORD }}' \
+             MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}' \
+             bash /tmp/restore_mautic.sh '${{ steps.brand.outputs.brand }}' '$RESTORE_PREFIX'"
 
       - name: Download setup-dc.log
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          scp -o StrictHostKeyChecking=no root@${{ vars.LINODE_IP }}:/var/log/setup-dc.log ./
+
+          scp -o StrictHostKeyChecking=no \
+            root@${{ vars.LINODE_IP }}:/var/log/setup-dc.log ./
+
           cat setup-dc.log
