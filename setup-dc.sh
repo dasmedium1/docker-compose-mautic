@@ -37,6 +37,8 @@ while ! docker exec "$WEB_CONTAINER" sh -c 'echo "Container is running"' 2>/dev/
         # Check container status
         CONTAINER_STATUS=$(docker inspect --format='{{.State.Status}}' "$WEB_CONTAINER" 2>/dev/null || echo "unknown")
         echo "### Container status: $CONTAINER_STATUS"
+        echo "### Last logs from container:"
+        docker logs "$WEB_CONTAINER" 2>&1 | tail -30
         exit 1
     fi
     echo "### Waiting for $WEB_CONTAINER to be fully running... ($ATTEMPT/$MAX_ATTEMPTS)"
