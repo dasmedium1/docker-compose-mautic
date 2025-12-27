@@ -48,20 +48,17 @@ jobs:
             exit 1
           fi
 
-          # Use Python to read YAML safely
-          python3 <<"EOF" >> $GITHUB_OUTPUT
-import yaml, sys, os
-brand = os.environ.get('BRAND')
-with open('brands.yml', 'r') as f:
-    data = yaml.safe_load(f)
-brands = data.get('brands', {})
-if brand not in brands:
-    sys.stderr.write(f"❌ brand '{brand}' not defined in brands.yml\n")
-    sys.exit(1)
-entry = brands[brand]
-print(f"domain={entry.get('domain')}")
-print(f"email={entry.get('admin_email')}")
-EOF
+          # Extract domain and email from brands.yml using awk
+          domain=$(awk -v brand="$BRAND" '/^  [^[:space:]]+:/ {in_brand = ($1 == brand ":")} in_brand && /^    domain:/ {sub(/^[[:space:]]*domain:[[:space:]]*/, ""); print; exit}' brands.yml)
+          email=$(awk -v brand="$BRAND" '/^  [^[:space:]]+:/ {in_brand = ($1 == brand ":")} in_brand && /^    admin_email:/ {sub(/^[[:space:]]*admin_email:[[:space:]]*/, ""); print; exit}' brands.yml)
+
+          if [ -z "$domain" ] || [ -z "$email" ]; then
+            echo "❌ Could not find domain or email for brand '$BRAND' in brands.yml"
+            exit 1
+          fi
+
+          echo "domain=$domain" >> "$GITHUB_OUTPUT"
+          echo "email=$email" >> "$GITHUB_OUTPUT"
 
           # Determine password based on brand
           case "$BRAND" in
