@@ -49,8 +49,8 @@ jobs:
           fi
 
           # Extract domain and email from brands.yml using awk
-          domain=$(awk -v brand="$BRAND" '/^  [^[:space:]]+:/ {in_brand = ($1 == brand ":")} in_brand && /^    domain:/ {sub(/^[[:space:]]*domain:[[:space:]]*/, ""); print; exit}' brands.yml)
-          email=$(awk -v brand="$BRAND" '/^  [^[:space:]]+:/ {in_brand = ($1 == brand ":")} in_brand && /^    admin_email:/ {sub(/^[[:space:]]*admin_email:[[:space:]]*/, ""); print; exit}' brands.yml)
+          domain=$(awk -v brand="$BRAND" '/^  [^[:space:]]+:/ {in_brand = ($1 == brand ":")} in_brand && /^    domain:/ {sub(/^[[:space:]]*domain:[[:space:]]*/, ""); gsub(/[[:space:]]+$/, ""); print; exit}' brands.yml)
+          email=$(awk -v brand="$BRAND" '/^  [^[:space:]]+:/ {in_brand = ($1 == brand ":")} in_brand && /^    admin_email:/ {sub(/^[[:space:]]*admin_email:[[:space:]]*/, ""); gsub(/[[:space:]]+$/, ""); print; exit}' brands.yml)
 
           if [ -z "$domain" ] || [ -z "$email" ]; then
             echo "❌ Could not find domain or email for brand '$BRAND' in brands.yml"
