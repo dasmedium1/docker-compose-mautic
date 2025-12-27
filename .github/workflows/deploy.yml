@@ -17,7 +17,7 @@ jobs:
 
     # 🔑 Brand → Environment mapping
     environment:
-      name: mautic-${{ github.event.inputs.brand || 'default' }}
+      name: ${{ github.event.inputs.brand || 'default' }}
 
     steps:
       - name: Checkout code
