@@ -21,6 +21,7 @@ brands:
   #   admin_email: admin@acme.com
   #   admin_password_secret_name: MAUTIC_PASSWORD_ACME
   angelantonio:
+    brand_id: angelantonio
     domain: mautic.angelantonio.com
     db_name: mautic_angelantonio
     admin_email: admin@angelantonio.com             
