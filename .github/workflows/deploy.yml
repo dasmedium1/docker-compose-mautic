@@ -127,12 +127,12 @@ jobs:
           TARGET: /home/angelantonio/backup/root/mautic
           SCRIPT_AFTER: |
             cd /home/angelantonio/backup/root/mautic
-            sed -i "s/{{DOMAIN_NAME}}/${{ steps.brand.outputs.domain }}/g" setup-dc.sh
-            sed -i "s/{{EMAIL_ADDRESS}}/${{ steps.brand.outputs.email }}/g" setup-dc.sh
-            sed -i "s/{{MAUTIC_PASSWORD}}/${{ steps.brand.outputs.password }}/g" setup-dc.sh
-            sed -i "s/__MYSQL_PASSWORD__/${{ secrets.MYSQL_PASSWORD }}/g" .env
-            sed -i "s/__MYSQL_ROOT_PASSWORD__/${{ secrets.MYSQL_ROOT_PASSWORD }}/g" .env
-            sed -i "s/__DOMAIN__/${{ vars.DOMAIN }}/g" .env
+            sed -i "s|{{DOMAIN_NAME}}|${{ steps.brand.outputs.domain }}|g" setup-dc.sh
+            sed -i "s|{{EMAIL_ADDRESS}}|${{ steps.brand.outputs.email }}|g" setup-dc.sh
+            sed -i "s|{{MAUTIC_PASSWORD}}|${{ steps.brand.outputs.password }}|g" setup-dc.sh
+            sed -i "s|__MYSQL_PASSWORD__|${{ secrets.MYSQL_PASSWORD }}|g" .env
+            sed -i "s|__MYSQL_ROOT_PASSWORD__|${{ secrets.MYSQL_ROOT_PASSWORD }}|g" .env
+            sed -i "s|__DOMAIN__|${{ vars.DOMAIN }}|g" .env
             ./setup-dc.sh > /var/log/setup-dc.log 2>&1
       
       
