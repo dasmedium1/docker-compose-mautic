@@ -32,7 +32,7 @@ services:
     environment:
       - DOCKER_MAUTIC_LOAD_TEST_DATA=${DOCKER_MAUTIC_LOAD_TEST_DATA}
       - DOCKER_MAUTIC_RUN_MIGRATIONS=${DOCKER_MAUTIC_RUN_MIGRATIONS}
-      - MAUTIC_DB_DATABASE=${BRAND_DB_NAME:-${MYSQL_DATABASE}}
+      - MAUTIC_DB_DATABASE=${MYSQL_DATABASE}
       # - MAUTIC_TRUSTED_PROXIES=["10.0.1.140/24"]
       # - MAUTIC_TRUSTED_HEADERS=x-forwarded-for,x-forwarded-host,x-forwarded-proto
     env_file:
