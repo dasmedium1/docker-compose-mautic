@@ -14,6 +14,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      DOMAIN: ${{ vars.DOMAIN }}
+      EMAIL: ${{ vars.EMAIL }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,24 +30,37 @@ jobs:
 
       - name: Determine brand variables
         id: brand
+        env:
+          BRAND_INPUT: ${{ github.event.inputs.brand }}
         run: |
-          BRAND="${{ github.event.inputs.brand }}"
-          if [ -z "$BRAND" ]; then
-            BRAND="default"
-          fi
+          BRAND="${BRAND_INPUT:-default}"
           echo "brand=$BRAND" >> "$GITHUB_OUTPUT"
-          # Derive secret and variable names
+
           if [ "$BRAND" = "default" ]; then
-            echo "domain=${{ vars.DOMAIN }}" >> "$GITHUB_OUTPUT"
-            echo "email=${{ vars.EMAIL }}" >> "$GITHUB_OUTPUT"
+            echo "domain=$DOMAIN" >> "$GITHUB_OUTPUT"
+            echo "email=$EMAIL" >> "$GITHUB_OUTPUT"
             echo "password_secret=MAUTIC_PASSWORD" >> "$GITHUB_OUTPUT"
-          else
-            # For non‑default brands, rely on convention:
-            # DOMAIN_<BRAND>, EMAIL_<BRAND>, MAUTIC_PASSWORD_<BRAND>
-            echo "domain=${{ vars[format('DOMAIN_{0}', BRAND)] }}" >> "$GITHUB_OUTPUT"
-            echo "email=${{ vars[format('EMAIL_{0}', BRAND)] }}" >> "$GITHUB_OUTPUT"
-            echo "password_secret=MAUTIC_PASSWORD_$BRAND" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
+
+          if [ ! -f brands.yml ]; then
+            echo "❌ brands.yml not found"
+            exit 1
+          fi
+
+          ruby -r yaml -e "
+            data = YAML.load_file('brands.yml')
+            brands = data['brands'] || {}
+            brand_id = '$BRAND'
+            unless brands.key?(brand_id)
+              STDERR.puts \"❌ brand '\#{brand_id}' not defined in brands.yml\"
+              exit 1
+            end
+            entry = brands[brand_id]
+            puts \"domain=\#{entry['domain']}\"
+            puts \"email=\#{entry['admin_email']}\"
+            puts \"password_secret=\#{entry['admin_password_secret_name']}\"
+          " >> $GITHUB_OUTPUT
       
       - name: Backup Mautic before deployment
         if: ${{ vars.ENABLE_BACKUP != 'false' }}
