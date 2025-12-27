@@ -2,6 +2,10 @@
 
 # Multi‑brand support: accept brand identifier as first argument
 BRAND_ID="${1:-}"
+# Treat "default" as empty to preserve backwards compatibility
+if [ "$BRAND_ID" = "default" ]; then
+    BRAND_ID=""
+fi
 if [ -n "$BRAND_ID" ]; then
     export BRAND_ID
     export COMPOSE_PROJECT_NAME="basic-${BRAND_ID}"

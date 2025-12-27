@@ -66,7 +66,11 @@ jobs:
           # Determine password based on brand
           case "$BRAND" in
             angelantonio)
-              echo "password=${{ secrets.MAUTIC_PASSWORD_ANGELANTONIO }}" >> "$GITHUB_OUTPUT"
+              PASS="${{ secrets.MAUTIC_PASSWORD_ANGELANTONIO }}"
+              # Escape characters that are special in sed replacement: & and \
+              PASS_ESCAPED="${PASS//&/\\&}"
+              PASS_ESCAPED="${PASS_ESCAPED//\\/\\\\}"
+              echo "password=$PASS_ESCAPED" >> "$GITHUB_OUTPUT"
               ;;
             *)
               echo "❌ No password secret defined for brand '$BRAND'"
@@ -145,7 +149,7 @@ jobs:
             sed -i "s|__MYSQL_ROOT_PASSWORD__|${{ secrets.MYSQL_ROOT_PASSWORD }}|g" .env
             sed -i "s|__DOMAIN__|${{ env.DOMAIN }}|g" .env
             sed -i "s|__MYSQL_DATABASE__|${{ env.DB_NAME }}|g" .env
-            ./setup-dc.sh > /var/log/setup-dc.log 2>&1
+            ./setup-dc.sh ${{ steps.brand.outputs.brand }} > /var/log/setup-dc.log 2>&1
       
       
       # --------------------------
