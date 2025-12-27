@@ -40,6 +40,7 @@ jobs:
             echo "domain=$DOMAIN" >> "$GITHUB_OUTPUT"
             echo "email=$EMAIL" >> "$GITHUB_OUTPUT"
             echo "password=${{ secrets.MAUTIC_PASSWORD }}" >> "$GITHUB_OUTPUT"
+            echo "db_name=mautic_db" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -48,17 +49,19 @@ jobs:
             exit 1
           fi
 
-          # Extract domain and email from brands.yml using awk
+          # Extract domain, email and db_name from brands.yml using awk
           domain=$(awk -v brand="$BRAND" '/^  [^[:space:]]+:/ {in_brand = ($1 == brand ":")} in_brand && /^    domain:/ {sub(/^[[:space:]]*domain:[[:space:]]*/, ""); gsub(/[[:space:]]+$/, ""); print; exit}' brands.yml)
           email=$(awk -v brand="$BRAND" '/^  [^[:space:]]+:/ {in_brand = ($1 == brand ":")} in_brand && /^    admin_email:/ {sub(/^[[:space:]]*admin_email:[[:space:]]*/, ""); gsub(/[[:space:]]+$/, ""); print; exit}' brands.yml)
+          db_name=$(awk -v brand="$BRAND" '/^  [^[:space:]]+:/ {in_brand = ($1 == brand ":")} in_brand && /^    db_name:/ {sub(/^[[:space:]]*db_name:[[:space:]]*/, ""); gsub(/[[:space:]]+$/, ""); print; exit}' brands.yml)
 
-          if [ -z "$domain" ] || [ -z "$email" ]; then
-            echo "❌ Could not find domain or email for brand '$BRAND' in brands.yml"
+          if [ -z "$domain" ] || [ -z "$email" ] || [ -z "$db_name" ]; then
+            echo "❌ Could not find domain, email or db_name for brand '$BRAND' in brands.yml"
             exit 1
           fi
 
           echo "domain=$domain" >> "$GITHUB_OUTPUT"
           echo "email=$email" >> "$GITHUB_OUTPUT"
+          echo "db_name=$db_name" >> "$GITHUB_OUTPUT"
 
           # Determine password based on brand
           case "$BRAND" in
@@ -132,7 +135,8 @@ jobs:
             sed -i "s|{{MAUTIC_PASSWORD}}|${{ steps.brand.outputs.password }}|g" setup-dc.sh
             sed -i "s|__MYSQL_PASSWORD__|${{ secrets.MYSQL_PASSWORD }}|g" .env
             sed -i "s|__MYSQL_ROOT_PASSWORD__|${{ secrets.MYSQL_ROOT_PASSWORD }}|g" .env
-            sed -i "s|__DOMAIN__|${{ vars.DOMAIN }}|g" .env
+            sed -i "s|__DOMAIN__|${{ steps.brand.outputs.domain }}|g" .env
+            sed -i "s|__MYSQL_DATABASE__|${{ steps.brand.outputs.db_name }}|g" .env
             ./setup-dc.sh > /var/log/setup-dc.log 2>&1
       
       
