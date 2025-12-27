@@ -1,68 +1,89 @@
 #!/bin/bash
+set -e
+
 cd /home/angelantonio/backup/root/mautic
 
-# Read COMPOSE_PROJECT_NAME from .env file if not already set in environment
+echo "## setup-dc.sh starting"
+
+# ----------------------------------------
+# Resolve COMPOSE_PROJECT_NAME safely
+# ----------------------------------------
 if [ -z "${COMPOSE_PROJECT_NAME:-}" ] && [ -f .env ]; then
-    # Use grep to extract line, remove comments, get value
-    _line=$(grep -E '^COMPOSE_PROJECT_NAME=' .env | head -1)
+    _line=$(grep -E '^COMPOSE_PROJECT_NAME=' .env | head -1 || true)
     if [ -n "$_line" ]; then
-        # Extract after = and strip leading/trailing whitespace and quotes
         COMPOSE_PROJECT_NAME="${_line#*=}"
         COMPOSE_PROJECT_NAME=$(echo "$COMPOSE_PROJECT_NAME" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/^"//' -e 's/"$//')
         export COMPOSE_PROJECT_NAME
+        echo "## Using COMPOSE_PROJECT_NAME=$COMPOSE_PROJECT_NAME"
     fi
 fi
 
-# Detect project name from environment, fallback to 'basic'
-PROJECT_NAME="${COMPOSE_PROJECT_NAME:-basic}"
-WEB_CONTAINER="${PROJECT_NAME}-mautic_web-1"
-WORKER_CONTAINER="${PROJECT_NAME}-mautic_worker-1"
-
-# Check/create required networks
+# ----------------------------------------
+# Ensure required network exists
+# ----------------------------------------
 if ! docker network inspect mysql_private >/dev/null 2>&1; then
-    echo "Creating mysql_private network..."
+    echo "## Creating mysql_private network"
     docker network create -d overlay --attachable mysql_private
 fi
 
-# docker compose build
-docker compose up -d mautic_db --wait && docker compose up -d mautic_web --wait
+# ----------------------------------------
+# Start required services
+# ----------------------------------------
+echo "## Starting database"
+docker compose up -d mautic_db --wait
 
-echo "## Wait for $WEB_CONTAINER container to be fully running"
+echo "## Starting mautic_web"
+docker compose up -d mautic_web --wait
+
+# ----------------------------------------
+# Wait for mautic_web container (Compose-safe)
+# ----------------------------------------
+echo "## Waiting for mautic_web service container"
+
 MAX_ATTEMPTS=30
 ATTEMPT=0
-while ! docker exec "$WEB_CONTAINER" sh -c 'echo "Container is running"' 2>/dev/null; do
+
+while true; do
+    WEB_CONTAINER_ID=$(docker compose ps -q mautic_web || true)
+
+    if [ -n "$WEB_CONTAINER_ID" ]; then
+        if docker inspect -f '{{.State.Running}}' "$WEB_CONTAINER_ID" 2>/dev/null | grep -q true; then
+            echo "## mautic_web is running ($WEB_CONTAINER_ID)"
+            break
+        fi
+    fi
+
     ATTEMPT=$((ATTEMPT+1))
     if [ "$ATTEMPT" -gt "$MAX_ATTEMPTS" ]; then
-        echo "### ERROR: Container $WEB_CONTAINER did not start within expected time."
-        # Check container status
-        CONTAINER_STATUS=$(docker inspect --format='{{.State.Status}}' "$WEB_CONTAINER" 2>/dev/null || echo "unknown")
-        echo "### Container status: $CONTAINER_STATUS"
-        echo "### Last logs from container:"
-        docker logs "$WEB_CONTAINER" 2>&1 | tail -30
+        echo "### ERROR: mautic_web did not start in time"
+        docker compose ps
+        docker compose logs --tail=50 mautic_web
         exit 1
     fi
-    echo "### Waiting for $WEB_CONTAINER to be fully running... ($ATTEMPT/$MAX_ATTEMPTS)"
+
+    echo "### Waiting for mautic_web... ($ATTEMPT/$MAX_ATTEMPTS)"
     sleep 2
 done
 
-echo "## Check if Mautic is installed"
+# ----------------------------------------
+# Check if Mautic is installed
+# ----------------------------------------
+echo "## Checking if Mautic is installed"
+
 if docker compose exec -T mautic_web test -f /var/www/html/config/local.php && \
    docker compose exec -T mautic_web grep -q "site_url" /var/www/html/config/local.php; then
-    echo "## Mautic is installed already."
+    echo "## Mautic already installed"
 else
-    # Stop worker container to avoid known Mautic issue
-    if docker ps --filter "name=$WORKER_CONTAINER" --filter "status=running" -q | grep -q .; then
-        echo "Stopping $WORKER_CONTAINER to avoid https://github.com/mautic/docker-mautic/issues/270"
-        docker stop "$WORKER_CONTAINER"
-        echo "## Ensure the worker is stopped before installing Mautic"
-        while docker ps -q --filter name="$WORKER_CONTAINER" | grep -q .; do
-            echo "### Waiting for $WORKER_CONTAINER to stop..."
-            sleep 2
-        done
-    else
-        echo "Container $WORKER_CONTAINER does not exist or is not running."
+    # ----------------------------------------
+    # Stop worker to avoid known issue
+    # ----------------------------------------
+    WORKER_CONTAINER_ID=$(docker compose ps -q mautic_worker || true)
+    if [ -n "$WORKER_CONTAINER_ID" ]; then
+        echo "## Stopping mautic_worker to avoid known install issue"
+        docker stop "$WORKER_CONTAINER_ID"
     fi
-    echo "## Installing Mautic..."
+
+    echo "## Installing Mautic"
     docker compose exec -T -u www-data -w /var/www/html mautic_web \
         php ./bin/console mautic:install --force \
         --admin_email {{EMAIL_ADDRESS}} \
@@ -70,43 +91,44 @@ else
         https://{{DOMAIN_NAME}}
 fi
 
-echo "## Starting all the containers"
+# ----------------------------------------
+# Start all containers
+# ----------------------------------------
+echo "## Ensuring all services are running"
 docker compose up -d
 
+# ----------------------------------------
+# Post-install configuration
+# ----------------------------------------
 DOMAIN="{{DOMAIN_NAME}}"
-if [[ "$DOMAIN" == *"DOMAIN_NAME"* ]]; then
-    echo "The DOMAIN variable is not set yet."
+
+if [[ "$DOMAIN" == *"DOMAIN_NAME"* || -z "$DOMAIN" ]]; then
+    echo "## DOMAIN not set — skipping post-install configuration"
     exit 0
 fi
 
-echo "## Check if Mautic is installed"
-if docker compose exec -T mautic_web test -f /var/www/html/config/local.php && \
-   docker compose exec -T mautic_web grep -q "site_url" /var/www/html/config/local.php; then
-    echo "## Mautic is installed already."
-    
-    # Replace the site_url value with the domain
-    echo "## Updating site_url in Mautic configuration..."
-    docker compose exec -T mautic_web sed -i "s|'site_url' => '.*',|'site_url' => 'https://$DOMAIN',|g" /var/www/html/config/local.php
+echo "## Updating site_url and trusted proxies"
 
-    # Auto-detect Traefik network and subnet
-    echo "## Detecting Traefik network..."
-    TRAEFIK_CONTAINER=$(docker ps --filter "name=traefik" --format "{{.Names}}" | head -n1)
+docker compose exec -T mautic_web sed -i \
+    "s|'site_url' => '.*',|'site_url' => 'https://$DOMAIN',|g" \
+    /var/www/html/config/local.php
 
-    if [[ -z "$TRAEFIK_CONTAINER" ]]; then
-        echo "ERROR: Could not find a running Traefik container. Falling back to 10.0.1.0/24."
-        TRAEFIK_SUBNET="10.0.1.0/24"
-    else
-        TRAEFIK_NETWORK=$(docker inspect "$TRAEFIK_CONTAINER" \
-            --format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{end}}' | head -n1)
-        TRAEFIK_SUBNET=$(docker network inspect "$TRAEFIK_NETWORK" -f '{{(index .IPAM.Config 0).Subnet}}')
-        echo "## Detected Traefik container: $TRAEFIK_CONTAINER"
-        echo "## Detected Traefik network: $TRAEFIK_NETWORK"
-        echo "## Detected Traefik subnet: $TRAEFIK_SUBNET"
-    fi
+# ----------------------------------------
+# Detect Traefik network/subnet
+# ----------------------------------------
+TRAEFIK_CONTAINER=$(docker ps --filter "name=traefik" --format "{{.Names}}" | head -n1)
 
-    # Add trusted proxies configuration
-    echo "## Adding trusted proxies configuration..."
-    docker compose exec -T mautic_web bash -c "cat >> /var/www/html/config/local.php" <<EOF
+if [ -z "$TRAEFIK_CONTAINER" ]; then
+    echo "## Traefik not detected, using fallback subnet"
+    TRAEFIK_SUBNET="10.0.1.0/24"
+else
+    TRAEFIK_NETWORK=$(docker inspect "$TRAEFIK_CONTAINER" \
+        --format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}}{{end}}' | head -n1)
+    TRAEFIK_SUBNET=$(docker network inspect "$TRAEFIK_NETWORK" \
+        -f '{{(index .IPAM.Config 0).Subnet}}')
+fi
+
+docker compose exec -T mautic_web bash -c "cat >> /var/www/html/config/local.php" <<EOF
 \$parameters['trusted_proxies'] = ['$TRAEFIK_SUBNET'];
 \$parameters['trusted_headers'] = [
     'forwarded' => 'FORWARDED',
@@ -117,9 +139,8 @@ if docker compose exec -T mautic_web test -f /var/www/html/config/local.php && \
 ];
 EOF
 
-    # Clear Symfony cache
-    echo "## Clearing Symfony cache..."
-    docker compose exec -T --user www-data --workdir /var/www/html mautic_web php bin/console cache:clear
-fi
+echo "## Clearing cache"
+docker compose exec -T --user www-data --workdir /var/www/html mautic_web \
+    php bin/console cache:clear
 
-echo "## Script execution completed"
+echo "## setup-dc.sh completed successfully"
