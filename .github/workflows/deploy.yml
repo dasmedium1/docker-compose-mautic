@@ -39,7 +39,7 @@ jobs:
           if [ "$BRAND" = "default" ]; then
             echo "domain=$DOMAIN" >> "$GITHUB_OUTPUT"
             echo "email=$EMAIL" >> "$GITHUB_OUTPUT"
-            echo "password_secret=MAUTIC_PASSWORD" >> "$GITHUB_OUTPUT"
+            echo "password=${{ secrets.MAUTIC_PASSWORD }}" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -48,19 +48,31 @@ jobs:
             exit 1
           fi
 
-          ruby -r yaml -e "
-            data = YAML.load_file('brands.yml')
-            brands = data['brands'] || {}
-            brand_id = '$BRAND'
-            unless brands.key?(brand_id)
-              STDERR.puts \"❌ brand '\#{brand_id}' not defined in brands.yml\"
+          # Use Python to read YAML safely
+          python3 <<"EOF" >> $GITHUB_OUTPUT
+import yaml, sys, os
+brand = os.environ.get('BRAND')
+with open('brands.yml', 'r') as f:
+    data = yaml.safe_load(f)
+brands = data.get('brands', {})
+if brand not in brands:
+    sys.stderr.write(f"❌ brand '{brand}' not defined in brands.yml\n")
+    sys.exit(1)
+entry = brands[brand]
+print(f"domain={entry.get('domain')}")
+print(f"email={entry.get('admin_email')}")
+EOF
+
+          # Determine password based on brand
+          case "$BRAND" in
+            angelantonio)
+              echo "password=${{ secrets.MAUTIC_PASSWORD_ANGELANTONIO }}" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "❌ No password secret defined for brand '$BRAND'"
               exit 1
-            end
-            entry = brands[brand_id]
-            puts \"domain=#{entry['domain']}\"
-            puts \"email=#{entry['admin_email']}\"
-            puts \"password_secret=#{entry['admin_password_secret_name']}\"
-          " >> $GITHUB_OUTPUT
+              ;;
+          esac
       
       - name: Backup Mautic before deployment
         if: ${{ vars.ENABLE_BACKUP != 'false' }}
