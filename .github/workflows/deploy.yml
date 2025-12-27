@@ -40,7 +40,7 @@ jobs:
           scp -o StrictHostKeyChecking=no -i ~/.ssh/vps_key scripts/backup_mautic.sh root@${{ vars.LINODE_IP }}:/tmp/backup_mautic.sh
 
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key \
-            root@${{ vars.LINODE_IP }} "MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}' bash /tmp/backup_mautic.sh"
+            root@${{ vars.LINODE_IP }} "BRAND_NAME='${{ env.BRAND_NAME }}' DB_NAME='${{ vars.DB_NAME }}' MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}' bash /tmp/backup_mautic.sh"
       
       - name: Load .mautic_env variables
         run: |
@@ -112,7 +112,9 @@ jobs:
           scp -o StrictHostKeyChecking=no -i ~/.ssh/vps_key scripts/restore_mautic.sh root@${{ vars.LINODE_IP }}:/tmp/restore_mautic.sh
 
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key root@${{ vars.LINODE_IP }} \
-          "MYSQL_PASSWORD='${{ secrets.MYSQL_PASSWORD }}' \
+          "BRAND_NAME='${{ env.BRAND_NAME }}' \
+          DB_NAME='${{ vars.DB_NAME }}' \
+          MYSQL_PASSWORD='${{ secrets.MYSQL_PASSWORD }}' \
           MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}' \
           bash /tmp/restore_mautic.sh '$RESTORE_PREFIX'"
 

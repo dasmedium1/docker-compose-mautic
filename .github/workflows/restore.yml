@@ -37,6 +37,7 @@ jobs:
 
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key root@${{ vars.LINODE_IP }} \
           "BRAND_NAME='${{ env.BRAND_NAME }}' \
+          DB_NAME='${{ vars.DB_NAME }}' \
           MYSQL_PASSWORD='${{ secrets.MYSQL_PASSWORD }}' \
           MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}' \
           bash /tmp/restore_mautic.sh '$RESTORE_PREFIX'"

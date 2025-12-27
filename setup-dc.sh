@@ -1,6 +1,18 @@
 #!/bin/bash
 cd /home/angelantonio/backup/root/mautic
 
+# Read COMPOSE_PROJECT_NAME from .env file if not already set in environment
+if [ -z "${COMPOSE_PROJECT_NAME:-}" ] && [ -f .env ]; then
+    # Use grep to extract line, remove comments, get value
+    _line=$(grep -E '^COMPOSE_PROJECT_NAME=' .env | head -1)
+    if [ -n "$_line" ]; then
+        # Extract after = and strip leading/trailing whitespace and quotes
+        COMPOSE_PROJECT_NAME="${_line#*=}"
+        COMPOSE_PROJECT_NAME=$(echo "$COMPOSE_PROJECT_NAME" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' -e 's/^"//' -e 's/"$//')
+        export COMPOSE_PROJECT_NAME
+    fi
+fi
+
 # Detect project name from environment, fallback to 'basic'
 PROJECT_NAME="${COMPOSE_PROJECT_NAME:-basic}"
 WEB_CONTAINER="${PROJECT_NAME}-mautic_web-1"
@@ -16,8 +28,18 @@ fi
 docker compose up -d mautic_db --wait && docker compose up -d mautic_web --wait
 
 echo "## Wait for $WEB_CONTAINER container to be fully running"
-while ! docker exec "$WEB_CONTAINER" sh -c 'echo "Container is running"'; do
-    echo "### Waiting for $WEB_CONTAINER to be fully running..."
+MAX_ATTEMPTS=30
+ATTEMPT=0
+while ! docker exec "$WEB_CONTAINER" sh -c 'echo "Container is running"' 2>/dev/null; do
+    ATTEMPT=$((ATTEMPT+1))
+    if [ "$ATTEMPT" -gt "$MAX_ATTEMPTS" ]; then
+        echo "### ERROR: Container $WEB_CONTAINER did not start within expected time."
+        # Check container status
+        CONTAINER_STATUS=$(docker inspect --format='{{.State.Status}}' "$WEB_CONTAINER" 2>/dev/null || echo "unknown")
+        echo "### Container status: $CONTAINER_STATUS"
+        exit 1
+    fi
+    echo "### Waiting for $WEB_CONTAINER to be fully running... ($ATTEMPT/$MAX_ATTEMPTS)"
     sleep 2
 done
 
