@@ -1,9 +1,3 @@
 .aider.*
 .aider
 requirements.md
-.passwords
-logs
-traefik.yml
-chat.txt
-setup-backup.sh
-docker-compose-local.yml
