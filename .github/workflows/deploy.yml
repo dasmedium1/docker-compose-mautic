@@ -5,6 +5,11 @@ on:
     branches:
       - m6-dev-1
   workflow_dispatch:
+    inputs:
+      brand:
+        description: 'Brand identifier (optional, defaults to "default")'
+        required: false
+        default: 'default'
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -18,6 +23,27 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/vps_key
           chmod 600 ~/.ssh/vps_key
+
+      - name: Determine brand variables
+        id: brand
+        run: |
+          BRAND="${{ github.event.inputs.brand }}"
+          if [ -z "$BRAND" ]; then
+            BRAND="default"
+          fi
+          echo "brand=$BRAND" >> "$GITHUB_OUTPUT"
+          # Derive secret and variable names
+          if [ "$BRAND" = "default" ]; then
+            echo "domain=${{ vars.DOMAIN }}" >> "$GITHUB_OUTPUT"
+            echo "email=${{ vars.EMAIL }}" >> "$GITHUB_OUTPUT"
+            echo "password_secret=MAUTIC_PASSWORD" >> "$GITHUB_OUTPUT"
+          else
+            # For non‑default brands, rely on convention:
+            # DOMAIN_<BRAND>, EMAIL_<BRAND>, MAUTIC_PASSWORD_<BRAND>
+            echo "domain=${{ vars[format('DOMAIN_{0}', BRAND)] }}" >> "$GITHUB_OUTPUT"
+            echo "email=${{ vars[format('EMAIL_{0}', BRAND)] }}" >> "$GITHUB_OUTPUT"
+            echo "password_secret=MAUTIC_PASSWORD_$BRAND" >> "$GITHUB_OUTPUT"
+          fi
       
       - name: Backup Mautic before deployment
         if: ${{ vars.ENABLE_BACKUP != 'false' }}
@@ -54,14 +80,15 @@ jobs:
           fi
 
       - name: Verify domain DNS
-        if: ${{ vars.DOMAIN }}
+        if: ${{ steps.brand.outputs.domain }}
         run: |
-          DOMAIN_IP=$(dig +short ${{ vars.DOMAIN }})
+          DOMAIN="${{ steps.brand.outputs.domain }}"
+          DOMAIN_IP=$(dig +short "$DOMAIN")
           if [ "$DOMAIN_IP" != "${{ vars.LINODE_IP }}" ]; then
-            echo "Error: Domain ${{ vars.DOMAIN }} does not point to Linode IP ${{ vars.LINODE_IP }}"
+            echo "Error: Domain $DOMAIN does not point to Linode IP ${{ vars.LINODE_IP }}"
             exit 1
           fi
-          echo "Domain ${{ vars.DOMAIN }} correctly points to Linode IP"
+          echo "Domain $DOMAIN correctly points to Linode IP"
 
       - name: Deploy to Server
         uses: easingthemes/ssh-deploy@main
@@ -73,9 +100,9 @@ jobs:
           TARGET: /home/angelantonio/backup/root/mautic
           SCRIPT_AFTER: |
             cd /home/angelantonio/backup/root/mautic
-            sed -i "s/{{DOMAIN_NAME}}/${{ vars.DOMAIN }}/g" setup-dc.sh
-            sed -i "s/{{EMAIL_ADDRESS}}/${{ vars.EMAIL }}/g" setup-dc.sh
-            sed -i "s/{{MAUTIC_PASSWORD}}/${{ secrets.MAUTIC_PASSWORD }}/g" setup-dc.sh
+            sed -i "s/{{DOMAIN_NAME}}/${{ steps.brand.outputs.domain }}/g" setup-dc.sh
+            sed -i "s/{{EMAIL_ADDRESS}}/${{ steps.brand.outputs.email }}/g" setup-dc.sh
+            sed -i "s/{{MAUTIC_PASSWORD}}/${{ secrets[steps.brand.outputs.password_secret] }}/g" setup-dc.sh
             sed -i "s/__MYSQL_PASSWORD__/${{ secrets.MYSQL_PASSWORD }}/g" .env
             sed -i "s/__MYSQL_ROOT_PASSWORD__/${{ secrets.MYSQL_ROOT_PASSWORD }}/g" .env
             sed -i "s/__DOMAIN__/${{ vars.DOMAIN }}/g" .env

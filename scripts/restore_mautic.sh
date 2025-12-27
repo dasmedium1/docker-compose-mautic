@@ -1,29 +1,46 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Multi‑brand support: accept brand identifier as first argument
+BRAND_ID="${1:-default}"
+if [ $# -eq 2 ]; then
+    # Backwards compatibility: if only one argument (prefix) assume default brand
+    PREFIX="$1"
+    BRAND_ID="default"
+else
+    PREFIX="$2"
+fi
+
+if [ -z "$PREFIX" ]; then
+    echo "❌ Usage: $0 <brand-id> <backup-file-prefix>"
+    echo "   Example: $0 default 2025-12-02"
+    echo "   For backwards compatibility: $0 2025-12-02   (brand defaults to 'default')"
+    exit 1
+fi
+
+if [ "$BRAND_ID" = "default" ]; then
+    VOLUME_PREFIX="mautic"
+    DB_NAME="mautic_db"
+    COMPOSE_PROJECT_NAME="basic"
+else
+    VOLUME_PREFIX="mautic_${BRAND_ID}"
+    DB_NAME="mautic_${BRAND_ID}"
+    COMPOSE_PROJECT_NAME="basic-${BRAND_ID}"
+fi
+
 # --------------------------
 # CONFIGURATION
 # --------------------------
 BACKUP_DIR="/home/angelantonio/backup/root/mautic/backups"
-MYSQL_CONTAINER_NAME="basic-mautic_db-1"
-MYSQL_DATABASE="mautic_db"
+MYSQL_CONTAINER_NAME="${COMPOSE_PROJECT_NAME}-mautic_db-1"
+MYSQL_DATABASE="${DB_NAME}"
 MYSQL_USER="mautic_db_user"
 MYSQL_PASSWORD="${MYSQL_PASSWORD}"
 MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD}"
 MAUTIC_ROOT="/home/angelantonio/backup/root/mautic"
 
-# --------------------------
-# VALIDATE INPUT ARGUMENT
-# --------------------------
-if [ $# -ne 1 ]; then
-  echo "❌ Usage: $0 <backup-file-prefix>"
-  echo "   Example: $0 2025-12-02"
-  exit 1
-fi
-
-PREFIX="$1"
-FS_BACKUP="$BACKUP_DIR/backup-$PREFIX.tar.gz"
-DB_BACKUP="$BACKUP_DIR/db-backup-$PREFIX.sql.gz"
+FS_BACKUP="$BACKUP_DIR/backup-${BRAND_ID}-${PREFIX}.tar.gz"
+DB_BACKUP="$BACKUP_DIR/db-backup-${BRAND_ID}-${PREFIX}.sql.gz"
 
 echo "🔍 Looking for backups:"
 echo "📦 Filesystem: $FS_BACKUP"

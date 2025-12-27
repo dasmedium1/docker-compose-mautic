@@ -1,9 +1,9 @@
 x-mautic-volumes: &mautic-volumes
-  - ./mautic/config:/var/www/html/config:z
-  - ./mautic/logs:/var/www/html/var/logs:z
-  - ./mautic/media/files:/var/www/html/docroot/media/files:z
-  - ./mautic/media/images:/var/www/html/docroot/media/images:z
-  - ./cron:/opt/mautic/cron:z
+  - ./${VOLUME_PREFIX:-mautic}/config:/var/www/html/config:z
+  - ./${VOLUME_PREFIX:-mautic}/logs:/var/www/html/var/logs:z
+  - ./${VOLUME_PREFIX:-mautic}/media/files:/var/www/html/docroot/media/files:z
+  - ./${VOLUME_PREFIX:-mautic}/media/images:/var/www/html/docroot/media/images:z
+  - ./${VOLUME_PREFIX:-mautic}_cron:/opt/mautic/cron:z
 
 services:
   mautic_db:
@@ -32,6 +32,7 @@ services:
     environment:
       - DOCKER_MAUTIC_LOAD_TEST_DATA=${DOCKER_MAUTIC_LOAD_TEST_DATA}
       - DOCKER_MAUTIC_RUN_MIGRATIONS=${DOCKER_MAUTIC_RUN_MIGRATIONS}
+      - MAUTIC_DB_DATABASE=${BRAND_DB_NAME:-${MYSQL_DATABASE}}
       # - MAUTIC_TRUSTED_PROXIES=["10.0.1.140/24"]
       # - MAUTIC_TRUSTED_HEADERS=x-forwarded-for,x-forwarded-host,x-forwarded-proto
     env_file:
@@ -50,14 +51,14 @@ services:
       - mysql_private
     labels:
       - traefik.enable=true
-      - traefik.http.routers.mautic.rule=Host(`${DOMAIN}`)
+      - traefik.http.routers.mautic-${BRAND_ID:-default}.rule=Host(`${DOMAIN}`)
       - traefik.http.services.mautic.loadbalancer.server.port=80
       - traefik.http.routers.mautic.entrypoints=websecure                                                            
       - traefik.http.routers.mautic.tls=true                                                                         
       - traefik.http.routers.mautic.tls.certresolver=letsencrypt
-      - traefik.http.middlewares.mautic-headers.headers.customRequestHeaders.X-Forwarded-Proto=https
-      - traefik.http.middlewares.mautic-headers.headers.customRequestheaders.X-Forwarded-Host=${DOMAIN}
-      - traefik.http.routers.mautic.middlewares=mautic-headers 
+      - traefik.http.middlewares.mautic-headers-${BRAND_ID:-default}.headers.customRequestHeaders.X-Forwarded-Proto=https
+      - traefik.http.middlewares.mautic-headers-${BRAND_ID:-default}.headers.customRequestheaders.X-Forwarded-Host=${DOMAIN}
+      - traefik.http.routers.mautic-${BRAND_ID:-default}.middlewares=mautic-headers-${BRAND_ID:-default}
 
   mautic_cron:
     image: mautic/mautic:${MAUTIC_VERSION:-6.0.5-apache}

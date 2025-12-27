@@ -1,0 +1,22 @@
+# Multi‑brand configuration
+# This file defines the available Mautic instances (brands).
+# Each brand must have a unique identifier (brand_id).
+# When running a script, pass the brand_id as the first argument.
+#
+# For backwards compatibility, the 'default' brand uses the
+# existing environment variables (DOMAIN, EMAIL_ADDRESS,
+# MAUTIC_PASSWORD, MYSQL_DATABASE) from .env and GitHub secrets.
+# All other brands must define the following fields:
+
+brands:
+  default:
+    # The 'default' brand uses existing variables.
+    # Its values are automatically taken from the environment
+    # (DOMAIN, EMAIL_ADDRESS, MAUTIC_PASSWORD, MYSQL_DATABASE).
+    # No explicit configuration is needed here.
+  # Example additional brand (uncomment and adjust):
+  # acme:
+  #   domain: acme.example.com
+  #   db_name: mautic_acme
+  #   admin_email: admin@acme.com
+  #   admin_password_secret_name: MAUTIC_PASSWORD_ACME

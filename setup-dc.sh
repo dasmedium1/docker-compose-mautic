@@ -1,4 +1,19 @@
 #!/bin/bash
+
+# Multi‑brand support: accept brand identifier as first argument
+BRAND_ID="${1:-}"
+if [ -n "$BRAND_ID" ]; then
+    export BRAND_ID
+    export COMPOSE_PROJECT_NAME="basic-${BRAND_ID}"
+    export VOLUME_PREFIX="mautic_${BRAND_ID}"
+    export BRAND_DB_NAME="mautic_${BRAND_ID}"
+else
+    export BRAND_ID="default"
+    export COMPOSE_PROJECT_NAME="basic"
+    export VOLUME_PREFIX="mautic"
+    export BRAND_DB_NAME="${MYSQL_DATABASE:-mautic_db}"
+fi
+
 cd /home/angelantonio/backup/root/mautic
 
 # Check/create required networks

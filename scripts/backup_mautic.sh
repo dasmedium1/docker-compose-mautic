@@ -1,18 +1,30 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Multi‑brand support: accept brand identifier as first argument
+BRAND_ID="${1:-default}"
+if [ "$BRAND_ID" = "default" ]; then
+    VOLUME_PREFIX="mautic"
+    DB_NAME="mautic_db"
+    COMPOSE_PROJECT_NAME="basic"
+else
+    VOLUME_PREFIX="mautic_${BRAND_ID}"
+    DB_NAME="mautic_${BRAND_ID}"
+    COMPOSE_PROJECT_NAME="basic-${BRAND_ID}"
+fi
+
 # -------------------------
 # CONFIGURATION
 # -------------------------
 
 BACKUP_ROOT="/home/angelantonio/backup/root/mautic"
 BACKUP_DIR="$BACKUP_ROOT/backups"
-BACKUP_NAME="backup-$(date +%F).tar.gz"
-DB_BACKUP_NAME="db-backup-$(date +%F).sql.gz"
+BACKUP_NAME="backup-${BRAND_ID}-$(date +%F).tar.gz"
+DB_BACKUP_NAME="db-backup-${BRAND_ID}-$(date +%F).sql.gz"
 DB_BACKUP_FILE="$BACKUP_DIR/$DB_BACKUP_NAME"
 
-MYSQL_CONTAINER_NAME="basic-mautic_db-1"
-MYSQL_DATABASE="mautic_db"
+MYSQL_CONTAINER_NAME="${COMPOSE_PROJECT_NAME}-mautic_db-1"
+MYSQL_DATABASE="${DB_NAME}"
 MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}"
 
 BACKUP_RETENTION=14  # Number of backups to retain

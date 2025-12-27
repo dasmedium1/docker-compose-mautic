@@ -10,6 +10,57 @@ This setup is inspired by the original work of John Linhart (escopecz) who creat
 - Automated backup and restore workflows
 - GitHub Actions for CI/CD automation
 
+## Multi‑brand Architecture
+
+The system now supports running **multiple isolated Mautic instances (brands)** on the same host, using the same Traefik instance, Docker images, and underlying infrastructure.
+
+Each brand is defined by a unique identifier (`brand_id`) and has:
+
+- Its own Docker Compose project (container names, networks, and volumes are prefixed with the brand identifier)
+- A dedicated directory for persistent data (`./mautic_<brand_id>/`)
+- A separate MySQL database (`mautic_<brand_id>`)
+- Unique domain, admin email, and admin password (stored as GitHub secrets)
+- Independent Traefik router and middleware (no cross‑brand routing)
+
+### Adding a New Brand
+
+1. **Create the required GitHub variables and secrets** (Settings → Secrets and variables → Actions):
+   - `DOMAIN_<BRAND>` – the domain for this brand (e.g., `DOMAIN_ACME` = `acme.example.com`)
+   - `EMAIL_<BRAND>` – the admin email for this brand
+   - `MAUTIC_PASSWORD_<BRAND>` – the admin password (secret)
+
+2. **Update the workflow files** (optional):
+   - If you want the brand to appear in the manual‑dispatch drop‑down, add its identifier to the `brand` input’s `default` list in `deploy.yml`, `backup.yml`, and `restore.yml`.  
+     This step is **not mandatory**; you can always type the brand identifier manually.
+
+3. **Run a deployment for the new brand**:
+   - Go to Actions → Deploy Mautic App
+   - Choose “Run workflow”, enter the brand identifier (e.g., `acme`) and click “Run workflow”
+   - The workflow will create the necessary directories, database, and Traefik routing.
+
+### Operating on a Specific Brand
+
+All scripts accept an optional brand identifier as their first argument:
+
+```bash
+# Deploy (or update) a specific brand
+./setup-dc.sh acme
+
+# Create a backup of the 'acme' brand
+./scripts/backup_mautic.sh acme
+
+# Restore the 'acme' brand from a backup taken on 2025‑12‑02
+./scripts/restore_mautic.sh acme 2025‑12‑02
+```
+
+If no brand identifier is supplied, the **default** brand is used (compatible with the previous single‑instance setup).
+
+### Backwards Compatibility
+
+- The existing single‑brand installation continues to work as the **default** brand.
+- No existing data, volumes, or container names are renamed.
+- All existing GitHub Actions workflows remain functional; they will operate on the **default** brand unless you explicitly specify another brand.
+
 ## Architecture
 
 ```
