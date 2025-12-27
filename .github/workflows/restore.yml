@@ -5,9 +5,17 @@ on:
       restore_prefix:
         description: 'Prefix of the backup to restore (e.g., mautic_backup_20240101_120000)'
         required: true
+      brand:
+        description: 'Brand identifier (e.g., default, brandA). Defaults to "default".'
+        default: 'default'
+        required: false
 jobs:
   restore:
     runs-on: ubuntu-latest
+    environment:
+      name: mautic-${{ github.event.inputs.brand || 'default' }}
+    env:
+      BRAND_NAME: ${{ github.event.inputs.brand || 'default' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -28,7 +36,8 @@ jobs:
           scp -o StrictHostKeyChecking=no -i ~/.ssh/vps_key scripts/restore_mautic.sh root@${{ vars.LINODE_IP }}:/tmp/restore_mautic.sh
 
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key root@${{ vars.LINODE_IP }} \
-          "MYSQL_PASSWORD='${{ secrets.MYSQL_PASSWORD }}' \
+          "BRAND_NAME='${{ env.BRAND_NAME }}' \
+          MYSQL_PASSWORD='${{ secrets.MYSQL_PASSWORD }}' \
           MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}' \
           bash /tmp/restore_mautic.sh '$RESTORE_PREFIX'"
 

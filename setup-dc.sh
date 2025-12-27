@@ -1,6 +1,11 @@
 #!/bin/bash
 cd /home/angelantonio/backup/root/mautic
 
+# Detect project name from environment, fallback to 'basic'
+PROJECT_NAME="${COMPOSE_PROJECT_NAME:-basic}"
+WEB_CONTAINER="${PROJECT_NAME}-mautic_web-1"
+WORKER_CONTAINER="${PROJECT_NAME}-mautic_worker-1"
+
 # Check/create required networks
 if ! docker network inspect mysql_private >/dev/null 2>&1; then
     echo "Creating mysql_private network..."
@@ -10,9 +15,9 @@ fi
 # docker compose build
 docker compose up -d mautic_db --wait && docker compose up -d mautic_web --wait
 
-echo "## Wait for basic-mautic_web-1 container to be fully running"
-while ! docker exec basic-mautic_web-1 sh -c 'echo "Container is running"'; do
-    echo "### Waiting for basic-mautic_web-1 to be fully running..."
+echo "## Wait for $WEB_CONTAINER container to be fully running"
+while ! docker exec "$WEB_CONTAINER" sh -c 'echo "Container is running"'; do
+    echo "### Waiting for $WEB_CONTAINER to be fully running..."
     sleep 2
 done
 
@@ -22,16 +27,16 @@ if docker compose exec -T mautic_web test -f /var/www/html/config/local.php && \
     echo "## Mautic is installed already."
 else
     # Stop worker container to avoid known Mautic issue
-    if docker ps --filter "name=basic-mautic_worker-1" --filter "status=running" -q | grep -q .; then
-        echo "Stopping basic-mautic_worker-1 to avoid https://github.com/mautic/docker-mautic/issues/270"
-        docker stop basic-mautic_worker-1
+    if docker ps --filter "name=$WORKER_CONTAINER" --filter "status=running" -q | grep -q .; then
+        echo "Stopping $WORKER_CONTAINER to avoid https://github.com/mautic/docker-mautic/issues/270"
+        docker stop "$WORKER_CONTAINER"
         echo "## Ensure the worker is stopped before installing Mautic"
-        while docker ps -q --filter name=basic-mautic_worker-1 | grep -q .; do
-            echo "### Waiting for basic-mautic_worker-1 to stop..."
+        while docker ps -q --filter name="$WORKER_CONTAINER" | grep -q .; do
+            echo "### Waiting for $WORKER_CONTAINER to stop..."
             sleep 2
         done
     else
-        echo "Container basic-mautic_worker-1 does not exist or is not running."
+        echo "Container $WORKER_CONTAINER does not exist or is not running."
     fi
     echo "## Installing Mautic..."
     docker compose exec -T -u www-data -w /var/www/html mautic_web \

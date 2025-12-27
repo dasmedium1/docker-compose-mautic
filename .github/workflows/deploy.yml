@@ -5,9 +5,18 @@ on:
     branches:
       - m6-dev-1
   workflow_dispatch:
+    inputs:
+      brand:
+        description: 'Brand identifier (e.g., default, brandA). Defaults to "default".'
+        default: 'default'
+        required: false
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: mautic-${{ github.event.inputs.brand || 'default' }}
+    env:
+      BRAND_NAME: ${{ github.event.inputs.brand || 'default' }}
 
     steps:
       - name: Checkout code
@@ -79,6 +88,8 @@ jobs:
             sed -i "s/__MYSQL_PASSWORD__/${{ secrets.MYSQL_PASSWORD }}/g" .env
             sed -i "s/__MYSQL_ROOT_PASSWORD__/${{ secrets.MYSQL_ROOT_PASSWORD }}/g" .env
             sed -i "s/__DOMAIN__/${{ vars.DOMAIN }}/g" .env
+            sed -i "s/__BRAND_NAME__/${{ env.BRAND_NAME }}/g" .env
+            sed -i "s/__DB_NAME__/${{ vars.DB_NAME }}/g" .env
             ./setup-dc.sh > /var/log/setup-dc.log 2>&1
       
       

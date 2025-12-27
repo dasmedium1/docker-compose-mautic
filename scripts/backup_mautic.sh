@@ -6,13 +6,19 @@ set -euo pipefail
 # -------------------------
 
 BACKUP_ROOT="/home/angelantonio/backup/root/mautic"
-BACKUP_DIR="$BACKUP_ROOT/backups"
+BRAND_NAME="${BRAND_NAME:-default}"
+BACKUP_BASE="$BACKUP_ROOT/backups"
+BACKUP_DIR="$BACKUP_BASE/$BRAND_NAME"
+mkdir -p "$BACKUP_DIR"
+
 BACKUP_NAME="backup-$(date +%F).tar.gz"
 DB_BACKUP_NAME="db-backup-$(date +%F).sql.gz"
 DB_BACKUP_FILE="$BACKUP_DIR/$DB_BACKUP_NAME"
 
-MYSQL_CONTAINER_NAME="basic-mautic_db-1"
-MYSQL_DATABASE="mautic_db"
+# Determine container name based on project name (brand)
+PROJECT_NAME="${BRAND_NAME:-basic}"
+MYSQL_CONTAINER_NAME="${PROJECT_NAME}-mautic_db-1"
+MYSQL_DATABASE="${DB_NAME:-mautic_db}"
 MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}"
 
 BACKUP_RETENTION=14  # Number of backups to retain
@@ -43,7 +49,6 @@ if [ "$HAS_DATA" = false ]; then
   exit 1
 fi
 
-mkdir -p "$BACKUP_DIR"
 cd "$BACKUP_ROOT"
 
 echo "📦 Creating filesystem backup: $BACKUP_NAME"

@@ -4,9 +4,13 @@ set -euo pipefail
 # --------------------------
 # CONFIGURATION
 # --------------------------
-BACKUP_DIR="/home/angelantonio/backup/root/mautic/backups"
-MYSQL_CONTAINER_NAME="basic-mautic_db-1"
-MYSQL_DATABASE="mautic_db"
+BRAND_NAME="${BRAND_NAME:-default}"
+BACKUP_BASE="/home/angelantonio/backup/root/mautic/backups"
+BACKUP_DIR="$BACKUP_BASE/$BRAND_NAME"
+
+PROJECT_NAME="${BRAND_NAME:-basic}"
+MYSQL_CONTAINER_NAME="${PROJECT_NAME}-mautic_db-1"
+MYSQL_DATABASE="${DB_NAME:-mautic_db}"
 MYSQL_USER="mautic_db_user"
 MYSQL_PASSWORD="${MYSQL_PASSWORD}"
 MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD}"
