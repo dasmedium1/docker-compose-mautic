@@ -36,6 +36,9 @@ jobs:
         id: brand
         env:
           BRAND_INPUT: ${{ github.event.inputs.brand }}
+          DOMAIN: ${{ vars.DOMAIN }}
+          EMAIL: ${{ vars.EMAIL}}
+          DB_NAME: ${{ vars.DB_NAME }}
         run: |
           BRAND="${BRAND_INPUT:-default}"
 
