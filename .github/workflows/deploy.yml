@@ -82,24 +82,32 @@ jobs:
           TARGET: /home/angelantonio/backup/root/mautic
           SCRIPT_AFTER: |
             cd /home/angelantonio/backup/root/mautic
+
+            # Replace placeholders in setup-dc.sh
             sed -i "s/{{DOMAIN_NAME}}/${{ vars.DOMAIN }}/g" setup-dc.sh
             sed -i "s/{{EMAIL_ADDRESS}}/${{ vars.EMAIL }}/g" setup-dc.sh
             sed -i "s/{{MAUTIC_PASSWORD}}/${{ secrets.MAUTIC_PASSWORD }}/g" setup-dc.sh
+
+            # Replace placeholders in .env
             sed -i "s/__MYSQL_PASSWORD__/${{ secrets.MYSQL_PASSWORD }}/g" .env
             sed -i "s/__MYSQL_ROOT_PASSWORD__/${{ secrets.MYSQL_ROOT_PASSWORD }}/g" .env
             sed -i "s/__DOMAIN__/${{ vars.DOMAIN }}/g" .env
             sed -i "s/__BRAND_NAME__/${{ env.BRAND_NAME }}/g" .env
             sed -i "s/__DB_NAME__/${{ vars.DB_NAME }}/g" .env
-            # generate .mautic_env with actual values
+            sed -i "s/__DB_USER__/${{ vars.MYSQL_USER }}/g" .env
+
+            # Generate .mautic_env dynamically
             echo "MAUTIC_DB_HOST=mautic_db" > .mautic_env
             echo "MAUTIC_DB_PORT=3306" >> .mautic_env
             echo "MAUTIC_DB_DATABASE=${{ vars.DB_NAME }}" >> .mautic_env
-            echo "MAUTIC_DB_USER=mautic_db_user" >> .mautic_env
+            echo "MAUTIC_DB_USER=${{ vars.MYSQL_USER }}" >> .mautic_env
             echo "MAUTIC_DB_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .mautic_env
             echo "MAUTIC_PORT=80" >> .mautic_env
             echo "MAUTIC_URL=https://${{ vars.DOMAIN }}" >> .mautic_env
+
+            # Run the setup script
             ./setup-dc.sh > /var/log/setup-dc.log 2>&1
-      
+            
       
       # --------------------------
       # 🔁 CONDITIONAL RESTORE STEP
