@@ -4,93 +4,55 @@ set -euo pipefail
 # -------------------------
 # CONFIGURATION
 # -------------------------
-
-BACKUP_ROOT="/home/angelantonio/backup/root/mautic"
 BRAND_NAME="${BRAND_NAME:-default}"
-BACKUP_BASE="$BACKUP_ROOT/backups"
-BACKUP_DIR="$BACKUP_BASE/$BRAND_NAME"
-mkdir -p "$BACKUP_DIR"
-
-BACKUP_NAME="backup-$(date +%F).tar.gz"
-DB_BACKUP_NAME="db-backup-$(date +%F).sql.gz"
-DB_BACKUP_FILE="$BACKUP_DIR/$DB_BACKUP_NAME"
-
-# Determine container name based on project name (brand)
-PROJECT_NAME="${BRAND_NAME:-basic}"
-MYSQL_CONTAINER_NAME="${PROJECT_NAME}-mautic_db-1"
-MYSQL_DATABASE="${DB_NAME:-mautic_db}"
+DB_NAME="${DB_NAME:-mautic_db}"
 MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}"
 
-BACKUP_RETENTION=14  # Number of backups to retain
+# Canonical backup directory (per brand)
+BACKUP_ROOT="/home/angelantonio/backups/${BRAND_NAME}/current"
+mkdir -p "$BACKUP_ROOT"
 
-# -------------------------
-# FILESYSTEM BACKUP
-# -------------------------
+BACKUP_RETENTION=14  # Number of previous backups to keep (optional rotation)
 
-echo "📁 Checking backup source directory: $BACKUP_ROOT"
-if [ ! -d "$BACKUP_ROOT" ]; then
-  echo "❌ ERROR: Backup source directory does not exist: $BACKUP_ROOT"
-  exit 1
-fi
-
-DATA_DIRS=(mautic/config mautic/logs mautic/media/files mautic/media/images cron)
-HAS_DATA=false
-
-for dir in "${DATA_DIRS[@]}"; do
-  FULL_PATH="$BACKUP_ROOT/$dir"
-  if [ -d "$FULL_PATH" ] && [ -n "$(ls -A "$FULL_PATH" 2>/dev/null || true)" ]; then
-    echo "✔ Found data in: $FULL_PATH"
-    HAS_DATA=true
-  fi
-done
-
-if [ "$HAS_DATA" = false ]; then
-  echo "❌ No data found in critical directories — aborting filesystem backup."
-  exit 1
-fi
-
-cd "$BACKUP_ROOT"
-
-echo "📦 Creating filesystem backup: $BACKUP_NAME"
-tar --gzip -cf "$BACKUP_DIR/$BACKUP_NAME" mautic cron
-echo "✅ Filesystem backup created: $BACKUP_DIR/$BACKUP_NAME"
+echo "## Starting backup for brand: $BRAND_NAME"
+echo "## Backup directory: $BACKUP_ROOT"
 
 # -------------------------
 # DATABASE BACKUP
 # -------------------------
+echo "## Backing up database: $DB_NAME"
 
-echo "🛢 Creating database backup..."
-
-docker exec "$MYSQL_CONTAINER_NAME" sh -c "
-  echo '[client]' > /tmp/my.cnf
-  echo 'user=root' >> /tmp/my.cnf
-  echo 'password=$MYSQL_ROOT_PASSWORD' >> /tmp/my.cnf
-  chmod 600 /tmp/my.cnf
-  mysqldump --defaults-extra-file=/tmp/my.cnf \
-    --single-transaction --quick --lock-tables=false \
-    $MYSQL_DATABASE
-" | gzip > "$DB_BACKUP_FILE"
-
-docker exec "$MYSQL_CONTAINER_NAME" rm -f /tmp/my.cnf || true
-
-echo "✅ Database backup created: $DB_BACKUP_FILE"
-
-# -------------------------
-# RETENTION
-# -------------------------
-
-echo "🧹 Applying retention policy (keep last $BACKUP_RETENTION backups)..."
-cd "$BACKUP_DIR"
-
-TOTAL_BACKUPS=$(ls -1 backup-*.tar.gz db-backup-*.sql.gz 2>/dev/null | wc -l || true)
-
-if [ "$TOTAL_BACKUPS" -gt "$BACKUP_RETENTION" ]; then
-  REMOVE_COUNT=$((TOTAL_BACKUPS - BACKUP_RETENTION))
-  echo "Removing $REMOVE_COUNT old backup(s)..."
-  ls -1tr backup-*.tar.gz db-backup-*.sql.gz | head -n "$REMOVE_COUNT" | xargs rm -f
-  echo "🗑 Old backups removed."
-else
-  echo "No backups to remove. ($TOTAL_BACKUPS ≤ $BACKUP_RETENTION)"
+MYSQL_CONTAINER=$(docker compose ps -q mautic_db)
+if [ -z "$MYSQL_CONTAINER" ]; then
+    echo "❌ ERROR: Database container not running"
+    exit 1
 fi
 
-echo "🎉 Backup + DB dump + retention complete."
+docker exec "$MYSQL_CONTAINER" sh -c "
+  mysqldump -u root -p\"$MYSQL_ROOT_PASSWORD\" $DB_NAME
+" | gzip > "$BACKUP_ROOT/${DB_NAME}.sql.gz"
+
+echo "✅ Database backup completed"
+
+# -------------------------
+# VOLUME BACKUP (named volumes)
+# -------------------------
+VOLUMES=("mautic_config" "mautic_logs" "mautic_media_files" "mautic_media_images" "mautic_cron")
+
+for vol in "${VOLUMES[@]}"; do
+    VOL_DIR="$BACKUP_ROOT/$vol"
+    mkdir -p "$VOL_DIR"
+    echo "## Backing up volume: $vol"
+    docker run --rm -v "$vol":/data -v "$VOL_DIR":/backup alpine sh -c "cp -a /data/. /backup/"
+done
+
+echo "✅ Volumes backup completed"
+
+# -------------------------
+# RETENTION (optional)
+# -------------------------
+# If you want rotation, you can move the current backup to a .old folder first.
+# Example:
+# mv "$BACKUP_ROOT" "${BACKUP_ROOT}.prev"
+
+echo "🎉 Backup completed successfully in canonical directory: $BACKUP_ROOT"

@@ -5,130 +5,82 @@ set -euo pipefail
 # CONFIGURATION
 # --------------------------
 BRAND_NAME="${BRAND_NAME:-default}"
-BACKUP_BASE="/home/angelantonio/backup/root/mautic/backups"
-BACKUP_DIR="$BACKUP_BASE/$BRAND_NAME"
-
-PROJECT_NAME="${BRAND_NAME:-basic}"
-MYSQL_CONTAINER_NAME="${PROJECT_NAME}-mautic_db-1"
-MYSQL_DATABASE="${DB_NAME:-mautic_db}"
+DB_NAME="${DB_NAME:-mautic_db}"
 MYSQL_USER="mautic_db_user"
-MYSQL_PASSWORD="${MYSQL_PASSWORD}"
-MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD}"
-MAUTIC_ROOT="/home/angelantonio/backup/root/mautic"
+MYSQL_PASSWORD="${MYSQL_PASSWORD:?MYSQL_PASSWORD is required}"
+MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}"
+
+# Canonical backup path
+BACKUP_ROOT="/home/angelantonio/backups/${BRAND_NAME}/current"
+echo "## Restoring brand: $BRAND_NAME"
+echo "## Backup directory: $BACKUP_ROOT"
 
 # --------------------------
-# VALIDATE INPUT ARGUMENT
+# VALIDATE BACKUPS EXIST
 # --------------------------
-if [ $# -ne 1 ]; then
-  echo "❌ Usage: $0 <backup-file-prefix>"
-  echo "   Example: $0 2025-12-02"
-  exit 1
-fi
-
-PREFIX="$1"
-FS_BACKUP="$BACKUP_DIR/backup-$PREFIX.tar.gz"
-DB_BACKUP="$BACKUP_DIR/db-backup-$PREFIX.sql.gz"
-
-echo "🔍 Looking for backups:"
-echo "📦 Filesystem: $FS_BACKUP"
-echo "🛢 Database:    $DB_BACKUP"
-
-if [ ! -f "$FS_BACKUP" ]; then
-  echo "❌ Filesystem backup not found: $FS_BACKUP"
-  exit 1
-fi
+DB_BACKUP="$BACKUP_ROOT/${DB_NAME}.sql.gz"
 
 if [ ! -f "$DB_BACKUP" ]; then
-  echo "❌ Database backup not found: $DB_BACKUP"
-  exit 1
+    echo "❌ Database backup not found: $DB_BACKUP"
+    exit 1
 fi
 
 # --------------------------
 # STOP SERVICES
 # --------------------------
 echo "🛑 Stopping Mautic services..."
-cd "$MAUTIC_ROOT"
 docker compose stop mautic_web mautic_cron mautic_worker 2>/dev/null || true
-echo "⏸️ Services stopped."
-
-# Give services time to stop
 sleep 5
 
 # --------------------------
-# RESTORE FILESYSTEM
+# RESTORE VOLUMES (named volumes)
 # --------------------------
-echo "📁 Restoring filesystem..."
-cd "$MAUTIC_ROOT"
-tar -xzf "$FS_BACKUP"
-echo "✔ Filesystem restored."
+VOLUMES=("mautic_config" "mautic_logs" "mautic_media_files" "mautic_media_images" "mautic_cron")
 
-# --------------------------
-# FIX PERMISSIONS
-# --------------------------
-echo "🔧 Fixing file permissions..."
-chown -R 33:33 "$MAUTIC_ROOT/mautic" 2>/dev/null || true
-find "$MAUTIC_ROOT/mautic" -type d -exec chmod 755 {} \; 2>/dev/null || true
-find "$MAUTIC_ROOT/mautic" -type f -exec chmod 644 {} \; 2>/dev/null || true
-chmod -R 777 "$MAUTIC_ROOT/mautic/logs" 2>/dev/null || true
-chmod -R 777 "$MAUTIC_ROOT/mautic/media" 2>/dev/null || true
-echo "✔ Permissions fixed."
+for vol in "${VOLUMES[@]}"; do
+    VOL_BACKUP="$BACKUP_ROOT/$vol"
+    if [ -d "$VOL_BACKUP" ]; then
+        echo "📁 Restoring volume: $vol"
+        docker run --rm -v "$vol":/data -v "$VOL_BACKUP":/backup alpine sh -c "rm -rf /data/* && cp -a /backup/. /data/"
+    else
+        echo "⚠️ Backup for volume not found: $VOL_BACKUP"
+    fi
+done
 
 # --------------------------
 # RESTORE DATABASE
 # --------------------------
-echo "🛢 Restoring database ($MYSQL_DATABASE)..."
+echo "🛢 Restoring database ($DB_NAME)..."
 
-# Ensure database container is running
-if ! docker ps --filter "name=$MYSQL_CONTAINER_NAME" --filter "status=running" | grep -q "$MYSQL_CONTAINER_NAME"; then
+MYSQL_CONTAINER=$(docker compose ps -q mautic_db)
+if [ -z "$MYSQL_CONTAINER" ]; then
     echo "⚠️ Database container not running, starting it..."
-    cd "$MAUTIC_ROOT"
     docker compose up -d mautic_db
     sleep 10
 fi
 
-# Drop and recreate database
-echo "🗑️ Dropping and recreating database..."
-docker exec "$MYSQL_CONTAINER_NAME" \
-  sh -c "mysql -u root -p\"$MYSQL_ROOT_PASSWORD\" -e 'DROP DATABASE IF EXISTS ${MYSQL_DATABASE}; CREATE DATABASE ${MYSQL_DATABASE};'"
+docker exec "$MYSQL_CONTAINER" sh -c "
+    mysql -u root -p\"$MYSQL_ROOT_PASSWORD\" -e 'DROP DATABASE IF EXISTS ${DB_NAME}; CREATE DATABASE ${DB_NAME};'
+"
 
-# Restore database
-echo "📥 Importing database backup..."
-gunzip < "$DB_BACKUP" | docker exec -i "$MYSQL_CONTAINER_NAME" \
-  mysql -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE"
+gunzip < "$DB_BACKUP" | docker exec -i "$MYSQL_CONTAINER" \
+    mysql -u root -p"$MYSQL_ROOT_PASSWORD" "$DB_NAME"
 
-echo "✔ Database restored."
-
-# --------------------------
-# RE-APPLY PRIVILEGES
-# --------------------------
-echo "🔐 Reapplying database user privileges..."
-
-docker exec "$MYSQL_CONTAINER_NAME" \
-  mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "
-    GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';
+docker exec "$MYSQL_CONTAINER" mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "
+    GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${MYSQL_USER}'@'%';
     FLUSH PRIVILEGES;
-  "
+"
 
-echo "🔑 Database privileges restored for user: $MYSQL_USER"
+echo "✅ Database restored"
 
 # --------------------------
 # CLEAR CACHES
 # --------------------------
-echo "🧹 Clearing application caches..."
-
-# Start web container temporarily if not running
-cd "$MAUTIC_ROOT"
-docker compose up -d mautic_db --wait && docker compose up -d mautic_web --wait
-
-# Clear Symfony cache
+docker compose up -d mautic_web --wait
 docker compose exec -T --user www-data --workdir /var/www/html mautic_web \
-  php bin/console cache:clear --no-warmup 2>/dev/null || true
-
-# Clear Doctrine cache
+    php bin/console cache:clear --no-warmup 2>/dev/null || true
 docker compose exec -T --user www-data --workdir /var/www/html mautic_web \
-  php bin/console doctrine:cache:clear-metadata 2>/dev/null || true
-
-echo "✔ Caches cleared."
+    php bin/console doctrine:cache:clear-metadata 2>/dev/null || true
 
 # --------------------------
 # RESTART SERVICES
@@ -137,8 +89,9 @@ echo "🚀 Restarting all services..."
 docker compose up -d
 sleep 10
 
-# Verify services are running
-echo "🔍 Verifying service status..."
+# --------------------------
+# POST-RESTORATION CHECKS
+# --------------------------
 if docker compose ps | grep -q "Up"; then
     echo "✅ All services are running"
 else
@@ -146,31 +99,22 @@ else
     docker compose ps
 fi
 
-# --------------------------
-# POST-RESTORATION CHECKS
-# --------------------------
-echo "🔍 Running post-restoration checks..."
-
-# Check database connectivity
+# Database connectivity check
 docker compose exec -T mautic_web php -r "
 try {
-    \$conn = new PDO('mysql:host=mautic_db;dbname=${MYSQL_DATABASE}', '${MYSQL_USER}', '${MYSQL_PASSWORD}');
+    \$conn = new PDO('mysql:host=mautic_db;dbname=${DB_NAME}', '${MYSQL_USER}', '${MYSQL_PASSWORD}');
     echo '✅ Database connection successful\n';
 } catch (PDOException \$e) {
     echo '❌ Database connection failed: ' . \$e->getMessage();
 }
 " 2>/dev/null || echo "⚠️ Database connectivity check may have failed"
 
-# Check if Mautic is reachable (give it a moment)
+# Web interface check
 sleep 5
 if curl -f -s -o /dev/null -w "%{http_code}" http://localhost:80 2>/dev/null | grep -q "200\|302"; then
     echo "✅ Mautic web interface is reachable"
 else
-    echo "⚠️ Mautic web interface check failed (may need more time to start)"
+    echo "⚠️ Mautic web interface check failed"
 fi
 
-# --------------------------
-# SUCCESS MESSAGE
-# --------------------------
-echo "🎉 Restore completed successfully for prefix: $PREFIX"
-echo "   Mautic should now be fully operational."
+echo "🎉 Restore completed successfully for brand: $BRAND_NAME"
