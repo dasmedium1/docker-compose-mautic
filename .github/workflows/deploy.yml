@@ -143,3 +143,27 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           scp -o StrictHostKeyChecking=no root@${{ vars.LINODE_IP }}:/var/log/setup-dc.log ./
           cat setup-dc.log
+        
+      - name: Cleanup sensitive env files and variables
+        run: |
+          set -euo pipefail
+
+          DEPLOY_DIR="/home/angelantonio/backup/root/mautic"
+          echo "📁 Cleaning up .env files"
+          rm -f "$DEPLOY_DIR/.env" "$DEPLOY_DIR/.mautic_env" && echo "✔ .env and .mautic_env removed"
+
+          echo "🔍 Listing running Mautic containers"
+          CONTAINERS=$(docker ps --filter "name=mautic" --format "{{.Names}}")
+
+          if [ -z "$CONTAINERS" ]; then
+            echo "⚠️ No Mautic containers found"
+          else
+            for c in $CONTAINERS; do
+              echo "🔒 Unsetting sensitive environment variables in container: $c"
+              docker exec "$c" sh -c '
+                unset MAUTIC_DB_HOST MAUTIC_DB_PORT MAUTIC_DB_DATABASE MAUTIC_DB_USER MAUTIC_DB_PASSWORD
+                echo "✔ Variables unset in container"
+              '
+            done
+          fi
+  
