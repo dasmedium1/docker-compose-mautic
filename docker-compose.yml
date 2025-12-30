@@ -1,43 +1,41 @@
 x-mautic-volumes: &mautic-volumes
-  - mautic:/var/www/html/config
-  - mautic:/var/www/html/var/logs
-  - mautic:/var/www/html/docroot/media/files
-  - mautic:/var/www/html/docroot/media/images
-  - mautic:/opt/mautic/cron
+  - mautic:/mautic/config:/var/www/html/config
+  - mautic:/mautic/logs:/var/www/html/var/logs
+  - mautic:/mautic/media/files:/var/www/html/docroot/media/files
+  - mautic:/mautic/media/images:/var/www/html/docroot/media/images
+  - mautic:/mautic/cron:/opt/mautic/cron
 
 services:
-  mautic_db_${BRAND_NAME}:
+  mautic_db:
     image: mysql:8.0
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:
-      test: mysqladmin --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD ping
+      test: ["CMD-SHELL", "mysqladmin ping -u$$MYSQL_USER -p$$MYSQL_PASSWORD"]
       start_period: 5s
       interval: 5s
       timeout: 5s
       retries: 10
     networks:
-      - mysql_private
+      mysql_private:
+        aliases:
+          - mautic_db_${BRAND_NAME}
 
-  mautic_web_${BRAND_NAME}::
+  mautic_web:
     image: mautic/mautic:${MAUTIC_VERSION:-6.0.5-apache}
-    links:
-      - mautic_db:mysql
     volumes: *mautic-volumes
-    environment:
-      - DOCKER_MAUTIC_LOAD_TEST_DATA=${DOCKER_MAUTIC_LOAD_TEST_DATA}
-      - DOCKER_MAUTIC_RUN_MIGRATIONS=${DOCKER_MAUTIC_RUN_MIGRATIONS}
-      # - MAUTIC_TRUSTED_PROXIES=["10.0.1.140/24"]
-      # - MAUTIC_TRUSTED_HEADERS=x-forwarded-for,x-forwarded-host,x-forwarded-proto
     env_file:
       - .mautic_env
+    environment:
+      DOCKER_MAUTIC_LOAD_TEST_DATA: ${DOCKER_MAUTIC_LOAD_TEST_DATA}
+      DOCKER_MAUTIC_RUN_MIGRATIONS: ${DOCKER_MAUTIC_RUN_MIGRATIONS}
     healthcheck:
-      test: curl http://localhost
+      test: ["CMD", "curl", "-f", "http://localhost"]
       start_period: 5s
       interval: 5s
       timeout: 5s
@@ -46,50 +44,46 @@ services:
       mautic_db:
         condition: service_healthy
     networks:
-      - traefik_web
-      - mysql_private
+      traefik_web:
+        aliases:
+          - mautic_web_${BRAND_NAME}
+      mysql_private:
     labels:
       - traefik.enable=true
-      - traefik.http.routers.mautic.rule=Host(`${DOMAIN}`)
-      - traefik.http.services.mautic.loadbalancer.server.port=80
-      - traefik.http.routers.mautic.entrypoints=websecure                                                            
-      - traefik.http.routers.mautic.tls=true                                                                         
-      - traefik.http.routers.mautic.tls.certresolver=letsencrypt
-      - traefik.http.middlewares.mautic-headers.headers.customRequestHeaders.X-Forwarded-Proto=https
-      - traefik.http.middlewares.mautic-headers.headers.customRequestheaders.X-Forwarded-Host=${DOMAIN}
-      - traefik.http.routers.mautic.middlewares=mautic-headers 
+      - traefik.http.routers.mautic_${BRAND_NAME}.rule=Host(`${DOMAIN}`)
+      - traefik.http.routers.mautic_${BRAND_NAME}.entrypoints=websecure
+      - traefik.http.routers.mautic_${BRAND_NAME}.tls=true
+      - traefik.http.routers.mautic_${BRAND_NAME}.tls.certresolver=letsencrypt
+      - traefik.http.services.mautic_${BRAND_NAME}.loadbalancer.server.port=80
+      - traefik.http.middlewares.mautic_${BRAND_NAME}-headers.headers.customRequestHeaders.X-Forwarded-Proto=https
+      - traefik.http.middlewares.mautic_${BRAND_NAME}-headers.headers.customRequestHeaders.X-Forwarded-Host=${DOMAIN}
+      - traefik.http.routers.mautic_${BRAND_NAME}.middlewares=mautic_${BRAND_NAME}-headers
 
-  mautic_cron_${BRAND_NAME}:
+  mautic_cron:
     image: mautic/mautic:${MAUTIC_VERSION:-6.0.5-apache}
-    links:
-      - mautic_db:mysql
     volumes: *mautic-volumes
-    environment:
-      - DOCKER_MAUTIC_ROLE=mautic_cron
     env_file:
       - .mautic_env
+    environment:
+      DOCKER_MAUTIC_ROLE: mautic_cron
     depends_on:
       mautic_web:
         condition: service_healthy
     networks:
-      - mysql_private
-      - traefik_web
+      mysql_private:
 
-  mautic_worker_${BRAND_NAME}:
+  mautic_worker:
     image: mautic/mautic:${MAUTIC_VERSION:-6.0.5-apache}
-    links:
-      - mautic_db:mysql
     volumes: *mautic-volumes
-    environment:
-      - DOCKER_MAUTIC_ROLE=mautic_worker
     env_file:
       - .mautic_env
+    environment:
+      DOCKER_MAUTIC_ROLE: mautic_worker
     depends_on:
       mautic_web:
         condition: service_healthy
     networks:
-      - mysql_private
-      - traefik_web
+      mysql_private:
     deploy:
       replicas: 1
 
