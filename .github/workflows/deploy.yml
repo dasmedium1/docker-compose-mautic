@@ -144,26 +144,28 @@ jobs:
           scp -o StrictHostKeyChecking=no root@${{ vars.LINODE_IP }}:/var/log/setup-dc.log ./
           cat setup-dc.log
         
-      - name: Cleanup sensitive env files and variables
+      - name: Cleanup environment files and unset container vars
         run: |
-          set -euo pipefail
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key root@${{ vars.LINODE_IP }} bash -s <<'EOF'
+            set -euo pipefail
 
-          DEPLOY_DIR="/home/angelantonio/backup/root/mautic"
-          echo "📁 Cleaning up .env files"
-          rm -f "$DEPLOY_DIR/.env" "$DEPLOY_DIR/.mautic_env" && echo "✔ .env and .mautic_env removed"
+            DEPLOY_DIR="/home/angelantonio/backup/root/mautic"
 
-          echo "🔍 Listing running Mautic containers"
-          CONTAINERS=$(docker ps --filter "name=mautic" --format "{{.Names}}")
+            echo "📁 Removing .env files"
+            rm -f "$DEPLOY_DIR/.env" "$DEPLOY_DIR/.mautic_env" && echo "✔ Files removed"
 
-          if [ -z "$CONTAINERS" ]; then
-            echo "⚠️ No Mautic containers found"
-          else
-            for c in $CONTAINERS; do
-              echo "🔒 Unsetting sensitive environment variables in container: $c"
-              docker exec "$c" sh -c '
-                unset MAUTIC_DB_HOST MAUTIC_DB_PORT MAUTIC_DB_DATABASE MAUTIC_DB_USER MAUTIC_DB_PASSWORD
-                echo "✔ Variables unset in container"
-              '
-            done
-          fi
-  
+            echo "🔍 Finding all Mautic containers"
+            CONTAINERS=$(docker ps --format "{{.Names}}" | grep -E "mautic_(web|cron|worker)_")
+
+            if [ -z "$CONTAINERS" ]; then
+              echo "⚠️ No Mautic containers found"
+            else
+              for c in $CONTAINERS; do
+                echo "🔒 Unsetting sensitive env vars in container: $c"
+                docker exec "$c" sh -c '
+                  unset MAUTIC_DB_HOST MAUTIC_DB_PORT MAUTIC_DB_DATABASE MAUTIC_DB_USER MAUTIC_DB_PASSWORD
+                  echo "✔ Variables unset in container"
+                '
+              done
+            fi
+      
