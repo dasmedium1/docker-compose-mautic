@@ -145,23 +145,18 @@ jobs:
           cat setup-dc.log
         
       - name: Cleanup sensitive environment variables on server
-        env:
-          BRAND_NAME: ${{ env.BRAND_NAME }}
-          DEPLOY_DIR: /home/angelantonio/backup/root/mautic
         run: |
-          set -euo pipefail
-
-          echo "🔐 Connecting to server to clean up .env files and container variables..."
-          
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key root@${{ vars.LINODE_IP }} bash -s <<'EOF'
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key root@${{ vars.LINODE_IP }} \
+          "BRAND_NAME='${{ env.BRAND_NAME }}' DEPLOY_DIR='/home/angelantonio/backup/root/mautic' bash -s" <<'EOF'
             set -euo pipefail
 
-            BRAND_NAME="${BRAND_NAME}"
-            DEPLOY_DIR="${DEPLOY_DIR}"
+            echo "🔐 Connecting to server to clean up .env files and container variables..."
 
+            # Remove local .env files
             echo "📁 Removing .env files for brand: $BRAND_NAME"
             rm -f "$DEPLOY_DIR/.env" "$DEPLOY_DIR/.mautic_env" && echo "✔ Files removed"
 
+            # Define container name patterns dynamically
             echo "🔍 Searching for Mautic containers for brand: $BRAND_NAME"
             CONTAINER_PATTERNS=(
               "${BRAND_NAME}-mautic_web"
@@ -170,6 +165,7 @@ jobs:
               "${BRAND_NAME}-mautic_db"
             )
 
+            # Iterate over each pattern and unset environment variables inside containers
             for pattern in "${CONTAINER_PATTERNS[@]}"; do
               CONTAINERS=$(docker ps --format '{{.Names}}' | grep "^$pattern" || true)
 
