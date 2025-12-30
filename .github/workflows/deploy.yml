@@ -97,7 +97,7 @@ jobs:
             sed -i "s/__DB_USER__/${{ vars.MYSQL_USER }}/g" .env
 
             # Generate .mautic_env dynamically
-            echo "MAUTIC_DB_HOST=mautic_db" > .mautic_env
+            echo "MAUTIC_DB_HOST=mautic_db_${BRAND_NAME}" > .mautic_env
             echo "MAUTIC_DB_PORT=3306" >> .mautic_env
             echo "MAUTIC_DB_DATABASE=${{ vars.DB_NAME }}" >> .mautic_env
             echo "MAUTIC_DB_USER=${{ vars.MYSQL_USER }}" >> .mautic_env

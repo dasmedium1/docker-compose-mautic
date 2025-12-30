@@ -6,7 +6,7 @@ x-mautic-volumes: &mautic-volumes
   - mautic:/opt/mautic/cron
 
 services:
-  mautic_db:
+  mautic_db_${BRAND_NAME}:
     image: mysql:8.0
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
@@ -24,7 +24,7 @@ services:
     networks:
       - mysql_private
 
-  mautic_web:
+  mautic_web_${BRAND_NAME}::
     image: mautic/mautic:${MAUTIC_VERSION:-6.0.5-apache}
     links:
       - mautic_db:mysql
@@ -59,7 +59,7 @@ services:
       - traefik.http.middlewares.mautic-headers.headers.customRequestheaders.X-Forwarded-Host=${DOMAIN}
       - traefik.http.routers.mautic.middlewares=mautic-headers 
 
-  mautic_cron:
+  mautic_cron_${BRAND_NAME}:
     image: mautic/mautic:${MAUTIC_VERSION:-6.0.5-apache}
     links:
       - mautic_db:mysql
@@ -75,7 +75,7 @@ services:
       - mysql_private
       - traefik_web
 
-  mautic_worker:
+  mautic_worker_${BRAND_NAME}:
     image: mautic/mautic:${MAUTIC_VERSION:-6.0.5-apache}
     links:
       - mautic_db:mysql
@@ -101,4 +101,4 @@ networks:
   traefik_web:
     external: true
   mysql_private:
-    driver: bridge
+    external: true
