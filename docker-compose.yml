@@ -101,4 +101,4 @@ networks:
   traefik_web:
     external: true
   mysql_private:
-    external: true
+    driver: bridge

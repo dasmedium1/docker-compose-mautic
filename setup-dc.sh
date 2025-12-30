@@ -18,13 +18,13 @@ if [ -z "${COMPOSE_PROJECT_NAME:-}" ] && [ -f .env ]; then
     fi
 fi
 
-# ----------------------------------------
-# Ensure required network exists
-# ----------------------------------------
-if ! docker network inspect mysql_private >/dev/null 2>&1; then
-    echo "## Creating mysql_private network"
-    docker network create -d overlay --attachable mysql_private
-fi
+# # ----------------------------------------
+# # Ensure required network exists
+# # ----------------------------------------
+# if ! docker network inspect mysql_private >/dev/null 2>&1; then
+#     echo "## Creating mysql_private network"
+#     docker network create -d overlay --attachable mysql_private
+# fi
 
 # ----------------------------------------
 # Start required services
