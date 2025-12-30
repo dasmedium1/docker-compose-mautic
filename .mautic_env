@@ -1,7 +1,8 @@
 # use this file for environment variables that can be used.
 # see https://docs.mautic.org/en/5.x/
 
-MAUTIC_DB_HOST="${MYSQL_HOST}"
+# MAUTIC_DB_HOST="${MYSQL_HOST}"
+MAUTIC_DB_HOST=mautic_db_${BRAND_NAME}
 MAUTIC_DB_PORT="${MYSQL_PORT}"
 MAUTIC_DB_DATABASE="${MYSQL_DATABASE}"
 MAUTIC_DB_USER="${MYSQL_USER}"
