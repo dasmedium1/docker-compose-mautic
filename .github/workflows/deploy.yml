@@ -144,41 +144,49 @@ jobs:
           scp -o StrictHostKeyChecking=no root@${{ vars.LINODE_IP }}:/var/log/setup-dc.log ./
           cat setup-dc.log
         
-      - name: Cleanup sensitive environment variables
+      - name: Cleanup sensitive environment variables on server
         env:
           BRAND_NAME: ${{ env.BRAND_NAME }}
           DEPLOY_DIR: /home/angelantonio/backup/root/mautic
         run: |
           set -euo pipefail
 
-          echo "📁 Removing .env files for brand: $BRAND_NAME"
-          rm -f "$DEPLOY_DIR/.env" "$DEPLOY_DIR/.mautic_env" && echo "✔ Files removed"
+          echo "🔐 Connecting to server to clean up .env files and container variables..."
+          
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key root@${{ vars.LINODE_IP }} bash -s <<'EOF'
+            set -euo pipefail
 
-          echo "🔍 Searching for Mautic containers for brand: $BRAND_NAME"
+            BRAND_NAME="${BRAND_NAME}"
+            DEPLOY_DIR="${DEPLOY_DIR}"
 
-          CONTAINER_PATTERNS=(
-            "${BRAND_NAME}-mautic_web"
-            "${BRAND_NAME}-mautic_cron"
-            "${BRAND_NAME}-mautic_worker"
-            "${BRAND_NAME}-mautic_db"
-          )
+            echo "📁 Removing .env files for brand: $BRAND_NAME"
+            rm -f "$DEPLOY_DIR/.env" "$DEPLOY_DIR/.mautic_env" && echo "✔ Files removed"
 
-          for pattern in "${CONTAINER_PATTERNS[@]}"; do
-            CONTAINERS=$(docker ps --format '{{.Names}}' | grep "^$pattern" || true)
+            echo "🔍 Searching for Mautic containers for brand: $BRAND_NAME"
+            CONTAINER_PATTERNS=(
+              "${BRAND_NAME}-mautic_web"
+              "${BRAND_NAME}-mautic_cron"
+              "${BRAND_NAME}-mautic_worker"
+              "${BRAND_NAME}-mautic_db"
+            )
 
-            if [ -z "$CONTAINERS" ]; then
-              echo "⚠️ No containers found for pattern: $pattern"
-              continue
-            fi
+            for pattern in "${CONTAINER_PATTERNS[@]}"; do
+              CONTAINERS=$(docker ps --format '{{.Names}}' | grep "^$pattern" || true)
 
-            for c in $CONTAINERS; do
-              echo "🔒 Unsetting sensitive environment variables in container: $c"
-              docker exec "$c" sh -c '
-                unset MAUTIC_DB_HOST MAUTIC_DB_PORT MAUTIC_DB_DATABASE MAUTIC_DB_USER MAUTIC_DB_PASSWORD
-                unset MYSQL_ROOT_PASSWORD MYSQL_PASSWORD MYSQL_USER MYSQL_DATABASE
-                echo "✔ Sensitive variables unset in container"
-              '
+              if [ -z "$CONTAINERS" ]; then
+                echo "⚠️ No containers found for pattern: $pattern"
+                continue
+              fi
+
+              for c in $CONTAINERS; do
+                echo "🔒 Unsetting sensitive environment variables in container: $c"
+                docker exec "$c" sh -c '
+                  unset MAUTIC_DB_HOST MAUTIC_DB_PORT MAUTIC_DB_DATABASE MAUTIC_DB_USER MAUTIC_DB_PASSWORD
+                  unset MYSQL_ROOT_PASSWORD MYSQL_PASSWORD MYSQL_USER MYSQL_DATABASE
+                  echo "✔ Sensitive variables unset in container"
+                '
+              done
             done
-          done
 
-          echo "🎉 Cleanup complete for brand: $BRAND_NAME"
+            echo "🎉 Cleanup complete for brand: $BRAND_NAME"
+          EOF
