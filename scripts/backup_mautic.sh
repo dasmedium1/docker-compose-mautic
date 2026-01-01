@@ -4,55 +4,87 @@ set -euo pipefail
 # -------------------------
 # CONFIGURATION
 # -------------------------
+
 BRAND_NAME="${BRAND_NAME:-default}"
-DB_NAME="${DB_NAME:-mautic_db}"
+DEPLOY_ROOT="/home/angelantonio/backup/root/mautic"
+BACKUP_ROOT="$DEPLOY_ROOT/backups/$BRAND_NAME"
+
+CURRENT_DIR="$BACKUP_ROOT/current"
+ARCHIVE_DIR="$BACKUP_ROOT/archive"
+
+MYSQL_DATABASE="${DB_NAME}"
 MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}"
 
-# Canonical backup directory (per brand)
-BACKUP_ROOT="/home/angelantonio/backups/${BRAND_NAME}/current"
-mkdir -p "$BACKUP_ROOT"
+mkdir -p "$CURRENT_DIR" "$ARCHIVE_DIR"
 
-BACKUP_RETENTION=14  # Number of previous backups to keep (optional rotation)
+FS_BACKUP="$CURRENT_DIR/filesystem.tar.gz"
+DB_BACKUP="$CURRENT_DIR/database.sql.gz"
 
-echo "## Starting backup for brand: $BRAND_NAME"
-echo "## Backup directory: $BACKUP_ROOT"
+# -------------------------
+# LOCATE MYSQL CONTAINER
+# -------------------------
+
+echo "🔍 Locating MySQL container for brand: $BRAND_NAME"
+
+MYSQL_CONTAINER=$(docker ps \
+  --filter "label=com.docker.compose.service=mautic_db" \
+  --filter "label=com.docker.compose.project=$BRAND_NAME" \
+  --format '{{.Names}}')
+
+if [ -z "$MYSQL_CONTAINER" ]; then
+  echo "❌ Could not find MySQL container for brand: $BRAND_NAME"
+  exit 1
+fi
+
+echo "✔ Found MySQL container: $MYSQL_CONTAINER"
+
+# -------------------------
+# ARCHIVE PREVIOUS BACKUP
+# -------------------------
+
+if [ -f "$FS_BACKUP" ] || [ -f "$DB_BACKUP" ]; then
+  TS=$(date +%Y%m%d-%H%M%S)
+  mkdir -p "$ARCHIVE_DIR/$TS"
+  mv "$CURRENT_DIR"/* "$ARCHIVE_DIR/$TS/" || true
+  echo "📦 Previous backup archived to: $ARCHIVE_DIR/$TS"
+fi
+
+# -------------------------
+# FILESYSTEM BACKUP
+# -------------------------
+
+echo "📁 Backing up filesystem..."
+
+cd "$DEPLOY_ROOT"
+
+tar -czf "$FS_BACKUP" \
+  mautic \
+  cron
+
+echo "✅ Filesystem backup created: $FS_BACKUP"
 
 # -------------------------
 # DATABASE BACKUP
 # -------------------------
-echo "## Backing up database: $DB_NAME"
 
-MYSQL_CONTAINER=$(docker compose ps -q mautic_db)
-if [ -z "$MYSQL_CONTAINER" ]; then
-    echo "❌ ERROR: Database container not running"
-    exit 1
-fi
+echo "🛢 Backing up database: $MYSQL_DATABASE"
 
 docker exec "$MYSQL_CONTAINER" sh -c "
-  mysqldump -u root -p\"$MYSQL_ROOT_PASSWORD\" $DB_NAME
-" | gzip > "$BACKUP_ROOT/${DB_NAME}.sql.gz"
+  mysqldump \
+    -u root \
+    -p\"$MYSQL_ROOT_PASSWORD\" \
+    --single-transaction \
+    --quick \
+    --lock-tables=false \
+    $MYSQL_DATABASE
+" | gzip > "$DB_BACKUP"
 
-echo "✅ Database backup completed"
-
-# -------------------------
-# VOLUME BACKUP (named volumes)
-# -------------------------
-VOLUMES=("mautic_config" "mautic_logs" "mautic_media_files" "mautic_media_images" "mautic_cron")
-
-for vol in "${VOLUMES[@]}"; do
-    VOL_DIR="$BACKUP_ROOT/$vol"
-    mkdir -p "$VOL_DIR"
-    echo "## Backing up volume: $vol"
-    docker run --rm -v "$vol":/data -v "$VOL_DIR":/backup alpine sh -c "cp -a /data/. /backup/"
-done
-
-echo "✅ Volumes backup completed"
+echo "✅ Database backup created: $DB_BACKUP"
 
 # -------------------------
-# RETENTION (optional)
+# COMPLETION
 # -------------------------
-# If you want rotation, you can move the current backup to a .old folder first.
-# Example:
-# mv "$BACKUP_ROOT" "${BACKUP_ROOT}.prev"
 
-echo "🎉 Backup completed successfully in canonical directory: $BACKUP_ROOT"
+echo "🎉 Backup completed successfully for brand: $BRAND_NAME"
+echo "   Filesystem: $FS_BACKUP"
+echo "   Database:   $DB_BACKUP"
