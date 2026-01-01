@@ -145,6 +145,8 @@ jobs:
           cat setup-dc.log
         
       - name: Cleanup sensitive environment variables on server
+        env:
+          BRAND_NAME: ${{ env.BRAND_NAME }}
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key root@${{ vars.LINODE_IP }} \
           "DEPLOY_DIR='/home/angelantonio/backup/root/mautic' bash -s" << 'EOF'
