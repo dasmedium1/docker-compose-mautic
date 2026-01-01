@@ -147,12 +147,14 @@ jobs:
       - name: Cleanup sensitive environment variables on server
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key root@${{ vars.LINODE_IP }} \
-          DEPLOY_DIR='/home/angelantonio/backup/root/mautic' bash -s" <<'EOF'
-            set -euo pipefail
+          "DEPLOY_DIR='/home/angelantonio/backup/root/mautic' bash -s" << 'EOF'
+          set -euo pipefail
 
-            echo "🔐 Connecting to server to clean up .env files and container variables..."
+          echo "🔐 Connecting to server to clean up .env files and container variables..."
 
-            # Remove local .env files
-            echo "📁 Removing .env files for brand: $BRAND_NAME"
-            rm -f "$DEPLOY_DIR/.env" "$DEPLOY_DIR/.mautic_env" && echo "✔ Files removed"
+          # Remove local .env files
+          echo "📁 Removing .env files for brand: $BRAND_NAME"
+          rm -f "$DEPLOY_DIR/.env" "$DEPLOY_DIR/.mautic_env" && echo "✔ Files removed"
+
           EOF
+
