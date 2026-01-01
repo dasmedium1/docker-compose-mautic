@@ -6,14 +6,18 @@ set -euo pipefail
 # -------------------------
 
 BRAND_NAME="${BRAND_NAME:-default}"
+
 DEPLOY_ROOT="/home/angelantonio/backup/root/mautic"
 BACKUP_ROOT="$DEPLOY_ROOT/backups/$BRAND_NAME"
 
 CURRENT_DIR="$BACKUP_ROOT/current"
 ARCHIVE_DIR="$BACKUP_ROOT/archive"
 
-MYSQL_DATABASE="${DB_NAME}"
+MYSQL_DATABASE="${DB_NAME:?DB_NAME is required}"
 MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}"
+
+# Docker volume names (derived from compose project)
+MAUTIC_VOLUME="${BRAND_NAME}_mautic"
 
 mkdir -p "$CURRENT_DIR" "$ARCHIVE_DIR"
 
@@ -39,6 +43,19 @@ fi
 echo "✔ Found MySQL container: $MYSQL_CONTAINER"
 
 # -------------------------
+# VALIDATE MAUTIC VOLUME
+# -------------------------
+
+echo "🔍 Validating Mautic volume: $MAUTIC_VOLUME"
+
+if ! docker volume inspect "$MAUTIC_VOLUME" >/dev/null 2>&1; then
+  echo "❌ Mautic volume not found: $MAUTIC_VOLUME"
+  exit 1
+fi
+
+echo "✔ Found volume: $MAUTIC_VOLUME"
+
+# -------------------------
 # ARCHIVE PREVIOUS BACKUP
 # -------------------------
 
@@ -50,21 +67,21 @@ if [ -f "$FS_BACKUP" ] || [ -f "$DB_BACKUP" ]; then
 fi
 
 # -------------------------
-# FILESYSTEM BACKUP
+# FILESYSTEM BACKUP (VOLUME)
 # -------------------------
 
-echo "📁 Backing up filesystem..."
+echo "📁 Backing up Mautic filesystem from Docker volume..."
 
-cd "$DEPLOY_ROOT"
-
-tar -czf "$FS_BACKUP" \
-  mautic \
-  cron
+docker run --rm \
+  -v "${MAUTIC_VOLUME}:/volume:ro" \
+  -v "${CURRENT_DIR}:/backup" \
+  alpine \
+  sh -c "cd /volume && tar -czf /backup/filesystem.tar.gz ."
 
 echo "✅ Filesystem backup created: $FS_BACKUP"
 
 # -------------------------
-# DATABASE BACKUP
+# DATABASE BACKUP (LOGICAL)
 # -------------------------
 
 echo "🛢 Backing up database: $MYSQL_DATABASE"
