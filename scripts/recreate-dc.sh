@@ -11,8 +11,6 @@ docker compose \
 
 docker compose \
   --project-name "${BRAND_NAME}" \
-  up -d \
-  --force-recreate \
-  --remove-orphans
+  up -d 
 
 echo "✅ Containers recreated successfully for brand: ${BRAND_NAME}"
