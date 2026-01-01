@@ -6,14 +6,18 @@ set -euo pipefail
 # -------------------------
 
 BRAND_NAME="${BRAND_NAME:-default}"
+
 DEPLOY_ROOT="/home/angelantonio/backup/root/mautic"
 BACKUP_ROOT="$DEPLOY_ROOT/backups/$BRAND_NAME/current"
 
-MYSQL_DATABASE="${DB_NAME}"
+MYSQL_DATABASE="${DB_NAME:?DB_NAME is required}"
 MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}"
 
 FS_BACKUP="$BACKUP_ROOT/filesystem.tar.gz"
 DB_BACKUP="$BACKUP_ROOT/database.sql.gz"
+
+# Docker volume name (derived from compose project)
+MAUTIC_VOLUME="${BRAND_NAME}_mautic"
 
 # -------------------------
 # VALIDATION
@@ -28,6 +32,8 @@ if [ ! -f "$DB_BACKUP" ]; then
   echo "❌ Database backup not found: $DB_BACKUP"
   exit 1
 fi
+
+echo "✔ Backup files validated"
 
 # -------------------------
 # LOCATE MYSQL CONTAINER
@@ -48,24 +54,38 @@ fi
 echo "✔ Found MySQL container: $MYSQL_CONTAINER"
 
 # -------------------------
-# FILESYSTEM RESTORE
+# VALIDATE MAUTIC VOLUME
 # -------------------------
 
-echo "📁 Restoring filesystem..."
+echo "🔍 Validating Mautic volume: $MAUTIC_VOLUME"
 
-cd "$DEPLOY_ROOT"
+if ! docker volume inspect "$MAUTIC_VOLUME" >/dev/null 2>&1; then
+  echo "❌ Mautic volume not found: $MAUTIC_VOLUME"
+  exit 1
+fi
 
-# Preserve existing files in case of partial failure
-RESTORE_TMP="$(mktemp -d)"
+echo "✔ Found volume: $MAUTIC_VOLUME"
 
-tar -xzf "$FS_BACKUP" -C "$RESTORE_TMP"
+# -------------------------
+# FILESYSTEM RESTORE (VOLUME)
+# -------------------------
 
-rsync -a --delete "$RESTORE_TMP/mautic/" mautic/
-rsync -a --delete "$RESTORE_TMP/cron/" cron/
+echo "📁 Restoring Mautic filesystem into Docker volume..."
 
-rm -rf "$RESTORE_TMP"
+# Clear volume first to avoid residue
+docker run --rm \
+  -v "${MAUTIC_VOLUME}:/volume" \
+  alpine \
+  sh -c "rm -rf /volume/*"
 
-echo "✅ Filesystem restored"
+# Restore from backup
+docker run --rm \
+  -v "${MAUTIC_VOLUME}:/volume" \
+  -v "${BACKUP_ROOT}:/backup:ro" \
+  alpine \
+  sh -c "cd /volume && tar -xzf /backup/filesystem.tar.gz"
+
+echo "✅ Filesystem restored into volume"
 
 # -------------------------
 # DATABASE RESTORE
@@ -73,12 +93,20 @@ echo "✅ Filesystem restored"
 
 echo "🛢 Restoring database: $MYSQL_DATABASE"
 
-docker exec -i "$MYSQL_CONTAINER" sh -c "
-  mysql \
-    -u root \
-    -p\"$MYSQL_ROOT_PASSWORD\" \
-    $MYSQL_DATABASE
-" < <(gunzip -c "$DB_BACKUP")
+echo "🗑 Dropping and recreating database..."
+
+docker exec "$MYSQL_CONTAINER" sh -c "
+  mysql -u root -p\"$MYSQL_ROOT_PASSWORD\" -e '
+    DROP DATABASE IF EXISTS \`${MYSQL_DATABASE}\`;
+    CREATE DATABASE \`${MYSQL_DATABASE}\`;
+  '
+"
+
+echo "📥 Importing database dump..."
+
+gunzip < "$DB_BACKUP" | docker exec -i "$MYSQL_CONTAINER" sh -c "
+  mysql -u root -p\"$MYSQL_ROOT_PASSWORD\" \"$MYSQL_DATABASE\"
+"
 
 echo "✅ Database restored"
 
@@ -87,3 +115,5 @@ echo "✅ Database restored"
 # -------------------------
 
 echo "🎉 Restore completed successfully for brand: $BRAND_NAME"
+echo "   Filesystem volume: $MAUTIC_VOLUME"
+echo "   Database:          $MYSQL_DATABASE"
