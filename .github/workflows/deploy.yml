@@ -10,6 +10,10 @@ on:
         description: 'Brand identifier (e.g., default, brandA). Defaults to "default".'
         default: 'default'
         required: false
+      cleanup_env:
+        description: 'Cleanup .env files and sensitive variables after deployment'
+        default: 'true'
+        required: false
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -145,6 +149,7 @@ jobs:
           cat setup-dc.log
         
       - name: Cleanup sensitive environment variables on server
+        if: ${{ github.event.inputs.cleanup_env == 'true' }}
         env:
           BRAND_NAME: ${{ env.BRAND_NAME }}
         run: |
