@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-
+cd /home/angelantonio/backup/root/mautic
 : "${BRAND_NAME:?BRAND_NAME must be set}"
 
 echo "🔄 Recreating containers for brand: ${BRAND_NAME}"
