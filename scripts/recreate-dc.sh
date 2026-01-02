@@ -5,9 +5,10 @@ cd /home/angelantonio/backup/root/mautic
 
 echo "🔄 Recreating containers for brand: ${BRAND_NAME}"
 
-docker compose \
-  --project-name "${BRAND_NAME}" \
-  pull
+# Not pulling latest images to avoid unexpected issues
+# docker compose \
+#   --project-name "${BRAND_NAME}" \
+#   pull
 
 docker compose \
   --project-name "${BRAND_NAME}" \
