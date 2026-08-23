@@ -15,3 +15,13 @@ Branch cleanup done (2026-08-22): deleted `llm-testing`, `single`, `brands`, `m6
 - [x] **9. Single source of truth for `.mautic_env`.** Converted to `__TOKEN__` placeholders; `deploy.yml`/`rotate-secrets.yml` now `sed`-substitute the committed template instead of regenerating it.
 - [x] **10. DRY the SSH/scp boilerplate.** Extracted `.github/actions/run-remote-script` composite action and adopted it in all backup/restore/rotate steps.
 - [x] **11. Add CI verification.** Added `.github/workflows/ci.yml` running `shellcheck` + `docker compose config -q`.
+
+## Remove multi-brand feature (per-site repo)
+
+- [x] Remove `brand` workflow input and `environment: mautic-<brand>` blocks; use repo-level secrets/vars.
+- [x] Replace `BRAND_NAME`/`__BRAND_NAME__` with `COMPOSE_PROJECT_NAME`/`__PROJECT_NAME__` (repo var).
+- [x] Add `DEPLOY_DIR` repo var; thread it through workflows, `setup-dc.sh`, and scripts (no hardcoded path).
+- [x] Make pre-deploy backup skip gracefully (exit 0) when no container/volume exists.
+- [x] Scope DB alias/labels/volumes by `COMPOSE_PROJECT_NAME` (required for multiple sites on shared `mysql_private`).
+- [x] Scrub `setup-dc.sh` (contains substituted `MAUTIC_PASSWORD`) during post-deploy cleanup.
+- [x] Update `AGENTS.md`/`README.md` to the single-site-per-repo model.

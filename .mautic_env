@@ -1,7 +1,7 @@
 # use this file for environment variables that can be used.
 # see https://docs.mautic.org/en/5.x/
 
-MAUTIC_DB_HOST=mautic_db___BRAND_NAME__
+MAUTIC_DB_HOST=mautic_db___PROJECT_NAME__
 MAUTIC_DB_PORT=3306
 MAUTIC_DB_DATABASE=__DB_NAME__
 MAUTIC_DB_USER=__DB_USER__

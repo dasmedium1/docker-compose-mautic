@@ -15,7 +15,7 @@ inputs:
     description: Path to the local script to run remotely
     required: true
   env:
-    description: Env assignments to prefix the remote command (e.g. "BRAND_NAME='x' DB_NAME='y'")
+    description: Env assignments to prefix the remote command (e.g. "COMPOSE_PROJECT_NAME='x' DEPLOY_DIR='/path' DB_NAME='y'")
     required: false
     default: ''
 runs:

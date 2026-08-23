@@ -2,21 +2,10 @@ name: Restore Running Mautic Workflow
 
 on:
   workflow_dispatch:
-    inputs:
-      brand:
-        description: 'Brand identifier (e.g., default, brandA)'
-        default: 'default'
-        required: false
 
 jobs:
   restore:
     runs-on: ubuntu-latest
-    environment:
-      name: mautic-${{ github.event.inputs.brand || 'default' }}
-
-    env:
-      BRAND_NAME: ${{ github.event.inputs.brand || 'default' }}
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -27,4 +16,4 @@ jobs:
           ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
           host: ${{ vars.LINODE_IP }}
           script: scripts/restore_mautic.sh
-          env: "BRAND_NAME='${{ env.BRAND_NAME }}' DB_NAME='${{ vars.DB_NAME }}' MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}'"
+          env: "COMPOSE_PROJECT_NAME='${{ vars.COMPOSE_PROJECT_NAME }}' DEPLOY_DIR='${{ vars.DEPLOY_DIR }}' DB_NAME='${{ vars.DB_NAME }}' MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}'"

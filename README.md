@@ -62,10 +62,16 @@ This setup is inspired by the original work of John Linhart (escopecz) who creat
 - `LINODE_IP`: IP address of your Linode VPS
 - `DOMAIN`: Domain name for your Mautic instance (e.g., `mautic.example.com`)
 - `EMAIL`: Email address for Mautic admin user and SSL certificates
+- `DB_NAME`: Mautic database name (e.g., `mautic`)
+- `MYSQL_USER`: Mautic database user
+- `COMPOSE_PROJECT_NAME`: Unique Compose project name for this site (e.g., `sitea`)
+- `DEPLOY_DIR`: Absolute deploy directory on the VPS (e.g., `/home/angelantonio/backup/root/sitea`)
 
 #### Optional Variables:
 - `ENABLE_BACKUP`: Set to `false` to skip backup before deployment (default: enabled)
 - `MAUTIC_VERSION`: Mautic version (default: `6.0.5-apache`)
+
+> **One repo = one website.** To deploy a second site onto the same VPS, fork this repo and set a different `COMPOSE_PROJECT_NAME` and `DEPLOY_DIR`. Secrets and variables live at the **repository** level (no GitHub environments).
 
 ## Quick Start
 
@@ -105,13 +111,13 @@ This setup is inspired by the original work of John Linhart (escopecz) who creat
   - Create filesystem backup (tar.gz of Mautic files)
   - Create database backup (MySQL dump)
   - Apply retention policy (keeps last 14 backups)
-  - Store backups in `/home/angelantonio/backup/root/mautic/backups/`
+  - Store backups in `$DEPLOY_DIR/backups/`
 
 ### 3. Restore Workflow (`restore.yml`)
-- **Trigger:** Manual dispatch (select `brand`)
+- **Trigger:** Manual dispatch
 - **Actions:**
-  - Restore filesystem from backup (`backups/<brand>/current/filesystem.tar.gz`)
-  - Restore database from dump (`backups/<brand>/current/database.sql.gz`)
+  - Restore filesystem from backup (`$DEPLOY_DIR/backups/current/filesystem.tar.gz`)
+  - Restore database from dump (`$DEPLOY_DIR/backups/current/database.sql.gz`)
   - Restart services
 
 ## File Structure
@@ -129,7 +135,8 @@ This setup is inspired by the original work of John Linhart (escopecz) who creat
 │   ├── deploy.yml              # Deployment workflow
 │   ├── backup.yml              # Backup workflow
 │   ├── restore.yml             # Restore workflow
-│   └── rotate-secrets.yml      # Secret rotation workflow
+│   ├── rotate-secrets.yml      # Secret rotation workflow
+│   └── ci.yml                  # Lint/syntax checks (shellcheck + compose config)
 └── .github/actions/
     └── run-remote-script       # Composite action (SCP + SSH run)
 ```
@@ -167,8 +174,8 @@ This setup is inspired by the original work of John Linhart (escopecz) who creat
 # SSH into your VPS
 ssh root@your-vps-ip
 
-# Navigate to Mautic directory
-cd /home/angelantonio/backup/root/mautic
+# Navigate to the deploy directory
+cd /path/to/your/deploy-dir
 
 # View running containers
 docker compose ps
@@ -183,17 +190,17 @@ docker compose exec -u www-data mautic_web php bin/console cache:clear
 
 ### Manual Backup
 ```bash
-cd /home/angelantonio/backup/root/mautic
-BRAND_NAME=default DB_NAME=your_db_name MYSQL_ROOT_PASSWORD=your_password bash scripts/backup_mautic.sh
+cd /path/to/your/deploy-dir
+COMPOSE_PROJECT_NAME=sitea DEPLOY_DIR=/path/to/your/deploy-dir DB_NAME=your_db_name MYSQL_ROOT_PASSWORD=your_password bash scripts/backup_mautic.sh
 ```
 
 ### Manual Restore
 ```bash
-cd /home/angelantonio/backup/root/mautic
-BRAND_NAME=default DB_NAME=your_db_name MYSQL_ROOT_PASSWORD=your_password bash scripts/restore_mautic.sh
+cd /path/to/your/deploy-dir
+COMPOSE_PROJECT_NAME=sitea DEPLOY_DIR=/path/to/your/deploy-dir DB_NAME=your_db_name MYSQL_ROOT_PASSWORD=your_password bash scripts/restore_mautic.sh
 ```
 
-Restore reads from `backups/<brand>/current/` only (no date/prefix argument).
+Restore reads from `$DEPLOY_DIR/backups/current/` only (no date/prefix argument).
 
 ## Troubleshooting
 
@@ -244,7 +251,7 @@ This repository differs from the original DigitalOcean-focused setup by:
 ## Future Enhancements
 
 - [ ] Redis integration for caching and sessions
-- [ ] Multiple Mautic instances support
+- [x] Multiple Mautic instances support (via per-site repo forks on one VPS)
 - [ ] Database read replicas
 - [ ] Enhanced monitoring with Prometheus/Grafana
 - [ ] Automated testing before deployment

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-cd /home/angelantonio/backup/root/mautic
+cd "${DEPLOY_DIR:?DEPLOY_DIR is required}"
 
 echo "## setup-dc.sh starting"
 

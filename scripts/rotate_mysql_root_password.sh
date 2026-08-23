@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-BRAND_NAME="${BRAND_NAME:?}"
+COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:?}"
 OLD_ROOT_PASSWORD="${OLD_ROOT_PASSWORD:?}"
 NEW_ROOT_PASSWORD="${NEW_ROOT_PASSWORD:?}"
 
 MYSQL_CONTAINER=$(docker ps \
   --filter "label=com.docker.compose.service=mautic_db" \
-  --filter "label=com.docker.compose.project=$BRAND_NAME" \
+  --filter "label=com.docker.compose.project=$COMPOSE_PROJECT_NAME" \
   --format '{{.Names}}')
 
 if [ -z "$MYSQL_CONTAINER" ]; then
