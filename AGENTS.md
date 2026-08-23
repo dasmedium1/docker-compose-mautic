@@ -31,6 +31,16 @@ The workflows `sed`-replace these on the server. If you change a token, update B
 
 Don't confuse `DB_NAME`/`MYSQL_USER` (variables) with the password secrets. `.env`/`.mautic_env` are deleted from the server post-deploy (`cleanup_env` step), so they are templates, not real secrets — do not add them to `.gitignore`.
 
+## Changing DB credentials (MySQL env-init trap)
+
+MySQL initializes `MYSQL_USER` / `MYSQL_PASSWORD` / `MYSQL_DATABASE` **only on the first boot of an empty data volume** (the `*_mysql-data` volume). Editing these in GitHub after a site is live does NOT update the running DB — the next deploy will regenerate `.env`/`.mautic_env` with the new values, but MySQL still has the old ones, and `mautic_web` exits with `Access denied` (the `mautic_db` healthcheck can still show "Healthy" because `mysqladmin ping` doesn't strictly require a working auth).
+
+To change the DB password on a live site, use the `rotate-secrets` workflow (runs `ALTER USER ... IDENTIFIED BY` via `rotate_db_password.sh`), not secret-editing + redeploy. To change the DB user or database name (or wipe), reset the DB volume and redeploy:
+
+```bash
+docker compose -p "$COMPOSE_PROJECT_NAME" down -v   # then re-run deploy
+```
+
 ## Shared SSH/scp action
 
 The workflows call the composite action `.github/actions/run-remote-script` (inputs: `ssh_key`, `host`, `script`, `env`) to SCP a script and run it over SSH. Add new remote-run steps by reusing this action, not by re-pasting the `scp`/`ssh` boilerplate. The `deploy` and `recreate` steps still use `easingthemes/ssh-deploy@main` (they deploy the whole tree via `SCRIPT_AFTER`).
