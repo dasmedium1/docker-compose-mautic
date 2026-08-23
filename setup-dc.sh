@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-cd /home/angelantonio/backup/root/mautic
+cd "${DEPLOY_DIR:?DEPLOY_DIR is required}"
 
 echo "## setup-dc.sh starting"
 
@@ -86,9 +86,9 @@ else
     echo "## Installing Mautic"
     docker compose exec -T -u www-data -w /var/www/html mautic_web \
         php ./bin/console mautic:install --force \
-        --admin_email {{EMAIL_ADDRESS}} \
-        --admin_password {{MAUTIC_PASSWORD}} \
-        https://{{DOMAIN_NAME}}
+        --admin_email "{{EMAIL_ADDRESS}}" \
+        --admin_password "{{MAUTIC_PASSWORD}}" \
+        "https://{{DOMAIN_NAME}}"
 fi
 
 # ----------------------------------------

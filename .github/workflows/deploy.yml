@@ -3,13 +3,9 @@ name: Deploy Mautic App (with Pre-Deploy Backup)
 on:
   push:
     branches:
-      - m6-dev-1
+      - master
   workflow_dispatch:
     inputs:
-      brand:
-        description: 'Brand identifier (e.g., default, brandA). Defaults to "default".'
-        default: 'default'
-        required: false
       cleanup_env:
         description: 'Cleanup .env files and sensitive variables after deployment'
         default: 'true'
@@ -17,11 +13,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: mautic-${{ github.event.inputs.brand || 'default' }}
-    env:
-      BRAND_NAME: ${{ github.event.inputs.brand || 'default' }}
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -31,26 +22,15 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/vps_key
           chmod 600 ~/.ssh/vps_key
-      
+
       - name: Backup Mautic before deployment
         if: ${{ vars.ENABLE_BACKUP != 'false' }}
-        run: |
-          set -euo pipefail
-
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/vps_key
-          chmod 600 ~/.ssh/vps_key
-
-          scp -o StrictHostKeyChecking=no -i ~/.ssh/vps_key scripts/backup_mautic.sh root@${{ vars.LINODE_IP }}:/tmp/backup_mautic.sh
-
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key \
-            root@${{ vars.LINODE_IP }} "BRAND_NAME='${{ env.BRAND_NAME }}' DB_NAME='${{ vars.DB_NAME }}' MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}' bash /tmp/backup_mautic.sh"
-      
-      - name: Load .mautic_env variables
-        run: |
-          set -a
-          source .mautic_env
-          set +a
+        uses: ./.github/actions/run-remote-script
+        with:
+          ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host: ${{ vars.LINODE_IP }}
+          script: scripts/backup_mautic.sh
+          env: "COMPOSE_PROJECT_NAME='${{ vars.COMPOSE_PROJECT_NAME }}' DEPLOY_DIR='${{ vars.DEPLOY_DIR }}' DB_NAME='${{ vars.DB_NAME }}' MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}'"
 
       - name: Check required secrets
         env:
@@ -83,9 +63,9 @@ jobs:
           SOURCE: .
           REMOTE_HOST: ${{ vars.LINODE_IP }}
           REMOTE_USER: root
-          TARGET: /home/angelantonio/backup/root/mautic
+          TARGET: ${{ vars.DEPLOY_DIR }}
           SCRIPT_AFTER: |
-            cd /home/angelantonio/backup/root/mautic
+            cd ${{ vars.DEPLOY_DIR }}
 
             # Replace placeholders in setup-dc.sh
             sed -i "s/{{DOMAIN_NAME}}/${{ vars.DOMAIN }}/g" setup-dc.sh
@@ -96,72 +76,38 @@ jobs:
             sed -i "s/__MYSQL_PASSWORD__/${{ secrets.MYSQL_PASSWORD }}/g" .env
             sed -i "s/__MYSQL_ROOT_PASSWORD__/${{ secrets.MYSQL_ROOT_PASSWORD }}/g" .env
             sed -i "s/__DOMAIN__/${{ vars.DOMAIN }}/g" .env
-            sed -i "s/__BRAND_NAME__/${{ env.BRAND_NAME }}/g" .env
+            sed -i "s/__PROJECT_NAME__/${{ vars.COMPOSE_PROJECT_NAME }}/g" .env
             sed -i "s/__DB_NAME__/${{ vars.DB_NAME }}/g" .env
             sed -i "s/__DB_USER__/${{ vars.MYSQL_USER }}/g" .env
 
-            # Generate .mautic_env dynamically
-            echo "MAUTIC_DB_HOST=mautic_db_${{env.BRAND_NAME}}" > .mautic_env
-            echo "MAUTIC_DB_PORT=3306" >> .mautic_env
-            echo "MAUTIC_DB_DATABASE=${{ vars.DB_NAME }}" >> .mautic_env
-            echo "MAUTIC_DB_USER=${{ vars.MYSQL_USER }}" >> .mautic_env
-            echo "MAUTIC_DB_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .mautic_env
-            echo "MAUTIC_PORT=80" >> .mautic_env
-            echo "MAUTIC_URL=https://${{ vars.DOMAIN }}" >> .mautic_env
+            # Substitute placeholders in the .mautic_env template
+            sed -i "s/__MYSQL_PASSWORD__/${{ secrets.MYSQL_PASSWORD }}/g" .mautic_env
+            sed -i "s/__DOMAIN__/${{ vars.DOMAIN }}/g" .mautic_env
+            sed -i "s/__PROJECT_NAME__/${{ vars.COMPOSE_PROJECT_NAME }}/g" .mautic_env
+            sed -i "s/__DB_NAME__/${{ vars.DB_NAME }}/g" .mautic_env
+            sed -i "s/__DB_USER__/${{ vars.MYSQL_USER }}/g" .mautic_env
 
             # Run the setup script
-            ./setup-dc.sh > /var/log/setup-dc.log 2>&1
-            
-      
-      # --------------------------
-      # 🔁 CONDITIONAL RESTORE STEP
-      # --------------------------
-      - name: Restore Mautic from backup (if enabled)
-        if: ${{ vars.ENABLE_RESTORE == 'true' && github.event.inputs.restore_prefix != '' }}
-        run: |
-          set -euo pipefail
-
-          echo "🔐 Preparing SSH key..."
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/vps_key
-          chmod 600 ~/.ssh/vps_key
-
-          RESTORE_PREFIX="${{ github.event.inputs.restore_prefix }}"
-          echo "♻ Restore requested for prefix: $RESTORE_PREFIX"
-          
-          scp -o StrictHostKeyChecking=no -i ~/.ssh/vps_key scripts/restore_mautic.sh root@${{ vars.LINODE_IP }}:/tmp/restore_mautic.sh
-
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key root@${{ vars.LINODE_IP }} \
-          "BRAND_NAME='${{ env.BRAND_NAME }}' \
-          DB_NAME='${{ vars.DB_NAME }}' \
-          MYSQL_PASSWORD='${{ secrets.MYSQL_PASSWORD }}' \
-          MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}' \
-          bash /tmp/restore_mautic.sh '$RESTORE_PREFIX'"
-
-          echo "🟢 Restore completed successfully."  
+            DEPLOY_DIR='${{ vars.DEPLOY_DIR }}' ./setup-dc.sh > ./setup-dc.log 2>&1
 
       - name: Download setup-dc.log
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          scp -o StrictHostKeyChecking=no root@${{ vars.LINODE_IP }}:/var/log/setup-dc.log ./
+          scp -o StrictHostKeyChecking=no root@${{ vars.LINODE_IP }}:${{ vars.DEPLOY_DIR }}/setup-dc.log ./
           cat setup-dc.log
-        
+
       - name: Cleanup sensitive environment variables on server
         if: ${{ github.event.inputs.cleanup_env == 'true' }}
-        env:
-          BRAND_NAME: ${{ env.BRAND_NAME }}
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key root@${{ vars.LINODE_IP }} \
-          "BRAND_NAME='${BRAND_NAME}' DEPLOY_DIR='/home/angelantonio/backup/root/mautic' bash -s" << 'EOF'
+          "DEPLOY_DIR='${{ vars.DEPLOY_DIR }}' bash -s" << 'EOF'
           set -euo pipefail
 
-          echo "🔐 Connected. Beginning cleanup of .env files and container variables..."
+          echo "🔐 Connected. Beginning cleanup of sensitive files..."
 
-          echo "📁 Removing .env files for brand: $BRAND_NAME"
-          rm -f "$DEPLOY_DIR/.env" "$DEPLOY_DIR/.mautic_env" && echo "✔ Files removed"
+          echo "📁 Removing .env, .mautic_env, and setup-dc.sh (contains substituted secrets)"
+          rm -f "$DEPLOY_DIR/.env" "$DEPLOY_DIR/.mautic_env" "$DEPLOY_DIR/setup-dc.sh" && echo "✔ Files removed"
 
           EOF
-
-

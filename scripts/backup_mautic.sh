@@ -5,10 +5,9 @@ set -euo pipefail
 # CONFIGURATION
 # -------------------------
 
-BRAND_NAME="${BRAND_NAME:-default}"
-
-DEPLOY_ROOT="/home/angelantonio/backup/root/mautic"
-BACKUP_ROOT="$DEPLOY_ROOT/backups/$BRAND_NAME"
+COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:?COMPOSE_PROJECT_NAME is required}"
+DEPLOY_ROOT="${DEPLOY_DIR:?DEPLOY_DIR is required}"
+BACKUP_ROOT="$DEPLOY_ROOT/backups"
 
 CURRENT_DIR="$BACKUP_ROOT/current"
 ARCHIVE_DIR="$BACKUP_ROOT/archive"
@@ -16,8 +15,8 @@ ARCHIVE_DIR="$BACKUP_ROOT/archive"
 MYSQL_DATABASE="${DB_NAME:?DB_NAME is required}"
 MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}"
 
-# Docker volume names (derived from compose project)
-MAUTIC_VOLUME="${BRAND_NAME}_mautic"
+# Docker volume name (derived from the compose project)
+MAUTIC_VOLUME="${COMPOSE_PROJECT_NAME}_mautic"
 
 mkdir -p "$CURRENT_DIR" "$ARCHIVE_DIR"
 
@@ -28,16 +27,16 @@ DB_BACKUP="$CURRENT_DIR/database.sql.gz"
 # LOCATE MYSQL CONTAINER
 # -------------------------
 
-echo "🔍 Locating MySQL container for brand: $BRAND_NAME"
+echo "🔍 Locating MySQL container for project: $COMPOSE_PROJECT_NAME"
 
 MYSQL_CONTAINER=$(docker ps \
   --filter "label=com.docker.compose.service=mautic_db" \
-  --filter "label=com.docker.compose.project=$BRAND_NAME" \
+  --filter "label=com.docker.compose.project=$COMPOSE_PROJECT_NAME" \
   --format '{{.Names}}')
 
 if [ -z "$MYSQL_CONTAINER" ]; then
-  echo "❌ Could not find MySQL container for brand: $BRAND_NAME"
-  exit 1
+  echo "⚠ No running MySQL container for project '$COMPOSE_PROJECT_NAME'; nothing to back up. Skipping."
+  exit 0
 fi
 
 echo "✔ Found MySQL container: $MYSQL_CONTAINER"
@@ -49,8 +48,8 @@ echo "✔ Found MySQL container: $MYSQL_CONTAINER"
 echo "🔍 Validating Mautic volume: $MAUTIC_VOLUME"
 
 if ! docker volume inspect "$MAUTIC_VOLUME" >/dev/null 2>&1; then
-  echo "❌ Mautic volume not found: $MAUTIC_VOLUME"
-  exit 1
+  echo "⚠ Mautic volume '$MAUTIC_VOLUME' not found; nothing to back up. Skipping."
+  exit 0
 fi
 
 echo "✔ Found volume: $MAUTIC_VOLUME"
@@ -64,6 +63,20 @@ if [ -f "$FS_BACKUP" ] || [ -f "$DB_BACKUP" ]; then
   mkdir -p "$ARCHIVE_DIR/$TS"
   mv "$CURRENT_DIR"/* "$ARCHIVE_DIR/$TS/" || true
   echo "📦 Previous backup archived to: $ARCHIVE_DIR/$TS"
+fi
+
+# -------------------------
+# RETENTION POLICY (keep last 14 archives)
+# -------------------------
+
+RETENTION=14
+ARCHIVED_COUNT=$(find "$ARCHIVE_DIR" -mindepth 1 -maxdepth 1 -type d | wc -l)
+if [ "$ARCHIVED_COUNT" -gt "$RETENTION" ]; then
+  TO_PRUNE=$((ARCHIVED_COUNT - RETENTION))
+  find "$ARCHIVE_DIR" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort | head -n "$TO_PRUNE" | while IFS= read -r NAME; do
+    echo "🗑 Pruning old backup: $ARCHIVE_DIR/$NAME"
+    rm -rf "$ARCHIVE_DIR/${NAME:?}"
+  done
 fi
 
 # -------------------------
@@ -86,10 +99,9 @@ echo "✅ Filesystem backup created: $FS_BACKUP"
 
 echo "🛢 Backing up database: $MYSQL_DATABASE"
 
-docker exec "$MYSQL_CONTAINER" sh -c "
+docker exec -e MYSQL_PWD="$MYSQL_ROOT_PASSWORD" "$MYSQL_CONTAINER" sh -c "
   mysqldump \
     -u root \
-    -p\"$MYSQL_ROOT_PASSWORD\" \
     --single-transaction \
     --quick \
     --lock-tables=false \
@@ -102,6 +114,6 @@ echo "✅ Database backup created: $DB_BACKUP"
 # COMPLETION
 # -------------------------
 
-echo "🎉 Backup completed successfully for brand: $BRAND_NAME"
+echo "🎉 Backup completed successfully for project: $COMPOSE_PROJECT_NAME"
 echo "   Filesystem: $FS_BACKUP"
 echo "   Database:   $DB_BACKUP"

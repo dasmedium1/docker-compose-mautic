@@ -5,10 +5,9 @@ set -euo pipefail
 # CONFIGURATION
 # -------------------------
 
-BRAND_NAME="${BRAND_NAME:-default}"
-
-DEPLOY_ROOT="/home/angelantonio/backup/root/mautic"
-BACKUP_ROOT="$DEPLOY_ROOT/backups/$BRAND_NAME/current"
+COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:?COMPOSE_PROJECT_NAME is required}"
+DEPLOY_ROOT="${DEPLOY_DIR:?DEPLOY_DIR is required}"
+BACKUP_ROOT="$DEPLOY_ROOT/backups/current"
 
 MYSQL_DATABASE="${DB_NAME:?DB_NAME is required}"
 MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}"
@@ -16,8 +15,8 @@ MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}"
 FS_BACKUP="$BACKUP_ROOT/filesystem.tar.gz"
 DB_BACKUP="$BACKUP_ROOT/database.sql.gz"
 
-# Docker volume name (derived from compose project)
-MAUTIC_VOLUME="${BRAND_NAME}_mautic"
+# Docker volume name (derived from the compose project)
+MAUTIC_VOLUME="${COMPOSE_PROJECT_NAME}_mautic"
 
 # -------------------------
 # VALIDATION
@@ -39,15 +38,15 @@ echo "✔ Backup files validated"
 # LOCATE MYSQL CONTAINER
 # -------------------------
 
-echo "🔍 Locating MySQL container for brand: $BRAND_NAME"
+echo "🔍 Locating MySQL container for project: $COMPOSE_PROJECT_NAME"
 
 MYSQL_CONTAINER=$(docker ps \
   --filter "label=com.docker.compose.service=mautic_db" \
-  --filter "label=com.docker.compose.project=$BRAND_NAME" \
+  --filter "label=com.docker.compose.project=$COMPOSE_PROJECT_NAME" \
   --format '{{.Names}}')
 
 if [ -z "$MYSQL_CONTAINER" ]; then
-  echo "❌ Could not find MySQL container for brand: $BRAND_NAME"
+  echo "❌ Could not find MySQL container for project: $COMPOSE_PROJECT_NAME"
   exit 1
 fi
 
@@ -95,8 +94,8 @@ echo "🛢 Restoring database: $MYSQL_DATABASE"
 
 echo "🗑 Dropping and recreating database..."
 
-docker exec "$MYSQL_CONTAINER" sh -c "
-  mysql -u root -p\"$MYSQL_ROOT_PASSWORD\" -e '
+docker exec -e MYSQL_PWD="$MYSQL_ROOT_PASSWORD" "$MYSQL_CONTAINER" sh -c "
+  mysql -u root -e '
     DROP DATABASE IF EXISTS \`${MYSQL_DATABASE}\`;
     CREATE DATABASE \`${MYSQL_DATABASE}\`;
   '
@@ -104,8 +103,8 @@ docker exec "$MYSQL_CONTAINER" sh -c "
 
 echo "📥 Importing database dump..."
 
-gunzip < "$DB_BACKUP" | docker exec -i "$MYSQL_CONTAINER" sh -c "
-  mysql -u root -p\"$MYSQL_ROOT_PASSWORD\" \"$MYSQL_DATABASE\"
+gunzip < "$DB_BACKUP" | docker exec -i -e MYSQL_PWD="$MYSQL_ROOT_PASSWORD" "$MYSQL_CONTAINER" sh -c "
+  mysql -u root \"$MYSQL_DATABASE\"
 "
 
 echo "✅ Database restored"
@@ -114,6 +113,6 @@ echo "✅ Database restored"
 # COMPLETION
 # -------------------------
 
-echo "🎉 Restore completed successfully for brand: $BRAND_NAME"
+echo "🎉 Restore completed successfully for project: $COMPOSE_PROJECT_NAME"
 echo "   Filesystem volume: $MAUTIC_VOLUME"
 echo "   Database:          $MYSQL_DATABASE"

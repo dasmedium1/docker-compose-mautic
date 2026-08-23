@@ -24,7 +24,7 @@ services:
     networks:
       mysql_private:
         aliases:
-          - mautic_db_${BRAND_NAME}
+          - mautic_db_${COMPOSE_PROJECT_NAME}
 
   mautic_web:
     image: mautic/mautic:${MAUTIC_VERSION:-6.0.5-apache}
@@ -46,18 +46,18 @@ services:
     networks:
       traefik_web:
         aliases:
-          - mautic_web_${BRAND_NAME}
+          - mautic_web_${COMPOSE_PROJECT_NAME}
       mysql_private:
     labels:
       - traefik.enable=true
-      - traefik.http.routers.mautic_${BRAND_NAME}.rule=Host(`${DOMAIN}`)
-      - traefik.http.routers.mautic_${BRAND_NAME}.entrypoints=websecure
-      - traefik.http.routers.mautic_${BRAND_NAME}.tls=true
-      - traefik.http.routers.mautic_${BRAND_NAME}.tls.certresolver=letsencrypt
-      - traefik.http.services.mautic_${BRAND_NAME}.loadbalancer.server.port=80
-      - traefik.http.middlewares.mautic_${BRAND_NAME}-headers.headers.customRequestHeaders.X-Forwarded-Proto=https
-      - traefik.http.middlewares.mautic_${BRAND_NAME}-headers.headers.customRequestHeaders.X-Forwarded-Host=${DOMAIN}
-      - traefik.http.routers.mautic_${BRAND_NAME}.middlewares=mautic_${BRAND_NAME}-headers
+      - traefik.http.routers.mautic_${COMPOSE_PROJECT_NAME}.rule=Host(`${DOMAIN}`)
+      - traefik.http.routers.mautic_${COMPOSE_PROJECT_NAME}.entrypoints=websecure
+      - traefik.http.routers.mautic_${COMPOSE_PROJECT_NAME}.tls=true
+      - traefik.http.routers.mautic_${COMPOSE_PROJECT_NAME}.tls.certresolver=letsencrypt
+      - traefik.http.services.mautic_${COMPOSE_PROJECT_NAME}.loadbalancer.server.port=80
+      - traefik.http.middlewares.mautic_${COMPOSE_PROJECT_NAME}-headers.headers.customRequestHeaders.X-Forwarded-Proto=https
+      - traefik.http.middlewares.mautic_${COMPOSE_PROJECT_NAME}-headers.headers.customRequestHeaders.X-Forwarded-Host=${DOMAIN}
+      - traefik.http.routers.mautic_${COMPOSE_PROJECT_NAME}.middlewares=mautic_${COMPOSE_PROJECT_NAME}-headers
 
   mautic_cron:
     image: mautic/mautic:${MAUTIC_VERSION:-6.0.5-apache}

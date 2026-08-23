@@ -1,17 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
-cd /home/angelantonio/backup/root/mautic
-: "${BRAND_NAME:?BRAND_NAME must be set}"
+cd "${DEPLOY_DIR:?DEPLOY_DIR is required}"
 
-echo "🔄 Recreating containers for brand: ${BRAND_NAME}"
+echo "🔄 Recreating containers for project: ${COMPOSE_PROJECT_NAME:-<from .env>}"
 
-# Not pulling latest images to avoid unexpected issues
-# docker compose \
-#   --project-name "${BRAND_NAME}" \
-#   pull
+docker compose up -d --force-recreate
 
-docker compose \
-  --project-name "${BRAND_NAME}" \
-  up -d 
-
-echo "✅ Containers recreated successfully for brand: ${BRAND_NAME}"
+echo "✅ Containers recreated successfully"
