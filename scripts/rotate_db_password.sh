@@ -12,8 +12,8 @@ MYSQL_CONTAINER=$(docker ps \
   --filter "label=com.docker.compose.project=$BRAND_NAME" \
   --format '{{.Names}}')
 
-docker exec "$MYSQL_CONTAINER" mysql \
-  -u root -p"$MYSQL_ROOT_PASSWORD" \
+docker exec -e MYSQL_PWD="$MYSQL_ROOT_PASSWORD" "$MYSQL_CONTAINER" mysql \
+  -u root \
   -e "
     ALTER USER '$MYSQL_USER'@'%' IDENTIFIED BY '$NEW_DB_PASSWORD';
     FLUSH PRIVILEGES;

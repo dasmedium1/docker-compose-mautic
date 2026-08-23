@@ -95,8 +95,8 @@ echo "🛢 Restoring database: $MYSQL_DATABASE"
 
 echo "🗑 Dropping and recreating database..."
 
-docker exec "$MYSQL_CONTAINER" sh -c "
-  mysql -u root -p\"$MYSQL_ROOT_PASSWORD\" -e '
+docker exec -e MYSQL_PWD="$MYSQL_ROOT_PASSWORD" "$MYSQL_CONTAINER" sh -c "
+  mysql -u root -e '
     DROP DATABASE IF EXISTS \`${MYSQL_DATABASE}\`;
     CREATE DATABASE \`${MYSQL_DATABASE}\`;
   '
@@ -104,8 +104,8 @@ docker exec "$MYSQL_CONTAINER" sh -c "
 
 echo "📥 Importing database dump..."
 
-gunzip < "$DB_BACKUP" | docker exec -i "$MYSQL_CONTAINER" sh -c "
-  mysql -u root -p\"$MYSQL_ROOT_PASSWORD\" \"$MYSQL_DATABASE\"
+gunzip < "$DB_BACKUP" | docker exec -i -e MYSQL_PWD="$MYSQL_ROOT_PASSWORD" "$MYSQL_CONTAINER" sh -c "
+  mysql -u root \"$MYSQL_DATABASE\"
 "
 
 echo "✅ Database restored"

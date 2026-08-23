@@ -3,7 +3,7 @@ name: Deploy Mautic App (with Pre-Deploy Backup)
 on:
   push:
     branches:
-      - m6-dev-1
+      - master
   workflow_dispatch:
     inputs:
       brand:
@@ -34,17 +34,12 @@ jobs:
       
       - name: Backup Mautic before deployment
         if: ${{ vars.ENABLE_BACKUP != 'false' }}
-        run: |
-          set -euo pipefail
-
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/vps_key
-          chmod 600 ~/.ssh/vps_key
-
-          scp -o StrictHostKeyChecking=no -i ~/.ssh/vps_key scripts/backup_mautic.sh root@${{ vars.LINODE_IP }}:/tmp/backup_mautic.sh
-
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key \
-            root@${{ vars.LINODE_IP }} "BRAND_NAME='${{ env.BRAND_NAME }}' DB_NAME='${{ vars.DB_NAME }}' MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}' bash /tmp/backup_mautic.sh"
+        uses: ./.github/actions/run-remote-script
+        with:
+          ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host: ${{ vars.LINODE_IP }}
+          script: scripts/backup_mautic.sh
+          env: "BRAND_NAME='${{ env.BRAND_NAME }}' DB_NAME='${{ vars.DB_NAME }}' MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}'"
       
       - name: Load .mautic_env variables
         run: |
@@ -100,45 +95,15 @@ jobs:
             sed -i "s/__DB_NAME__/${{ vars.DB_NAME }}/g" .env
             sed -i "s/__DB_USER__/${{ vars.MYSQL_USER }}/g" .env
 
-            # Generate .mautic_env dynamically
-            echo "MAUTIC_DB_HOST=mautic_db_${{env.BRAND_NAME}}" > .mautic_env
-            echo "MAUTIC_DB_PORT=3306" >> .mautic_env
-            echo "MAUTIC_DB_DATABASE=${{ vars.DB_NAME }}" >> .mautic_env
-            echo "MAUTIC_DB_USER=${{ vars.MYSQL_USER }}" >> .mautic_env
-            echo "MAUTIC_DB_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .mautic_env
-            echo "MAUTIC_PORT=80" >> .mautic_env
-            echo "MAUTIC_URL=https://${{ vars.DOMAIN }}" >> .mautic_env
+            # Generate .mautic_env by substituting placeholders in the committed template
+            sed -i "s/__MYSQL_PASSWORD__/${{ secrets.MYSQL_PASSWORD }}/g" .mautic_env
+            sed -i "s/__DOMAIN__/${{ vars.DOMAIN }}/g" .mautic_env
+            sed -i "s/__BRAND_NAME__/${{ env.BRAND_NAME }}/g" .mautic_env
+            sed -i "s/__DB_NAME__/${{ vars.DB_NAME }}/g" .mautic_env
+            sed -i "s/__DB_USER__/${{ vars.MYSQL_USER }}/g" .mautic_env
 
             # Run the setup script
             ./setup-dc.sh > /var/log/setup-dc.log 2>&1
-            
-      
-      # --------------------------
-      # 🔁 CONDITIONAL RESTORE STEP
-      # --------------------------
-      - name: Restore Mautic from backup (if enabled)
-        if: ${{ vars.ENABLE_RESTORE == 'true' && github.event.inputs.restore_prefix != '' }}
-        run: |
-          set -euo pipefail
-
-          echo "🔐 Preparing SSH key..."
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/vps_key
-          chmod 600 ~/.ssh/vps_key
-
-          RESTORE_PREFIX="${{ github.event.inputs.restore_prefix }}"
-          echo "♻ Restore requested for prefix: $RESTORE_PREFIX"
-          
-          scp -o StrictHostKeyChecking=no -i ~/.ssh/vps_key scripts/restore_mautic.sh root@${{ vars.LINODE_IP }}:/tmp/restore_mautic.sh
-
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key root@${{ vars.LINODE_IP }} \
-          "BRAND_NAME='${{ env.BRAND_NAME }}' \
-          DB_NAME='${{ vars.DB_NAME }}' \
-          MYSQL_PASSWORD='${{ secrets.MYSQL_PASSWORD }}' \
-          MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}' \
-          bash /tmp/restore_mautic.sh '$RESTORE_PREFIX'"
-
-          echo "🟢 Restore completed successfully."  
 
       - name: Download setup-dc.log
         run: |

@@ -12,6 +12,6 @@ echo "🔄 Recreating containers for brand: ${BRAND_NAME}"
 
 docker compose \
   --project-name "${BRAND_NAME}" \
-  up -d 
+  up -d --force-recreate
 
 echo "✅ Containers recreated successfully for brand: ${BRAND_NAME}"

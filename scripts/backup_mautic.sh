@@ -67,6 +67,20 @@ if [ -f "$FS_BACKUP" ] || [ -f "$DB_BACKUP" ]; then
 fi
 
 # -------------------------
+# RETENTION POLICY (keep last 14 archives)
+# -------------------------
+
+RETENTION=14
+ARCHIVED_COUNT=$(find "$ARCHIVE_DIR" -mindepth 1 -maxdepth 1 -type d | wc -l)
+if [ "$ARCHIVED_COUNT" -gt "$RETENTION" ]; then
+  TO_PRUNE=$((ARCHIVED_COUNT - RETENTION))
+  find "$ARCHIVE_DIR" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort | head -n "$TO_PRUNE" | while IFS= read -r NAME; do
+    echo "🗑 Pruning old backup: $ARCHIVE_DIR/$NAME"
+    rm -rf "$ARCHIVE_DIR/${NAME:?}"
+  done
+fi
+
+# -------------------------
 # FILESYSTEM BACKUP (VOLUME)
 # -------------------------
 
@@ -86,10 +100,9 @@ echo "✅ Filesystem backup created: $FS_BACKUP"
 
 echo "🛢 Backing up database: $MYSQL_DATABASE"
 
-docker exec "$MYSQL_CONTAINER" sh -c "
+docker exec -e MYSQL_PWD="$MYSQL_ROOT_PASSWORD" "$MYSQL_CONTAINER" sh -c "
   mysqldump \
     -u root \
-    -p\"$MYSQL_ROOT_PASSWORD\" \
     --single-transaction \
     --quick \
     --lock-tables=false \

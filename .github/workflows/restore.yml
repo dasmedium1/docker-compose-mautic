@@ -21,27 +21,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/vps_key
-          chmod 600 ~/.ssh/vps_key
-
       - name: Restore Mautic
-        run: |
-          set -euo pipefail
-
-          echo "♻ Restoring Mautic for brand: $BRAND_NAME"
-
-          scp -o StrictHostKeyChecking=no -i ~/.ssh/vps_key \
-            scripts/restore_mautic.sh \
-            root@${{ vars.LINODE_IP }}:/tmp/restore_mautic.sh
-
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key \
-            root@${{ vars.LINODE_IP }} \
-            "BRAND_NAME='${{ env.BRAND_NAME }}' \
-             DB_NAME='${{ vars.DB_NAME }}' \
-             MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}' \
-             bash /tmp/restore_mautic.sh"
-
-          echo "🟢 Restore completed successfully."
+        uses: ./.github/actions/run-remote-script
+        with:
+          ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host: ${{ vars.LINODE_IP }}
+          script: scripts/restore_mautic.sh
+          env: "BRAND_NAME='${{ env.BRAND_NAME }}' DB_NAME='${{ vars.DB_NAME }}' MYSQL_ROOT_PASSWORD='${{ secrets.MYSQL_ROOT_PASSWORD }}'"

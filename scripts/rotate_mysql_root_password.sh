@@ -15,8 +15,8 @@ if [ -z "$MYSQL_CONTAINER" ]; then
   exit 1
 fi
 
-docker exec "$MYSQL_CONTAINER" mysql \
-  -u root -p"$OLD_ROOT_PASSWORD" \
+docker exec -e MYSQL_PWD="$OLD_ROOT_PASSWORD" "$MYSQL_CONTAINER" mysql \
+  -u root \
   -e "
     ALTER USER 'root'@'%' IDENTIFIED BY '$NEW_ROOT_PASSWORD';
     FLUSH PRIVILEGES;

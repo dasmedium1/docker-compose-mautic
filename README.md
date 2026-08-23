@@ -65,7 +65,6 @@ This setup is inspired by the original work of John Linhart (escopecz) who creat
 
 #### Optional Variables:
 - `ENABLE_BACKUP`: Set to `false` to skip backup before deployment (default: enabled)
-- `ENABLE_RESTORE`: Set to `true` to enable restore functionality
 - `MAUTIC_VERSION`: Mautic version (default: `6.0.5-apache`)
 
 ## Quick Start
@@ -92,7 +91,7 @@ This setup is inspired by the original work of John Linhart (escopecz) who creat
 ## Workflows
 
 ### 1. Deploy Workflow (`deploy.yml`)
-- **Trigger:** Push to `m6-dev-1` branch or manual dispatch
+- **Trigger:** Push to `master` branch or manual dispatch
 - **Actions:**
   - Backup existing installation (optional)
   - Deploy Docker Compose stack
@@ -109,13 +108,10 @@ This setup is inspired by the original work of John Linhart (escopecz) who creat
   - Store backups in `/home/angelantonio/backup/root/mautic/backups/`
 
 ### 3. Restore Workflow (`restore.yml`)
-- **Trigger:** Manual dispatch with backup prefix input
+- **Trigger:** Manual dispatch (select `brand`)
 - **Actions:**
-  - Stop Mautic services
-  - Restore filesystem from backup
-  - Restore database from dump
-  - Fix permissions
-  - Clear caches
+  - Restore filesystem from backup (`backups/<brand>/current/filesystem.tar.gz`)
+  - Restore database from dump (`backups/<brand>/current/database.sql.gz`)
   - Restart services
 
 ## File Structure
@@ -127,12 +123,15 @@ This setup is inspired by the original work of John Linhart (escopecz) who creat
 ├── .mautic_env                 # Mautic-specific environment variables
 ├── scripts/
 │   ├── backup_mautic.sh        # Backup script
-│   └── restore_mautic.sh       # Restore script
+│   ├── restore_mautic.sh       # Restore script
+│   └── rotate_*_password.sh    # Password rotation scripts
 ├── .github/workflows/
 │   ├── deploy.yml              # Deployment workflow
 │   ├── backup.yml              # Backup workflow
-│   └── restore.yml             # Restore workflow
-└── requirements.md             # Project requirements and status
+│   ├── restore.yml             # Restore workflow
+│   └── rotate-secrets.yml      # Secret rotation workflow
+└── .github/actions/
+    └── run-remote-script       # Composite action (SCP + SSH run)
 ```
 
 ## Key Features
@@ -185,14 +184,16 @@ docker compose exec -u www-data mautic_web php bin/console cache:clear
 ### Manual Backup
 ```bash
 cd /home/angelantonio/backup/root/mautic
-MYSQL_ROOT_PASSWORD=your_password bash scripts/backup_mautic.sh
+BRAND_NAME=default DB_NAME=your_db_name MYSQL_ROOT_PASSWORD=your_password bash scripts/backup_mautic.sh
 ```
 
 ### Manual Restore
 ```bash
 cd /home/angelantonio/backup/root/mautic
-MYSQL_PASSWORD=your_password MYSQL_ROOT_PASSWORD=your_root_password bash scripts/restore_mautic.sh 2024-01-15
+BRAND_NAME=default DB_NAME=your_db_name MYSQL_ROOT_PASSWORD=your_password bash scripts/restore_mautic.sh
 ```
+
+Restore reads from `backups/<brand>/current/` only (no date/prefix argument).
 
 ## Troubleshooting
 
