@@ -19,5 +19,7 @@ jobs:
           shellcheck scripts/*.sh setup-dc.sh
 
       - name: Validate compose config
+        env:
+          COMPOSE_PROJECT_NAME: mautic
         run: |
           docker compose config -q
