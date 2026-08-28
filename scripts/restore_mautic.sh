@@ -12,25 +12,27 @@ BACKUP_ROOT="$DEPLOY_ROOT/backups/current"
 MYSQL_DATABASE="${DB_NAME:?DB_NAME is required}"
 MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}"
 
-FS_BACKUP="$BACKUP_ROOT/filesystem.tar.gz"
 DB_BACKUP="$BACKUP_ROOT/database.sql.gz"
 
-# Docker volume name (derived from the compose project)
-MAUTIC_VOLUME="${COMPOSE_PROJECT_NAME}_mautic"
+# Persistent Mautic volumes to restore (keys defined in docker-compose.yml)
+MAUTIC_DATA_VOLUMES=(mautic_config mautic_media_files mautic_media_images)
 
 # -------------------------
 # VALIDATION
 # -------------------------
 
-if [ ! -f "$FS_BACKUP" ]; then
-  echo "❌ Filesystem backup not found: $FS_BACKUP"
-  exit 1
-fi
-
 if [ ! -f "$DB_BACKUP" ]; then
   echo "❌ Database backup not found: $DB_BACKUP"
   exit 1
 fi
+
+for vol in "${MAUTIC_DATA_VOLUMES[@]}"; do
+  TARBALL="$BACKUP_ROOT/${vol}.tar.gz"
+  if [ ! -f "$TARBALL" ]; then
+    echo "❌ Filesystem backup not found: $TARBALL"
+    exit 1
+  fi
+done
 
 echo "✔ Backup files validated"
 
@@ -53,38 +55,31 @@ fi
 echo "✔ Found MySQL container: $MYSQL_CONTAINER"
 
 # -------------------------
-# VALIDATE MAUTIC VOLUME
+# FILESYSTEM RESTORE (PER-VOLUME)
 # -------------------------
 
-echo "🔍 Validating Mautic volume: $MAUTIC_VOLUME"
+for vol in "${MAUTIC_DATA_VOLUMES[@]}"; do
+  V="${COMPOSE_PROJECT_NAME}_${vol}"
+  echo "📁 Restoring Mautic volume: $V"
 
-if ! docker volume inspect "$MAUTIC_VOLUME" >/dev/null 2>&1; then
-  echo "❌ Mautic volume not found: $MAUTIC_VOLUME"
-  exit 1
-fi
+  # Ensure the volume exists (create it if the stack has not been started yet)
+  docker volume inspect "$V" >/dev/null 2>&1 || docker volume create "$V"
 
-echo "✔ Found volume: $MAUTIC_VOLUME"
+  # Clear volume first to avoid residue
+  docker run --rm \
+    -v "${V}:/volume" \
+    alpine \
+    sh -c "rm -rf /volume/*"
 
-# -------------------------
-# FILESYSTEM RESTORE (VOLUME)
-# -------------------------
+  # Restore from backup
+  docker run --rm \
+    -v "${V}:/volume" \
+    -v "${BACKUP_ROOT}:/backup:ro" \
+    alpine \
+    sh -c "cd /volume && tar -xzf /backup/${vol}.tar.gz"
 
-echo "📁 Restoring Mautic filesystem into Docker volume..."
-
-# Clear volume first to avoid residue
-docker run --rm \
-  -v "${MAUTIC_VOLUME}:/volume" \
-  alpine \
-  sh -c "rm -rf /volume/*"
-
-# Restore from backup
-docker run --rm \
-  -v "${MAUTIC_VOLUME}:/volume" \
-  -v "${BACKUP_ROOT}:/backup:ro" \
-  alpine \
-  sh -c "cd /volume && tar -xzf /backup/filesystem.tar.gz"
-
-echo "✅ Filesystem restored into volume"
+  echo "✅ Filesystem restored into volume: $V"
+done
 
 # -------------------------
 # DATABASE RESTORE
@@ -114,5 +109,5 @@ echo "✅ Database restored"
 # -------------------------
 
 echo "🎉 Restore completed successfully for project: $COMPOSE_PROJECT_NAME"
-echo "   Filesystem volume: $MAUTIC_VOLUME"
-echo "   Database:          $MYSQL_DATABASE"
+echo "   Filesystem volumes: ${MAUTIC_DATA_VOLUMES[*]}"
+echo "   Database:           $MYSQL_DATABASE"

@@ -48,7 +48,7 @@ The workflows call the composite action `.github/actions/run-remote-script` (inp
 ## Project / volume / network model
 
 - `COMPOSE_PROJECT_NAME` is the Compose project name and must be unique per site on a VPS (it drives container names, volume names, and network aliases). It flows into `.env` via the `__PROJECT_NAME__` token.
-- Docker volume names derive from the project name: `${COMPOSE_PROJECT_NAME}_mautic` and `${COMPOSE_PROJECT_NAME}_mysql-data` (Compose prefixes both; backup/restore scripts compute the former).
+- Persistent Mautic data lives in three named volumes, each mounted at the real Mautic path and shared by web/worker/cron: `${COMPOSE_PROJECT_NAME}_mautic_config` (`/var/www/html/config`), `${COMPOSE_PROJECT_NAME}_mautic_media_files` (`/var/www/html/docroot/media/files`), `${COMPOSE_PROJECT_NAME}_mautic_media_images` (`/var/www/html/docroot/media/images`). The DB uses `${COMPOSE_PROJECT_NAME}_mysql-data`. Backup/restore scripts archive these three app volumes (not logs/cron).
 - `.mautic_env` sets `MAUTIC_DB_HOST=mautic_db___PROJECT_NAME__` (substituted to `mautic_db_<project>`) to match the compose network alias `mautic_db_${COMPOSE_PROJECT_NAME}`. The alias MUST stay project-scoped because `mysql_private` is shared across sites on one VPS. Preserve this.
 - `traefik_web` and `mysql_private` are external networks; `setup-dc.sh` creates `mysql_private` (`-d overlay --attachable`) if missing but expects `traefik_web` to already exist.
 
@@ -60,7 +60,7 @@ The workflows call the composite action `.github/actions/run-remote-script` (inp
 ## Scripts
 
 - `scripts/backup_mautic.sh` / `restore_mautic.sh` require env vars `COMPOSE_PROJECT_NAME`, `DEPLOY_DIR`, `DB_NAME`, `MYSQL_ROOT_PASSWORD` and locate the MySQL container by compose labels (`com.docker.compose.service=mautic_db`, `com.docker.compose.project=$COMPOSE_PROJECT_NAME`).
-- `backup_mautic.sh` skips gracefully (exit 0) when the MySQL container or the Mautic volume doesn't exist yet, so the pre-deploy backup on a fresh site doesn't fail.
+- `backup_mautic.sh` skips gracefully (exit 0) when the MySQL container doesn't exist yet (and skips any individual app volume that is missing), so the pre-deploy backup on a fresh site doesn't fail.
 - `restore_mautic.sh` restores only from `$DEPLOY_DIR/backups/current/` (no date/prefix argument).
 - `backup_mautic.sh` archives the prior backup to `archive/<timestamp>` and prunes archives beyond the last 14.
 - `rotate_db_password.sh` / `rotate_mysql_root_password.sh` take their inputs from env vars, not args. Scripts pass MySQL credentials via `MYSQL_PWD` (`docker exec -e`), never `-p`.
