@@ -99,15 +99,20 @@ jobs:
           cat setup-dc.log
 
       - name: Cleanup sensitive environment variables on server
-        if: ${{ github.event.inputs.cleanup_env == 'true' }}
+        if: ${{ github.event.inputs.cleanup_env != 'false' }}
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/vps_key root@${{ vars.LINODE_IP }} \
           "DEPLOY_DIR='${{ vars.DEPLOY_DIR }}' bash -s" << 'EOF'
           set -euo pipefail
 
-          echo "🔐 Connected. Beginning cleanup of sensitive files..."
+          echo "Removing secret-bearing files (.mautic_env, setup-dc.sh)"
+          rm -f "$DEPLOY_DIR/.mautic_env" "$DEPLOY_DIR/setup-dc.sh"
 
-          echo "📁 Removing .env, .mautic_env, and setup-dc.sh (contains substituted secrets)"
-          rm -f "$DEPLOY_DIR/.env" "$DEPLOY_DIR/.mautic_env" "$DEPLOY_DIR/setup-dc.sh" && echo "✔ Files removed"
+          echo "Scrubbing secrets from .env (kept for project-name determinism)"
+          if [ -f "$DEPLOY_DIR/.env" ]; then
+            grep -Ev '^(MYSQL_PASSWORD|MYSQL_ROOT_PASSWORD)=' "$DEPLOY_DIR/.env" \
+              > "$DEPLOY_DIR/.env.scrubbed"
+            mv "$DEPLOY_DIR/.env.scrubbed" "$DEPLOY_DIR/.env"
+          fi
 
           EOF

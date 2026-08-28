@@ -1,9 +1,7 @@
 x-mautic-volumes: &mautic-volumes
-  - mautic:/mautic/config:/var/www/html/config
-  - mautic:/mautic/logs:/var/www/html/var/logs
-  - mautic:/mautic/media/files:/var/www/html/docroot/media/files
-  - mautic:/mautic/media/images:/var/www/html/docroot/media/images
-  - mautic:/mautic/cron:/opt/mautic/cron
+  - mautic_config:/var/www/html/config
+  - mautic_media_files:/var/www/html/docroot/media/files
+  - mautic_media_images:/var/www/html/docroot/media/images
 
 services:
   mautic_db:
@@ -89,7 +87,9 @@ services:
 
 volumes:
   mysql-data:
-  mautic:
+  mautic_config:
+  mautic_media_files:
+  mautic_media_images:
 
 networks:
   traefik_web:

@@ -15,12 +15,11 @@ ARCHIVE_DIR="$BACKUP_ROOT/archive"
 MYSQL_DATABASE="${DB_NAME:?DB_NAME is required}"
 MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}"
 
-# Docker volume name (derived from the compose project)
-MAUTIC_VOLUME="${COMPOSE_PROJECT_NAME}_mautic"
+# Persistent Mautic volumes to back up (keys defined in docker-compose.yml)
+MAUTIC_DATA_VOLUMES=(mautic_config mautic_media_files mautic_media_images)
 
 mkdir -p "$CURRENT_DIR" "$ARCHIVE_DIR"
 
-FS_BACKUP="$CURRENT_DIR/filesystem.tar.gz"
 DB_BACKUP="$CURRENT_DIR/database.sql.gz"
 
 # -------------------------
@@ -42,23 +41,10 @@ fi
 echo "✔ Found MySQL container: $MYSQL_CONTAINER"
 
 # -------------------------
-# VALIDATE MAUTIC VOLUME
-# -------------------------
-
-echo "🔍 Validating Mautic volume: $MAUTIC_VOLUME"
-
-if ! docker volume inspect "$MAUTIC_VOLUME" >/dev/null 2>&1; then
-  echo "⚠ Mautic volume '$MAUTIC_VOLUME' not found; nothing to back up. Skipping."
-  exit 0
-fi
-
-echo "✔ Found volume: $MAUTIC_VOLUME"
-
-# -------------------------
 # ARCHIVE PREVIOUS BACKUP
 # -------------------------
 
-if [ -f "$FS_BACKUP" ] || [ -f "$DB_BACKUP" ]; then
+if [ -n "$(find "$CURRENT_DIR" -mindepth 1 -maxdepth 1 -print -quit)" ]; then
   TS=$(date +%Y%m%d-%H%M%S)
   mkdir -p "$ARCHIVE_DIR/$TS"
   mv "$CURRENT_DIR"/* "$ARCHIVE_DIR/$TS/" || true
@@ -80,18 +66,23 @@ if [ "$ARCHIVED_COUNT" -gt "$RETENTION" ]; then
 fi
 
 # -------------------------
-# FILESYSTEM BACKUP (VOLUME)
+# FILESYSTEM BACKUP (PER-VOLUME)
 # -------------------------
 
-echo "📁 Backing up Mautic filesystem from Docker volume..."
-
-docker run --rm \
-  -v "${MAUTIC_VOLUME}:/volume:ro" \
-  -v "${CURRENT_DIR}:/backup" \
-  alpine \
-  sh -c "cd /volume && tar -czf /backup/filesystem.tar.gz ."
-
-echo "✅ Filesystem backup created: $FS_BACKUP"
+for vol in "${MAUTIC_DATA_VOLUMES[@]}"; do
+  V="${COMPOSE_PROJECT_NAME}_${vol}"
+  if docker volume inspect "$V" >/dev/null 2>&1; then
+    echo "📁 Backing up Mautic volume: $V"
+    docker run --rm \
+      -v "${V}:/volume:ro" \
+      -v "${CURRENT_DIR}:/backup" \
+      alpine \
+      sh -c "cd /volume && tar -czf /backup/${vol}.tar.gz ."
+    echo "✅ Volume backup created: ${vol}.tar.gz"
+  else
+    echo "⚠ Volume '$V' not found; skipping."
+  fi
+done
 
 # -------------------------
 # DATABASE BACKUP (LOGICAL)
@@ -115,5 +106,5 @@ echo "✅ Database backup created: $DB_BACKUP"
 # -------------------------
 
 echo "🎉 Backup completed successfully for project: $COMPOSE_PROJECT_NAME"
-echo "   Filesystem: $FS_BACKUP"
-echo "   Database:   $DB_BACKUP"
+echo "   Filesystem volumes: ${MAUTIC_DATA_VOLUMES[*]}"
+echo "   Database:           $DB_BACKUP"
